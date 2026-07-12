@@ -34,9 +34,28 @@ export function Nav() {
   const focusTrigger = () =>
     pillRef.current?.querySelector<HTMLElement>("[data-nav-trigger]")?.focus()
 
+  // A single dot that glides to sit just after the hovered/focused label.
+  const ulRef = useRef<HTMLUListElement>(null)
+  const [dot, setDot] = useState({ x: 0, y: 0, visible: false })
+
+  const moveDotToLabel = (label: HTMLElement | null) => {
+    // Ignore hover/focus until the menu is fully open, so the dot never shows
+    // or animates while the panel is still expanding.
+    if (!expanded || !label || !ulRef.current) return
+    const u = ulRef.current.getBoundingClientRect()
+    const r = label.getBoundingClientRect()
+    setDot({
+      x: r.right - u.left + 10,
+      y: r.top - u.top + r.height / 2,
+      visible: true,
+    })
+  }
+  const hideDot = () => setDot((d) => ({ ...d, visible: false }))
+
   const closeMenu = () => {
     setOpen(false)
     setExpanded(false)
+    hideDot()
   }
 
   useEffect(() => {
@@ -89,8 +108,15 @@ export function Nav() {
       <div
         ref={pillRef}
         onKeyDown={onKeyDown}
+        // Width animates first; padding animates together with the height
+        // (both delayed to 300ms on open). On close the order reverses.
+        style={{
+          transition: open
+            ? "width 300ms ease-out 0ms, padding 300ms ease-out 300ms"
+            : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms",
+        }}
         className={cn(
-          "rounded-3xl border border-border bg-card/70 text-card-foreground shadow-[0_16px_40px_-12px_color-mix(in_oklab,var(--background)_50%,transparent)] backdrop-blur-2xl backdrop-saturate-150 transition-[padding,width] duration-300 ease-out",
+          "rounded-3xl border border-border bg-card/70 text-card-foreground shadow-[0_16px_40px_-12px_color-mix(in_oklab,var(--background)_50%,transparent)] backdrop-blur-2xl backdrop-saturate-150",
           open ? "w-52 p-2" : "w-24 p-0"
         )}
       >
@@ -135,20 +161,60 @@ export function Nav() {
             // transitions (e.g. a link's hover), and only once fully open.
             if (e.target === e.currentTarget && open) setExpanded(true)
           }}
+          // Height animates second: on open it waits for the width (delay-300);
+          // on close it collapses after the items have faded out.
+          style={{ transitionDelay: open ? "300ms" : "150ms" }}
           className={cn(
-            "grid transition-all duration-300 ease-out",
-            open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            "grid transition-[grid-template-rows] duration-300 ease-out",
+            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
           )}
         >
           <div
             className={cn(expanded ? "overflow-visible" : "overflow-hidden")}
           >
-            <ul className="flex flex-col pt-1">
-              {links.map(({ href, label }) => {
+            <ul
+              ref={ulRef}
+              onMouseLeave={hideDot}
+              className="relative flex flex-col pt-1"
+            >
+              <span
+                aria-hidden
+                style={{
+                  transform: `translate(${dot.x - 2}px, ${dot.y - 2}px)`,
+                }}
+                className={cn(
+                  "pointer-events-none absolute top-0 left-0 size-1 rounded-full bg-foreground transition-[transform,opacity] duration-300 ease-out",
+                  dot.visible ? "opacity-100" : "opacity-0"
+                )}
+              />
+              {links.map(({ href, label }, i) => {
                 const active =
                   pathname === href || pathname.startsWith(`${href}/`)
                 return (
-                  <li key={href}>
+                  <li
+                    key={href}
+                    onMouseEnter={(e) =>
+                      moveDotToLabel(
+                        e.currentTarget.querySelector("[data-nav-label]")
+                      )
+                    }
+                    onFocus={(e) =>
+                      moveDotToLabel(
+                        e.currentTarget.querySelector("[data-nav-label]")
+                      )
+                    }
+                    // Items animate last, staggered, only after the box has
+                    // finished growing (width 0-300ms, height 300-600ms).
+                    style={{
+                      transitionDelay: open ? `${600 + i * 60}ms` : "0ms",
+                    }}
+                    className={cn(
+                      "transition-[opacity,transform] duration-200 ease-out",
+                      open
+                        ? "translate-y-0 opacity-100"
+                        : "translate-y-1 opacity-0"
+                    )}
+                  >
                     <Button
                       variant="ghost"
                       nativeButton={false}
@@ -161,7 +227,7 @@ export function Nav() {
                         active && "bg-foreground/6"
                       )}
                     >
-                      {label}
+                      <span data-nav-label>{label}</span>
                     </Button>
                   </li>
                 )
