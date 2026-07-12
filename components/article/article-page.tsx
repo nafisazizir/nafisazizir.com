@@ -1,5 +1,7 @@
+import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
+import { Reveal } from "@/components/motion/reveal"
 import type { Post } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
 
@@ -10,18 +12,14 @@ export function ArticlePage({ post }: { post: Post }) {
         <Toc items={post.toc} />
         <main className="mx-auto max-w-160">
           <article className="typeset typeset-article">
-            <header className="mb-10">
-              <h1 style={{ marginBlockStart: 0 }}>
-                {post.frontmatter.title}
-              </h1>
-              <time
-                dateTime={post.frontmatter.date}
-                className="text-muted-foreground text-sm"
-              >
-                {formatDate(post.frontmatter.date)}
-              </time>
-            </header>
-            <MDXContent source={post.content} />
+            <ArticleHeader
+              title={post.frontmatter.title}
+              date={post.frontmatter.date}
+              displayDate={formatDate(post.frontmatter.date)}
+            />
+            <Reveal delay={0.16} y={10}>
+              <MDXContent source={post.content} />
+            </Reveal>
           </article>
         </main>
       </div>

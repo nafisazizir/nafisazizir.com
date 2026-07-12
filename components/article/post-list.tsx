@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 
+import { EASE_OUT } from "@/lib/motion"
 import { formatDate } from "@/lib/utils"
 
 export interface PostListItem {
@@ -12,8 +13,6 @@ export interface PostListItem {
   date: string
   tags: string[]
 }
-
-const EASE_OUT = [0.22, 1, 0.36, 1] as const
 
 export function PostList({
   items,
@@ -44,7 +43,7 @@ export function PostList({
                 className="group block rounded-xl px-4 py-3 transition-all duration-200 hover:bg-muted/50"
               >
                 <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="text-[15px] font-[450] tracking-tight text-foreground transition-colors">
+                  <h2 className="text-[15px] font-[450] tracking-tight text-foreground">
                     {item.title}
                   </h2>
                   <time

@@ -64,8 +64,21 @@
   .typeset :where(a) {
     color: var(--color-foreground);
     text-decoration: underline;
-    text-decoration-color: var(--color-foreground);
+    text-decoration-color: color-mix(in oklab, var(--color-foreground) 40%, transparent);
     text-underline-offset: 2px;
+    transition:
+      text-decoration-color 0.2s ease,
+      text-underline-offset 0.2s ease;
+  }
+  .typeset :where(a):hover {
+    text-decoration-color: var(--color-foreground);
+    text-underline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typeset :where(a) {
+      transition: none;
+    }
   }
 
   .typeset :where(ul, ol) {
