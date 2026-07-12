@@ -1,0 +1,40 @@
+---
+title: "Skilldex - CLI Tool for Indexing AI Agent Skills"
+description: "A CLI tool (+ VS Code extension) that indexes AI agent skills into passive context files like AGENTS.md and CLAUDE.md, improving agent skill retrieval from 53% to 100% pass rate."
+date: 2026-02-21
+type: project
+tags: [exploration]
+cover: "/articles/skilldex-cli-tool-for-indexing-ai-agent-skills/cover.png"
+---
+
+When you install skills for your AI coding agent, you'd expect the agent to actually use them. But a lot of the time, it doesn't. Unless you explicitly tell it to. That friction got annoying enough that I built something about it.
+
+Turns out Vercel ran evals on this exact problem. They tested skills (on-demand retrieval) vs embedding a docs index directly in `AGENTS.md` so it's always in context. Default skills performed the same as having no docs at all, 53% pass rate either way. Passive context in `AGENTS.md` hit 100%.
+
+The reason is obvious in hindsight: with passive context, there's no decision point. The agent doesn't have to choose to load anything. It's just there.
+
+Full writeup: [AGENTS.md outperforms skills in our agent evals](https://vercel.com/blog/agents-md-outperforms-skills-in-our-agent-evals)
+
+## What Skilldex Does
+
+Skilldex takes your installed skills (Claude Code, Cursor, Windsurf, Copilot, etc.), reads their metadata, and writes a compact index into your `AGENTS.md` or `CLAUDE.md` ; whatever passive context file you use.
+
+```bash
+npx skilldex init
+```
+
+Scans for skills, you pick which ones to include, and it inserts a managed block into your target file. The agent sees everything on every request without you having to prompt it.
+
+Other commands: `add`, `remove`, `sync`, `list`. Multi-target if you use multiple agents:
+
+```bash
+skilldex init -t AGENTS.md CLAUDE.md
+```
+
+## Extensions
+
+![image](/articles/skilldex-cli-tool-for-indexing-ai-agent-skills/image-1.png)
+
+There's also an extension for both VS Code and Cursor. It adds a sidebar tree view showing all your indexed and available skills, with context menu actions for add/remove/sync. No terminal needed. Grab it on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=skilldex.skilldex-vscode) (works in Cursor too).
+
+Source at [github.com/nafisazizir/skilldex](http://github.com/nafisazizir/skilldex).

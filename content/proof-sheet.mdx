@@ -1,0 +1,127 @@
+---
+title: "The proof sheet"
+description: "Before a book goes to press, the printer pulls a proof. This is mine — every element of this site's type system, pressed onto one page."
+date: 2026-06-10
+type: blog
+tags: [meta, design]
+---
+
+Every printshop keeps a proof sheet pinned to the wall, a single page where
+every typeface, rule, and ornament gets pulled once before anything real goes
+to press. This is that page for this site. If something looks _off_ here, it
+looks off **everywhere**, so better to catch it now.
+
+The body text you're reading is set in EB Garamond, the same face as the
+[intro page](/). Links come in two flavours: quiet internal ones like that,
+and external ones like the type on
+[Practical Typography](https://practicaltypography.com), which open in a new
+tab. And occasionally there's inline code, like `pnpm dev`, sitting inside a
+sentence without making a scene. Strikethrough works too, for thoughts I've
+~~abandoned~~ revised.
+
+---
+
+## Headings, in their habitat
+
+A second-level heading sits above this paragraph, italic Garamond, like the
+site title. It marks the big movements of a piece.
+
+### Third level, for the smaller turns
+
+Third-level headings drop the italics and a size. They're for moments within
+a section, not new sections themselves.
+
+#### A fourth-level heading
+
+Fourth-level headings stay in the serif voice, just smaller and a touch
+heavier than the third — a real heading, not a label. They're rare in
+practice; most writing never nests this deep.
+
+---
+
+## Lists, ledgers, and loose ends
+
+Things I reach for when writing here:
+
+- Unordered lists, for collections without hierarchy
+- Nested thoughts, because some points have
+  - footholds
+  - and sub-footholds
+- A final item, to check the rhythm of the markers
+
+And when order matters, the ledger style:
+
+1. Write the draft in plain Markdown
+2. Drop in components only where prose falls short
+3. Read it once out loud before publishing
+
+There's also the running checklist form, half done as always:
+
+- [x] Typography system
+- [x] Code blocks with syntax highlighting
+- [ ] Tape, shredded paper, and other ephemera
+- [ ] An actual first post
+
+> Typography is the craft of endowing human language with a durable visual
+> form. — Robert Bringhurst, _The Elements of Typographic Style_
+
+That's a blockquote above, indented and italic, the way a borrowed thought
+should look: clearly someone else's, gently set apart.
+
+---
+
+## Code, pressed flat
+
+Inline code you've already seen. Fenced blocks get the full treatment, a
+titled card in the mono face, with syntax colours that follow light and dark
+mode:
+
+```ts title="lib/content.ts"
+const frontmatterSchema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  type: z.enum(["blog", "project"]),
+  tags: z.array(z.string()).default([]),
+  draft: z.boolean().default(false),
+})
+```
+
+Untitled blocks work too, for quick terminal asides:
+
+```bash
+pnpm dev
+# then visit http://localhost:3000/blog/proof-sheet
+```
+
+---
+
+## Tables, ruled like a notebook
+
+| Element  | Voice            | Face        |
+| -------- | ---------------- | ----------- |
+| Body     | The narrator     | EB Garamond |
+| Headings | Chapter openings | EB Garamond |
+| Metadata | Marginalia       | Geist Mono  |
+| Code     | The machine      | Geist Mono  |
+
+Column headers take the mono label voice; rows are ruled with hairlines, like
+a ledger that's been kept carefully but not preciously.
+
+## Images, framed
+
+Images sit in a thin frame on a card, waiting for the real artefacts — the
+tape, the torn edges, the photographs from somewhere further afield.
+
+![A placeholder image holding space for future artwork](/cutting-mat.svg)
+
+_A caption is just an italic line beneath the frame, like a pencil note._
+
+---
+
+So that's the full case of type[^1]. If a piece of writing needs something
+that isn't on this sheet, the sheet grows first and the piece publishes
+second.
+
+[^1]: In letterpress printing, a _case_ was the wooden tray that held the
+    metal type — upper case in the top tray, lower case in the bottom. This
+    footnote is also a test of footnotes.

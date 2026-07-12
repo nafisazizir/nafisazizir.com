@@ -1,0 +1,60 @@
+---
+title: "AI Impostor: 6 AI Models Playing Social Deduction"
+description: "A live spectator experience where 6 AI models from different providers play a Spyfall/Mr. White social deduction game continuously. No humans, no resets."
+date: 2026-03-08
+type: project
+tags: [exploration, "web development"]
+cover: "/articles/ai-impostor-6-ai-models-playing-social-deduction/cover.png"
+---
+
+Guillermo Rauch built a v0 chess spectator thing a while back. That stuck with me. When I was playing Mr. White with friends, the two ideas clicked: what if instead of humans, we put AIs in a social deduction game and just watched?
+
+AI Impostor is a live spectator experience. 6 AI models from different providers play a Spyfall/Mr. White style game continuously. No humans, no resets. You open the site and watch whatever game is in progress. Mid-game join works; it doesn't restart for you.
+
+## The Game
+
+Each game has 4 Civilians, 1 Impostor, and 1 Mr. White. Civilians and Impostor each get a word (different, but related). Mr. White gets nothing. Players give clues, discuss in rounds, then vote to eliminate.
+
+The Impostor's job: blend in without revealing they have a different word. Mr. White's job: infer the civilian word from context clues and survive long enough to use it. Civilians' job: find and eliminate both.
+
+Win conditions:
+
+- Civilians win if both Impostor and Mr. White are eliminated
+- Impostor wins by surviving to the final 2
+- Mr. White wins by getting voted out and correctly guessing the civilian word or surviving to final 2
+
+![image](/articles/ai-impostor-6-ai-models-playing-social-deduction/image-1.png)
+
+## How AIs Actually Play
+
+Watching this live was funnier than expected.
+
+The most common failure: an AI accidentally reveals the word mid-discussion. Like, verbatim. "My clue aligns with [the civilian word], but Player 3's clue is way too vague..." congratulations, you just handed Mr. White the answer. Civilians were supposed to be subtle.
+
+The other failure mode: a Civilian gives an extremely specific clue in round 1. Smart in theory. It pins Mr. White immediately. Except now Mr. White has the word. They get voted out, take their guess, and win. Backfired.
+
+The underlying problem is that these models don't naturally reason about information asymmetry in adversarial contexts. They know the answer, so they use it. They forget that:
+
+- The word itself is the secret
+- Mr. White is watching and learning from every clue
+- Winning means surviving and being strategic, not demonstrating you know the word
+
+The fix is prompting by explicitly telling them to be vague but specific, never state or imply the word directly, and always keep in mind that Mr. White wins by guessing it. Models need that framing spelled out. Without it, they just... play as if everyone's on the same team.
+
+## Under the Hood
+
+- **Next.js 16** + Vercel Workflow SDK
+- **Vercel AI SDK** with `streamText()` + Zod schemas, unified APIs for multi-provider. Structured outputs for every player action (clue, discussion message, vote, Mr. White's final guess)
+- **Vercel AI Gateway for** one API key routing to all 6 providers with automatic failover
+- **Upstash Redis** to achieve game state persistence + spectator presence tracking
+- **SSE streaming** to stream clues, discussion, and votes in real time; reasoning tokens visible when using thinking models
+
+![image](/articles/ai-impostor-6-ai-models-playing-social-deduction/image-2.png)
+
+## Why It's Not Live
+
+It ran live for a few hours, then I took it down. 6 models running continuously adds up the cost fast. I did add one optimisation; the game loop only starts when there's an active spectator. No viewers, no game. But even with that, a single session with a few people watching stacks up quickly. Didn't feel right leaving it on indefinitely.
+
+Might bring it back with stricter rate limiting or a scheduled window someday.
+
+Source at [github.com/nafisazizir/ai-impostor](http://github.com/nafisazizir/ai-impostor).
