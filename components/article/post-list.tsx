@@ -41,7 +41,7 @@ export function PostList({
             >
               <Link
                 href={`${basePath}/${item.slug}`}
-                className="group block rounded-lg px-4 py-3 transition-all duration-200 hover:bg-muted/50"
+                className="group block rounded-xl px-4 py-3 transition-all duration-200 hover:bg-muted/50"
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <h2 className="text-[15px] font-[450] tracking-tight text-foreground transition-colors">
