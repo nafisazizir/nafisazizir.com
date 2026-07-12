@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -50,13 +50,16 @@ export function Nav() {
       visible: true,
     })
   }
-  const hideDot = () => setDot((d) => ({ ...d, visible: false }))
+  const hideDot = useCallback(
+    () => setDot((d) => ({ ...d, visible: false })),
+    []
+  )
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setOpen(false)
     setExpanded(false)
     hideDot()
-  }
+  }, [hideDot])
 
   useEffect(() => {
     if (!open) return
@@ -65,7 +68,7 @@ export function Nav() {
     }
     document.addEventListener("pointerdown", onPointerDown)
     return () => document.removeEventListener("pointerdown", onPointerDown)
-  }, [open])
+  }, [open, closeMenu])
 
   // After opening from the keyboard, move focus onto the first/last link.
   useEffect(() => {
