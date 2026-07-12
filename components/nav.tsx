@@ -13,7 +13,6 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/blogs", label: "Blogs" },
-  { href: "/about", label: "About" },
 ]
 
 const isActive = (href: string, pathname: string) =>
