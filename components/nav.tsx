@@ -10,10 +10,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const links = [
+  { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/blogs", label: "Blogs" },
   { href: "/about", label: "About" },
 ]
+
+const isActive = (href: string, pathname: string) =>
+  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
 
 export function Nav() {
   const [open, setOpen] = useState(false)
@@ -21,6 +25,8 @@ export function Nav() {
   // once open so focus rings on the items aren't cut off by the edges.
   const [expanded, setExpanded] = useState(false)
   const pathname = usePathname()
+  const currentLabel =
+    links.find((l) => isActive(l.href, pathname))?.label ?? "Home"
   const pillRef = useRef<HTMLDivElement>(null)
   // When the menu is opened via keyboard, remember which end to focus once the
   // items are no longer `inert` (i.e. after `open` commits).
@@ -133,7 +139,7 @@ export function Nav() {
           aria-label={open ? "Close menu" : "Open menu"}
           className="group w-full justify-between font-semibold hover:bg-foreground/8 dark:hover:bg-foreground/8"
         >
-          Home
+          {currentLabel}
           <span className="relative grid size-4 place-items-center text-muted-foreground transition-colors group-hover:text-foreground">
             <HugeiconsIcon
               icon={MenuTwoLineIcon}
@@ -190,10 +196,9 @@ export function Nav() {
                   dot.visible ? "opacity-100" : "opacity-0"
                 )}
               />
-              {links.map(({ href, label }, i) => {
-                const active =
-                  pathname === href || pathname.startsWith(`${href}/`)
-                return (
+              {links
+                .filter(({ href }) => !isActive(href, pathname))
+                .map(({ href, label }, i) => (
                   <li
                     key={href}
                     onMouseEnter={(e) =>
@@ -224,17 +229,12 @@ export function Nav() {
                       data-nav-item
                       onClick={closeMenu}
                       render={<Link href={href} />}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "w-full justify-start hover:bg-foreground/8 dark:hover:bg-foreground/8",
-                        active && "bg-foreground/6"
-                      )}
+                      className="w-full justify-start hover:bg-foreground/8 dark:hover:bg-foreground/8"
                     >
                       <span data-nav-label>{label}</span>
                     </Button>
                   </li>
-                )
-              })}
+                ))}
             </ul>
           </div>
         </div>

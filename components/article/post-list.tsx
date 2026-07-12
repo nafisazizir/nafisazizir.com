@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 
-import { Nav } from "@/components/nav"
 import { formatDate } from "@/lib/utils"
 
 export interface PostListItem {
@@ -29,7 +28,6 @@ export function PostList({
 
   return (
     <div className="relative min-h-screen overflow-x-clip">
-      <Nav />
       <div className="mx-auto w-full max-w-160 px-6 pt-28 pb-24 sm:pt-32">
         <motion.header
           initial={reduced ? false : { opacity: 0, y: 12 }}
