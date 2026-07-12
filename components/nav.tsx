@@ -37,7 +37,7 @@ function AnimatedLabel({ label }: { label: string }) {
   }, [previous])
 
   return (
-    <span className="relative grid overflow-hidden">
+    <span className="relative grid justify-items-start overflow-hidden text-left">
       <span
         key={current}
         className={cn(
