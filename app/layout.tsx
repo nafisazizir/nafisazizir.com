@@ -1,10 +1,19 @@
+import type { Metadata } from "next"
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+export const metadata: Metadata = {
+  metadataBase: new URL("https://nafisazizir.com"),
+  title: {
+    default: "Nafis Azizi Riza",
+    template: "%s · Nafis Azizi Riza",
+  },
+}
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -20,7 +29,13 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("dark antialiased", fontMono.variable, "font-sans", inter.variable, "tracking-tight")}
+      className={cn(
+        "dark antialiased",
+        fontMono.variable,
+        "font-sans",
+        inter.variable,
+        "tracking-tight"
+      )}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
