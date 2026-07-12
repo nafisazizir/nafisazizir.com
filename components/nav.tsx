@@ -17,7 +17,48 @@ const links = [
 ]
 
 const isActive = (href: string, pathname: string) =>
-  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
+  href === "/"
+    ? pathname === "/"
+    : pathname === href || pathname.startsWith(`${href}/`)
+
+function AnimatedLabel({ label }: { label: string }) {
+  const [current, setCurrent] = useState(label)
+  const [previous, setPrevious] = useState<string | null>(null)
+
+  if (label !== current) {
+    setPrevious(current)
+    setCurrent(label)
+  }
+
+  useEffect(() => {
+    if (previous === null) return
+    const timer = setTimeout(() => setPrevious(null), 300)
+    return () => clearTimeout(timer)
+  }, [previous])
+
+  return (
+    <span className="relative grid overflow-hidden">
+      <span
+        key={current}
+        className={cn(
+          "col-start-1 row-start-1",
+          previous && "animate-in duration-300 ease-out slide-in-from-bottom"
+        )}
+      >
+        {current}
+      </span>
+      {previous && (
+        <span
+          key={previous}
+          aria-hidden
+          className="col-start-1 row-start-1 animate-out duration-300 ease-out fill-mode-forwards slide-out-to-top"
+        >
+          {previous}
+        </span>
+      )}
+    </span>
+  )
+}
 
 export function Nav() {
   const [open, setOpen] = useState(false)
@@ -125,8 +166,8 @@ export function Nav() {
             : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms",
         }}
         className={cn(
-          "rounded-3xl border border-border bg-card/70 text-card-foreground shadow-[0_16px_40px_-12px_color-mix(in_oklab,var(--background)_50%,transparent)] backdrop-blur-2xl backdrop-saturate-150",
-          open ? "w-52 p-2" : "w-24 p-0"
+          "rounded-3xl border border-border bg-card/20 text-card-foreground shadow-[0_16px_40px_-12px_color-mix(in_oklab,var(--background)_50%,transparent)] backdrop-blur-sm backdrop-saturate-150",
+          open ? "w-52 p-2" : "w-26 p-0"
         )}
       >
         <Button
@@ -139,7 +180,7 @@ export function Nav() {
           aria-label={open ? "Close menu" : "Open menu"}
           className="group w-full justify-between font-semibold hover:bg-foreground/8 dark:hover:bg-foreground/8"
         >
-          {currentLabel}
+          <AnimatedLabel label={currentLabel} />
           <span className="relative grid size-4 place-items-center text-muted-foreground transition-colors group-hover:text-foreground">
             <HugeiconsIcon
               icon={MenuTwoLineIcon}
