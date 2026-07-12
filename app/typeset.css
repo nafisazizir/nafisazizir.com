@@ -1,0 +1,179 @@
+@layer components {
+  .typeset {
+    --typeset-font-body: inherit;
+    --typeset-font-heading: var(--font-heading, inherit);
+    --typeset-font-mono: var(--font-mono, ui-monospace, monospace);
+
+    --typeset-size: 1em;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+
+    font-family: var(--typeset-font-body);
+    font-size: var(--typeset-size);
+    line-height: var(--typeset-leading);
+    color: var(--color-muted-foreground);
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 40rem) {
+    .typeset {
+      --typeset-size: 1.03em;
+    }
+  }
+
+  .typeset :where(p, ul, ol, pre, blockquote, table, hr, figure, img, details) {
+    margin-block-start: var(--typeset-flow);
+  }
+
+  .typeset > :where(*):first-child {
+    margin-block-start: 0;
+  }
+
+  .typeset :where(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--typeset-font-heading);
+    font-weight: 450;
+    line-height: 1.25;
+    letter-spacing: -0.014em;
+    color: var(--color-foreground);
+    text-wrap: balance;
+    margin-block-start: calc(var(--typeset-flow) * 1.9);
+    scroll-margin-top: 6rem;
+  }
+  .typeset :where(h1) {
+    font-size: 1.6em;
+  }
+  .typeset :where(h2) {
+    font-size: 1.18em;
+    /* Generous section gap, echoing the avatars docs' ~80px between sections. */
+    margin-block-start: calc(var(--typeset-flow) * 3.4);
+  }
+  .typeset :where(h3) {
+    font-size: 1em;
+    /* Subsection gap: wider than before, but kept well below the h2 section gap
+       so the hierarchy stays legible. */
+    margin-block-start: calc(var(--typeset-flow) * 2.2);
+  }
+  .typeset :where(h4, h5, h6) {
+    font-size: 0.9em;
+    margin-block-start: calc(var(--typeset-flow) * 1.7);
+  }
+  .typeset :where(h1, h2, h3, h4, h5, h6) + :where(p, ul, ol) {
+    margin-block-start: calc(var(--typeset-flow) * 0.5);
+  }
+
+  .typeset :where(a) {
+    color: var(--color-foreground);
+    text-decoration: underline;
+    text-decoration-color: var(--color-foreground);
+    text-underline-offset: 2px;
+  }
+
+  .typeset :where(ul, ol) {
+    padding-inline-start: 1.4em;
+  }
+  .typeset :where(li) {
+    margin-block-start: calc(var(--typeset-flow) * 0.4);
+  }
+  .typeset :where(ul) {
+    list-style: disc;
+  }
+  .typeset :where(ol) {
+    list-style: decimal;
+  }
+  .typeset :where(li)::marker {
+    color: var(--color-muted-foreground);
+  }
+  .typeset :where(li > ul, li > ol) {
+    margin-block-start: calc(var(--typeset-flow) * 0.4);
+  }
+
+  .typeset :where(code) {
+    font-family: var(--typeset-font-mono);
+    font-size: 0.86em;
+    color: var(--color-foreground);
+    background: color-mix(in oklab, var(--color-foreground) 6%, transparent);
+    border-radius: calc(var(--radius) * 0.6);
+    padding: 0.15em 0.36em;
+  }
+  .typeset :where(pre code) {
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    border-radius: 0;
+  }
+
+  .typeset :where(blockquote) {
+    border-inline-start: 2px solid
+      color-mix(in oklab, var(--color-foreground) 20%, transparent);
+    padding-inline-start: 1em;
+    color: var(--color-muted-foreground);
+  }
+
+  .typeset :where(hr) {
+    border: 0;
+    height: 1px;
+    background: color-mix(in oklab, var(--color-foreground) 12%, transparent);
+    margin-block-start: calc(var(--typeset-flow) * 2);
+  }
+
+  .typeset :where(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  .typeset :where(strong) {
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .typeset :where(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92em;
+    display: block;
+    overflow-x: auto;
+  }
+  .typeset :where(th, td) {
+    text-align: start;
+    padding: 0.5em 0.75em;
+    border-block-start: 1px solid
+      color-mix(in oklab, var(--color-foreground) 8%, transparent);
+  }
+  .typeset :where(th) {
+    font-weight: 550;
+    color: var(--color-foreground);
+  }
+  .typeset :where(td) {
+    color: var(--color-muted-foreground);
+  }
+  .typeset :where(.not-typeset, [data-not-typeset]),
+  .typeset :where(.not-typeset, [data-not-typeset]) * {
+    all: revert;
+  }
+}
+
+.typeset pre.shiki {
+  margin-block-start: var(--typeset-flow);
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  line-height: 1.65;
+  font-family: var(--typeset-font-mono);
+  font-size: 13px;
+  background: color-mix(in oklab, var(--color-foreground) 4%, transparent);
+}
+.typeset pre.shiki,
+.typeset pre.shiki span {
+  color: var(--shiki-light);
+}
+.dark .typeset pre.shiki,
+.dark .typeset pre.shiki span {
+  color: var(--shiki-dark);
+}
+
+.typeset-article {
+  --typeset-size: 15px;
+  --typeset-leading: 1.72;
+  --typeset-flow: 1.15em;
+}
