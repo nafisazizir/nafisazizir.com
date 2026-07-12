@@ -17,5 +17,5 @@ export default function ProjectsPage() {
     tags: p.frontmatter.tags,
   }))
 
-  return <PostList items={items} basePath="/projects" heading="Projects" />
+  return <PostList items={items} basePath="/projects" />
 }

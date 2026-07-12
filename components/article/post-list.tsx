@@ -18,30 +18,16 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const
 export function PostList({
   items,
   basePath,
-  heading,
 }: {
   items: PostListItem[]
   basePath: string
-  heading: string
 }) {
   const reduced = useReducedMotion() ?? false
 
   return (
     <div className="relative min-h-screen overflow-x-clip">
       <div className="mx-auto w-full max-w-160 px-6 pt-28 pb-24 sm:pt-32">
-        <motion.header
-          initial={reduced ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            reduced ? { duration: 0 } : { duration: 0.3, ease: EASE_OUT }
-          }
-        >
-          <h1 className="px-4 text-2xl font-[450] tracking-tight text-foreground">
-            {heading}
-          </h1>
-        </motion.header>
-
-        <ul className="mt-10 flex flex-col gap-4">
+        <ul className="flex flex-col gap-4">
           {items.map((item, i) => (
             <motion.li
               key={item.slug}
