@@ -2,6 +2,8 @@ import type { MDXComponents } from "mdx/types"
 import Link from "next/link"
 import type { ComponentPropsWithoutRef } from "react"
 
+import { revealBlocks } from "@/components/motion/reveal-block"
+
 /*
  *  - External (http/protocol-relative) → open in a new tab.
  *  - Internal route (absolute path, no file extension) → next/link, for
@@ -23,5 +25,6 @@ function Anchor({ href = "", ...props }: ComponentPropsWithoutRef<"a">) {
 }
 
 export const mdxComponents: MDXComponents = {
+  ...revealBlocks,
   a: Anchor,
 }

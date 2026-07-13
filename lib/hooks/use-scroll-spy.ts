@@ -26,17 +26,21 @@ export function useScrollSpy({ ids, topOffset = 0 }: ScrollSpyOptions) {
     const n = ids.length
     if (scrollY <= 0) return 0
     if (scrollY >= maxScroll - 1) return n - 1
+    // A single, consistent trigger line for every heading: a section becomes
+    // active once its heading crosses into the upper third of the viewport
+    // (but never above the fixed nav). Using one line for all headings keeps the
+    // highlight in step with what's actually being read — a per-index sliding
+    // line makes later sections light up while their heading is still far down.
+    const line = Math.max(topOffset + 8, vh * 0.3)
     let idx = 0
     for (let i = 0; i < n; i++) {
       const el = document.getElementById(ids[i])
       if (!el) continue
-      const top = el.getBoundingClientRect().top + scrollY
-      const line = (0.4 + 0.5 * (n > 1 ? i / (n - 1) : 0)) * vh
-      if (top - line <= scrollY) idx = i
+      if (el.getBoundingClientRect().top <= line) idx = i
     }
     return idx
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idsKey])
+  }, [idsKey, topOffset])
 
   const requestUpdate = useCallback(() => {
     if (rafRef.current != null) return
@@ -67,7 +71,16 @@ export function useScrollSpy({ ids, topOffset = 0 }: ScrollSpyOptions) {
       window.removeEventListener("resize", requestUpdate)
       ro?.disconnect()
       clearTimeout(t)
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current)
+      // Cancel any pending frame AND clear the ref. If we leave a stale (already
+      // cancelled) id here, the next effect run — e.g. React StrictMode's
+      // remount, or a client-side navigation into this page — sees a non-null
+      // rafRef and the `requestUpdate` guard blocks every future update, leaving
+      // the active section frozen. This is why the TOC tracked on a hard refresh
+      // but not after navigating in from the list.
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
       releaseRef.current?.()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

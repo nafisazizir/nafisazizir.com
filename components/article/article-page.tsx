@@ -1,7 +1,6 @@
 import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
-import { Reveal } from "@/components/motion/reveal"
 import type { Post } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
 
@@ -17,9 +16,7 @@ export function ArticlePage({ post }: { post: Post }) {
               date={post.frontmatter.date}
               displayDate={formatDate(post.frontmatter.date)}
             />
-            <Reveal delay={0.16} y={10}>
-              <MDXContent source={post.content} />
-            </Reveal>
+            <MDXContent source={post.content} />
           </article>
         </main>
       </div>
