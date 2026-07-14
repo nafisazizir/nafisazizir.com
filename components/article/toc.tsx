@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useState } from "react"
 
+import { tap as tapSound } from "@/lib/audio"
 import type { TocItem } from "@/lib/content"
 import { useScrollSpy } from "@/lib/hooks/use-scroll-spy"
 import { cn } from "@/lib/utils"
@@ -41,6 +42,7 @@ export function Toc({ items }: { items: TocItem[] }) {
             aria-current={i === active ? "true" : undefined}
             onClick={(e) => {
               e.preventDefault()
+              tapSound()
               scrollToId(it.id)
             }}
             style={{ height: TOC_ITEM_H }}

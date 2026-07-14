@@ -7,6 +7,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { MenuTwoLineIcon, MinusSignIcon } from "@hugeicons/core-free-icons"
 
 import { Button } from "@/components/ui/button"
+import {
+  close as closeSound,
+  open as openSound,
+  setVoice,
+  tap as tapSound,
+} from "@/lib/audio"
 import { cn } from "@/lib/utils"
 
 const links = [
@@ -141,14 +147,32 @@ export function Nav() {
     hideDot()
   }, [hideDot])
 
+  // The site's own sonic identity: every pitched sound is re-voiced from this
+  // seed, so the interface sounds like this site and no other. Set once.
+  useEffect(() => {
+    setVoice("nafisazizir")
+  }, [])
+
+  // Opening the overlay arrives on the z-axis; dismissing is its mirror.
+  // Selecting a nav link is a plain tap (see the link handlers below), so the
+  // structural close stays silent to avoid stacking two sounds at once.
+  const openMenu = useCallback(() => {
+    openSound()
+    setOpen(true)
+  }, [])
+  const dismiss = useCallback(() => {
+    closeSound()
+    closeMenu()
+  }, [closeMenu])
+
   useEffect(() => {
     if (!open) return
     const onPointerDown = (e: PointerEvent) => {
-      if (!pillRef.current?.contains(e.target as Node)) closeMenu()
+      if (!pillRef.current?.contains(e.target as Node)) dismiss()
     }
     document.addEventListener("pointerdown", onPointerDown)
     return () => document.removeEventListener("pointerdown", onPointerDown)
-  }, [open, closeMenu])
+  }, [open, dismiss])
 
   useEffect(() => {
     if (!open || !focusOnOpen.current) return
@@ -174,7 +198,7 @@ export function Nav() {
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape" && open) {
-      closeMenu()
+      dismiss()
       focusTrigger()
       return
     }
@@ -184,7 +208,7 @@ export function Nav() {
 
     if (!open) {
       focusOnOpen.current = e.key === "ArrowDown" ? "first" : "last"
-      setOpen(true)
+      openMenu()
       return
     }
 
@@ -221,7 +245,7 @@ export function Nav() {
             variant="ghost"
             data-nav-item
             data-nav-trigger
-            onClick={() => (open ? closeMenu() : setOpen(true))}
+            onClick={() => (open ? dismiss() : openMenu())}
             onMouseEnter={(e) =>
               moveDotToLabel(e.currentTarget.querySelector("[data-nav-label]"))
             }
@@ -246,7 +270,10 @@ export function Nav() {
               variant="ghost"
               nativeButton={false}
               data-nav-item
-              onClick={closeMenu}
+              onClick={() => {
+                tapSound()
+                closeMenu()
+              }}
               onMouseEnter={(e) =>
                 moveDotToLabel(
                   e.currentTarget.querySelector("[data-nav-label]")
@@ -269,7 +296,7 @@ export function Nav() {
               size="icon"
               data-nav-item
               data-nav-trigger
-              onClick={() => (open ? closeMenu() : setOpen(true))}
+              onClick={() => (open ? dismiss() : openMenu())}
               aria-expanded={open}
               aria-controls="nav-menu"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -345,7 +372,10 @@ export function Nav() {
                       variant="ghost"
                       nativeButton={false}
                       data-nav-item
-                      onClick={closeMenu}
+                      onClick={() => {
+                        tapSound()
+                        closeMenu()
+                      }}
                       render={<Link href={href} />}
                       className="w-full justify-start hover:bg-foreground/8 dark:hover:bg-foreground/8"
                     >
