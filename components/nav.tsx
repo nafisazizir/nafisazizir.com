@@ -21,6 +21,31 @@ const isActive = (href: string, pathname: string) =>
     ? pathname === "/"
     : pathname === href || pathname.startsWith(`${href}/`)
 
+function ToggleIcon({ open }: { open: boolean }) {
+  return (
+    <span className="relative grid size-4 place-items-center text-muted-foreground transition-colors group-hover:text-foreground">
+      <HugeiconsIcon
+        icon={MenuTwoLineIcon}
+        className={cn(
+          "col-start-1 row-start-1 transition-all duration-300 ease-out",
+          open
+            ? "scale-75 rotate-90 opacity-0"
+            : "scale-100 rotate-0 opacity-100"
+        )}
+      />
+      <HugeiconsIcon
+        icon={MinusSignIcon}
+        className={cn(
+          "col-start-1 row-start-1 transition-all duration-300 ease-out",
+          open
+            ? "scale-100 rotate-0 opacity-100"
+            : "scale-75 -rotate-90 opacity-0"
+        )}
+      />
+    </span>
+  )
+}
+
 function AnimatedLabel({ label }: { label: string }) {
   const [current, setCurrent] = useState(label)
   const [previous, setPrevious] = useState<string | null>(null)
@@ -37,7 +62,10 @@ function AnimatedLabel({ label }: { label: string }) {
   }, [previous])
 
   return (
-    <span className="relative grid justify-items-start overflow-hidden text-left">
+    <span
+      data-nav-label
+      className="relative grid justify-items-start overflow-hidden text-left"
+    >
       <span
         key={current}
         className={cn(
@@ -66,8 +94,10 @@ export function Nav() {
   // once open so focus rings on the items aren't cut off by the edges.
   const [expanded, setExpanded] = useState(false)
   const pathname = usePathname()
-  const currentLabel =
-    links.find((l) => isActive(l.href, pathname))?.label ?? "Home"
+  const active = links.find((l) => isActive(l.href, pathname))
+  const currentLabel = active?.label ?? "Home"
+  const activeHref = active?.href ?? "/"
+  const onSectionRoot = pathname === activeHref
   const pillRef = useRef<HTMLDivElement>(null)
   // When the menu is opened via keyboard, remember which end to focus once the
   // items are no longer `inert` (i.e. after `open` commits).
@@ -85,18 +115,21 @@ export function Nav() {
   const ulRef = useRef<HTMLUListElement>(null)
   const [dot, setDot] = useState({ x: 0, y: 0, visible: false })
 
-  const moveDotToLabel = (label: HTMLElement | null) => {
-    // Ignore hover/focus until the menu is fully open, so the dot never shows
-    // or animates while the panel is still expanding.
-    if (!expanded || !label || !ulRef.current) return
-    const u = ulRef.current.getBoundingClientRect()
-    const r = label.getBoundingClientRect()
-    setDot({
-      x: r.right - u.left + 10,
-      y: r.top - u.top + r.height / 2,
-      visible: true,
-    })
-  }
+  const moveDotToLabel = useCallback(
+    (label: HTMLElement | null) => {
+      // Ignore hover/focus until the menu is fully open, so the dot never shows
+      // or animates while the panel is still expanding.
+      if (!expanded || !label || !ulRef.current) return
+      const u = ulRef.current.getBoundingClientRect()
+      const r = label.getBoundingClientRect()
+      setDot({
+        x: r.right - u.left + 10,
+        y: r.top - u.top + r.height / 2,
+        visible: true,
+      })
+    },
+    [expanded]
+  )
   const hideDot = useCallback(
     () => setDot((d) => ({ ...d, visible: false })),
     []
@@ -117,14 +150,27 @@ export function Nav() {
     return () => document.removeEventListener("pointerdown", onPointerDown)
   }, [open, closeMenu])
 
-  // After opening from the keyboard, move focus onto the first/last link.
   useEffect(() => {
     if (!open || !focusOnOpen.current) return
-    const items = getItems()
-    const link = focusOnOpen.current === "first" ? items[1] : items.at(-1)
+    const link =
+      focusOnOpen.current === "first"
+        ? ulRef.current?.querySelector<HTMLElement>("[data-nav-item]")
+        : getItems().at(-1)
     link?.focus()
     focusOnOpen.current = null
   }, [open])
+
+  useEffect(() => {
+    if (!expanded || !pillRef.current) return
+    const hovered = pillRef.current.querySelector<HTMLElement>(
+      "[data-nav-item]:hover [data-nav-label]"
+    )
+    const focusedLabel = document.activeElement
+      ?.closest("[data-nav-item]")
+      ?.querySelector<HTMLElement>("[data-nav-label]")
+    const label = hovered ?? focusedLabel ?? null
+    if (label) moveDotToLabel(label)
+  }, [expanded, moveDotToLabel])
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape" && open) {
@@ -170,38 +216,69 @@ export function Nav() {
           open ? "w-52 p-2" : "w-26 p-0"
         )}
       >
-        <Button
-          variant="ghost"
-          data-nav-item
-          data-nav-trigger
-          onClick={() => (open ? closeMenu() : setOpen(true))}
-          aria-expanded={open}
-          aria-controls="nav-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          className="group w-full justify-between font-semibold hover:bg-foreground/8 dark:hover:bg-foreground/8"
-        >
-          <AnimatedLabel label={currentLabel} />
-          <span className="relative grid size-4 place-items-center text-muted-foreground transition-colors group-hover:text-foreground">
-            <HugeiconsIcon
-              icon={MenuTwoLineIcon}
-              className={cn(
-                "col-start-1 row-start-1 transition-all duration-300 ease-out",
-                open
-                  ? "scale-75 rotate-90 opacity-0"
-                  : "scale-100 rotate-0 opacity-100"
-              )}
-            />
-            <HugeiconsIcon
-              icon={MinusSignIcon}
-              className={cn(
-                "col-start-1 row-start-1 transition-all duration-300 ease-out",
-                open
-                  ? "scale-100 rotate-0 opacity-100"
-                  : "scale-75 -rotate-90 opacity-0"
-              )}
-            />
-          </span>
-        </Button>
+        {onSectionRoot || !open ? (
+          <Button
+            variant="ghost"
+            data-nav-item
+            data-nav-trigger
+            onClick={() => (open ? closeMenu() : setOpen(true))}
+            onMouseEnter={(e) =>
+              moveDotToLabel(e.currentTarget.querySelector("[data-nav-label]"))
+            }
+            onFocus={(e) =>
+              moveDotToLabel(e.currentTarget.querySelector("[data-nav-label]"))
+            }
+            onMouseLeave={hideDot}
+            aria-expanded={open}
+            aria-controls="nav-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            className={cn(
+              "group w-full justify-between hover:bg-foreground/8 aria-expanded:bg-transparent dark:hover:bg-foreground/8",
+              open ? "font-medium" : "font-semibold"
+            )}
+          >
+            <AnimatedLabel label={currentLabel} />
+            <ToggleIcon open={open} />
+          </Button>
+        ) : (
+          <div className="flex w-full items-center">
+            <Button
+              variant="ghost"
+              nativeButton={false}
+              data-nav-item
+              onClick={closeMenu}
+              onMouseEnter={(e) =>
+                moveDotToLabel(
+                  e.currentTarget.querySelector("[data-nav-label]")
+                )
+              }
+              onFocus={(e) =>
+                moveDotToLabel(
+                  e.currentTarget.querySelector("[data-nav-label]")
+                )
+              }
+              onMouseLeave={hideDot}
+              render={<Link href={activeHref} />}
+              aria-label={`Go to ${currentLabel}`}
+              className="group min-w-0 flex-1 justify-start font-medium hover:bg-foreground/8 dark:hover:bg-foreground/8"
+            >
+              <AnimatedLabel label={currentLabel} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              data-nav-item
+              data-nav-trigger
+              onClick={() => (open ? closeMenu() : setOpen(true))}
+              aria-expanded={open}
+              aria-controls="nav-menu"
+              aria-label={open ? "Close menu" : "Open menu"}
+              className="group shrink-0 hover:bg-foreground/8 aria-expanded:bg-transparent dark:hover:bg-foreground/8"
+            >
+              <ToggleIcon open={open} />
+            </Button>
+          </div>
+        )}
 
         <div
           id="nav-menu"
@@ -225,7 +302,7 @@ export function Nav() {
             <ul
               ref={ulRef}
               onMouseLeave={hideDot}
-              className="relative flex flex-col pt-1"
+              className="relative flex flex-col"
             >
               <span
                 aria-hidden
