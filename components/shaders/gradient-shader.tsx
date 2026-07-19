@@ -20,6 +20,8 @@ uniform float u_displacement, u_noiseSize, u_noiseIntensity, u_seed;
 uniform float u_color5Mix;
 uniform vec2  u_colorOffset, u_resolution, u_mouse;
 uniform float u_pull, u_pullRadius, u_glow, u_glowRadius;
+uniform float u_style, u_halftoneScale, u_posterLevels;
+uniform float u_grainScale, u_grainAmount, u_grainSoft, u_grainSparkle;
 
 in  vec2 vPosition;
 out vec4 fragColor;
@@ -76,6 +78,74 @@ vec2 rotate(vec2 v, float a) {
   return mat2(c, -s, s, c) * v;
 }
 
+float bayer4(int x, int y) {
+  float m[16] = float[16](
+     0.0,  8.0,  2.0, 10.0,
+    12.0,  4.0, 14.0,  6.0,
+     3.0, 11.0,  1.0,  9.0,
+    15.0,  7.0, 13.0,  5.0
+  );
+  return m[(y & 3) * 4 + (x & 3)] / 16.0;
+}
+
+float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
+
+vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+    -0.577350269189626, 0.024390243902439);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
+    + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy),
+      dot(x12.zw, x12.zw)), 0.0);
+  m = m * m;
+  m = m * m;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+float vnoise01(vec2 p) { return noise2D(p) * 0.5 + 0.5; }
+
+vec4 fbmR(vec2 n0, vec2 n1, vec2 n2, vec2 n3) {
+  float amplitude = 0.2;
+  vec4 total = vec4(0.0);
+  for (int i = 0; i < 3; i++) {
+    n0 = rotate(n0, 0.3);
+    n1 = rotate(n1, 0.3);
+    n2 = rotate(n2, 0.3);
+    n3 = rotate(n3, 0.3);
+    total.x += vnoise01(n0) * amplitude;
+    total.y += vnoise01(n1) * amplitude;
+    total.z += vnoise01(n2) * amplitude;
+    total.z += vnoise01(n3) * amplitude;
+    n0 *= 1.99;
+    n1 *= 1.99;
+    n2 *= 1.99;
+    n3 *= 1.99;
+    amplitude *= 0.6;
+  }
+  return total;
+}
+
+float stopMix(float dist, float spread, float shift, float soft) {
+  float t = clamp(dist / max(spread, 0.001) + shift, 0.0, 1.0);
+  float aa = fwidth(t);
+  return smoothstep(0.5 - 0.5 * soft - aa, 0.5 + 0.5 * soft + aa, t);
+}
+
 void main() {
   vec2 uv = vPosition;
   uv.x *= min(1.0, u_resolution.x / u_resolution.y);
@@ -96,13 +166,32 @@ void main() {
 
   vec2 pos = rotate(position, -u_colorRotation);
 
+  int style = int(u_style + 0.5);
+  float gShift = 0.0;
+  float gSoft = 1.0;
+  if (style == 4) {
+    vec2 guv = gl_FragCoord.xy * 0.7 * u_grainScale;
+    float baseNoise = snoise(guv * 0.5);
+    vec4 fbmVals = fbmR(
+      0.002 * guv + 10.0,
+      0.003 * guv,
+      0.001 * guv,
+      rotate(0.4 * guv, 2.0)
+    );
+    float grainDist = baseNoise * snoise(guv * 0.2) - fbmVals.x - fbmVals.y;
+    float sparkle = clamp(0.75 * baseNoise - fbmVals.z, 0.0, 1.0);
+    gShift = -(u_grainAmount * 0.5 * (grainDist + 0.5)
+             + u_grainSparkle * 2.5 * sparkle);
+    gSoft = clamp(u_grainSoft, 0.05, 1.0);
+  }
+
   vec3 color = vec3(0.0);
-  color = mix(u_color1, color, smoothstep(0.0, u_colorSpread, distance(pos, vec2(0.0,  u_colorSpacing * 1.5))));
-  color = mix(u_color2, color, smoothstep(0.0, u_colorSpread, distance(pos, vec2(0.0,  u_colorSpacing * 0.5))));
-  color = mix(u_color3, color, smoothstep(0.0, u_colorSpread, distance(pos, vec2(0.0, -u_colorSpacing * 0.5))));
-  color = mix(u_color4, color, smoothstep(0.0, u_colorSpread, distance(pos, vec2(0.0, -u_colorSpacing * 1.5))));
+  color = mix(u_color1, color, stopMix(distance(pos, vec2(0.0,  u_colorSpacing * 1.5)), u_colorSpread, gShift, gSoft));
+  color = mix(u_color2, color, stopMix(distance(pos, vec2(0.0,  u_colorSpacing * 0.5)), u_colorSpread, gShift, gSoft));
+  color = mix(u_color3, color, stopMix(distance(pos, vec2(0.0, -u_colorSpacing * 0.5)), u_colorSpread, gShift, gSoft));
+  color = mix(u_color4, color, stopMix(distance(pos, vec2(0.0, -u_colorSpacing * 1.5)), u_colorSpread, gShift, gSoft));
   if (u_color5Mix > 0.0) {
-    color = mix(color, u_color5, u_color5Mix * (1.0 - smoothstep(0.0, u_colorSpread * 0.8, distance(pos, vec2(0.0, 0.0)))));
+    color = mix(color, u_color5, u_color5Mix * (1.0 - stopMix(distance(pos, vec2(0.0, 0.0)), u_colorSpread * 0.8, gShift, gSoft)));
   }
 
   float glow = smoothstep(u_glowRadius, 0.0, dist) * u_glow;
@@ -110,6 +199,27 @@ void main() {
 
   float grain = noise2D(vPosition.xy * 600.0 + u_seed);
   color += grain * u_noiseIntensity;
+
+  if (style == 1) {
+    // Halftone: print-style dots on a 45deg grid, sized by local brightness.
+    float lum = clamp(luma(color), 0.0, 1.0);
+    vec2 g = rotate(gl_FragCoord.xy, 0.7853982) / max(u_halftoneScale, 1.0);
+    vec2 cell = fract(g) - 0.5;
+    float radius = sqrt(lum) * 0.9;
+    float dotMask = smoothstep(radius, radius - 0.18, length(cell));
+    color *= dotMask;
+  } else if (style == 2) {
+    // Posterize: quantize each channel into flat bands.
+    float L = max(u_posterLevels, 2.0);
+    color = floor(color * L + 0.5) / L;
+  } else if (style == 3) {
+    // Ordered (Bayer) dither: structured, screen-fixed grain into N bands.
+    float L = max(u_posterLevels, 2.0);
+    int bx = int(mod(gl_FragCoord.x, 4.0));
+    int by = int(mod(gl_FragCoord.y, 4.0));
+    float t = bayer4(bx, by) - 0.5;
+    color = floor(color * L + t + 0.5) / L;
+  }
 
   fragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 }`
@@ -132,6 +242,13 @@ export interface GradientConfig {
   pullRadius: number
   glow: number
   glowRadius: number
+  style: number
+  halftoneScale: number
+  posterLevels: number
+  grainScale: number
+  grainAmount: number
+  grainSoft: number
+  grainSparkle: number
   mouseLerp: number
   tween: number
   maxDpr: number
@@ -152,8 +269,15 @@ export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
   speed: 0.0008,
   pull: 0.35,
   pullRadius: 2.5,
-  glow: 0.12,
-  glowRadius: 1.8,
+  glow: 0,
+  glowRadius: 0,
+  style: 4,
+  halftoneScale: 6,
+  posterLevels: 6,
+  grainScale: 0.85,
+  grainAmount: 0.5,
+  grainSoft: 0.71,
+  grainSparkle: 0.25,
   mouseLerp: 0.12,
   tween: 1.4,
   maxDpr: 2,
@@ -377,6 +501,13 @@ export function GradientShader({
       gl!.uniform1f(U("u_pullRadius"), num(c, "pullRadius"))
       gl!.uniform1f(U("u_glow"), num(c, "glow"))
       gl!.uniform1f(U("u_glowRadius"), num(c, "glowRadius"))
+      gl!.uniform1f(U("u_style"), num(c, "style"))
+      gl!.uniform1f(U("u_halftoneScale"), num(c, "halftoneScale"))
+      gl!.uniform1f(U("u_posterLevels"), num(c, "posterLevels"))
+      gl!.uniform1f(U("u_grainScale"), num(c, "grainScale"))
+      gl!.uniform1f(U("u_grainAmount"), num(c, "grainAmount"))
+      gl!.uniform1f(U("u_grainSoft"), num(c, "grainSoft"))
+      gl!.uniform1f(U("u_grainSparkle"), num(c, "grainSparkle"))
       gl!.uniform3f(U("u_color1"), live[0][0], live[0][1], live[0][2])
       gl!.uniform3f(U("u_color2"), live[1][0], live[1][1], live[1][2])
       gl!.uniform3f(U("u_color3"), live[2][0], live[2][1], live[2][2])
