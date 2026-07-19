@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { SIGNATURE_PALETTES } from "@/components/shaders/gradient-presets"
 import { cn } from "@/lib/utils"
 
 const VERT = `#version 300 es
@@ -253,6 +254,10 @@ export interface GradientConfig {
   tween: number
   maxDpr: number
   presets: number[][][]
+  startSeed: number
+  seed: number | null
+  colors: number[][] | null
+  interactive: boolean
 }
 
 export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
@@ -281,32 +286,11 @@ export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
   mouseLerp: 0.12,
   tween: 1.4,
   maxDpr: 2,
-  presets: [
-    [
-      [22 / 255, 37 / 255, 75 / 255],
-      [35 / 255, 65 / 255, 138 / 255],
-      [170 / 255, 223 / 255, 217 / 255],
-      [223 / 255, 78 / 255, 16 / 255],
-    ], // Ocean
-    [
-      [1, 236 / 255, 210 / 255],
-      [1, 60 / 255, 0],
-      [13 / 255, 2 / 255, 0],
-      [55 / 255, 12 / 255, 0],
-    ], // Ember
-    [
-      [211 / 255, 218 / 255, 52 / 255],
-      [203 / 255, 178 / 255, 173 / 255],
-      [1 / 255, 29 / 255, 141 / 255],
-      [1 / 255, 3 / 255, 18 / 255],
-    ], // Lime
-    [
-      [0, 8 / 255, 22 / 255],
-      [0, 22 / 255, 65 / 255],
-      [220 / 255, 238 / 255, 1],
-      [0, 100 / 255, 1],
-    ], // Frost
-  ],
+  startSeed: 10.455,
+  seed: null,
+  colors: null,
+  interactive: true,
+  presets: SIGNATURE_PALETTES,
 }
 
 // GSAP power2.inOut, replicated so we don't pull in the dependency.
@@ -391,6 +375,7 @@ export function GradientShader({
     // --- Live interaction state --------------------------------------------
     const presets = cfgRef.current.presets
     let live: RGB01[] = presets[0].map((c) => [...c] as RGB01)
+    let targetColors: RGB01[] = live.map((c) => [...c] as RGB01)
     let presetIndex = 0
     let tween: {
       from: RGB01[]
@@ -399,7 +384,7 @@ export function GradientShader({
       dur: number
     } | null = null
 
-    let seed = 0.18
+    let seed = cfgRef.current.startSeed
     const target = { x: 0, y: 0 }
     const smooth = { x: 0, y: 0 }
 
@@ -425,6 +410,7 @@ export function GradientShader({
     // --- Pointer (window-level; the canvas is pointer-events-none) ---------
     let rafPointer = 0
     const onMove = (e: MouseEvent) => {
+      if (!cfgRef.current.interactive) return
       const cx = e.clientX,
         cy = e.clientY
       if (rafPointer) return
@@ -439,6 +425,7 @@ export function GradientShader({
       })
     }
     const onClick = (e: MouseEvent) => {
+      if (!cfgRef.current.interactive) return
       const el = e.target
       if (
         el instanceof Element &&
@@ -447,10 +434,17 @@ export function GradientShader({
         )
       )
         return
-      presetIndex = (presetIndex + 1) % presets.length
+      goToPreset((presetIndex + 1) % presets.length)
+    }
+    function goToPreset(next: number) {
+      presetIndex = next
+      tweenTo(presets[presetIndex])
+    }
+    function tweenTo(to: number[][]) {
+      targetColors = to.map((c) => [...c] as RGB01)
       tween = {
         from: live.map((c) => [...c] as RGB01),
-        to: presets[presetIndex].map((c) => [...c] as RGB01),
+        to: targetColors,
         start: -1,
         dur: (num(cfgRef.current, "tween") || 1.4) * 1000,
       }
@@ -466,8 +460,14 @@ export function GradientShader({
       raf = requestAnimationFrame(draw)
       const c = cfgRef.current
 
-      // Idle drift + pointer smoothing.
-      seed += num(c, "speed")
+      if (c.seed == null) seed += num(c, "speed")
+      else seed = c.seed
+      if (c.colors && c.colors.length === 4) {
+        const changed = c.colors.some((col, i) =>
+          col.some((v, j) => v !== targetColors[i][j])
+        )
+        if (changed) tweenTo(c.colors)
+      }
       const lerp = num(c, "mouseLerp")
       smooth.x += (target.x - smooth.x) * lerp
       smooth.y += (target.y - smooth.y) * lerp
