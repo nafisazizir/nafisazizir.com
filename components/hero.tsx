@@ -17,16 +17,16 @@ export function Hero() {
         transition={
           reduced ? { duration: 0 } : { duration: 1.1, ease: "easeOut" }
         }
-        className="absolute inset-0"
+        className="absolute inset-0 z-0"
       >
-        <GradientShader className="absolute inset-0" />
+        <GradientShader className="pointer-events-none absolute inset-0" />
       </motion.div>
 
       <motion.div
         initial={reduced ? false : "hidden"}
         animate="visible"
         variants={reduced ? undefined : staggerContainer(0.12, 0.6)}
-        className="pointer-events-none absolute inset-0 flex flex-col justify-end p-6 text-white sm:p-8 md:p-12"
+        className="absolute inset-0 z-10 flex flex-col justify-end p-6 text-foreground sm:p-8 md:p-12"
       >
         <div className="mx-auto flex w-full max-w-[110rem] flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <motion.h1
@@ -38,7 +38,7 @@ export function Hero() {
 
           <motion.p
             variants={item}
-            className="max-w-sm text-sm leading-snug tracking-tight text-white/90 sm:text-base lg:max-w-sm lg:text-right lg:text-lg"
+            className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-sm lg:text-right lg:text-lg"
           >
             Currently at Avenue Labs. Voice agents and the AI tooling around
             them are a few of the things I&apos;ve built. Off the clock I&apos;m
