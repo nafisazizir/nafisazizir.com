@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
-import Link from "next/link"
 
 import { staggerContainer, staggerItem } from "@/lib/motion"
 
@@ -42,21 +41,6 @@ export function AboutContent() {
         machine learning, and shipped tools that ended up serving thousands of
         people. That habit stuck. I still learn fastest by building the thing
         and putting it in front of someone.
-      </motion.p>
-
-      <motion.p variants={item}>
-        You can find what I&apos;ve built in{" "}
-        <Link href="/projects">projects</Link>, what I&apos;ve been thinking
-        about in the <Link href="/blogs">blog</Link>, my code on{" "}
-        <a href="https://github.com/nafisazizir" target="_blank" rel="noreferrer">
-          GitHub
-        </a>
-        , and the occasional note on{" "}
-        <a href="https://x.com/nafisazizir" target="_blank" rel="noreferrer">
-          X
-        </a>
-        . Or just say hi at{" "}
-        <a href="mailto:hello@nafisazizi.com">hello@nafisazizi.com</a>.
       </motion.p>
     </motion.article>
   )
