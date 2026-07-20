@@ -1,6 +1,7 @@
 import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
+import { ContactFooter } from "@/components/contact-footer"
 import type { Post } from "@/lib/content"
 import { formatDate } from "@/lib/utils"
 
@@ -18,6 +19,7 @@ export function ArticlePage({ post }: { post: Post }) {
             />
             <MDXContent source={post.content} />
           </article>
+          <ContactFooter />
         </main>
       </div>
     </div>

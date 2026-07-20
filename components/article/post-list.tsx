@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 
+import { ContactFooter } from "@/components/contact-footer"
 import { EASE_OUT } from "@/lib/motion"
 import { formatDate } from "@/lib/utils"
 
@@ -62,6 +63,8 @@ export function PostList({
             </motion.li>
           ))}
         </ul>
+
+        <ContactFooter />
       </div>
     </div>
   )

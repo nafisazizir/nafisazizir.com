@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion"
 
 import { staggerContainer, staggerItem } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 
 const links = [
   { href: "https://github.com/nafisazizir", label: "GitHub" },
@@ -10,7 +11,7 @@ const links = [
   { href: "mailto:hello@nafisazizir.com", label: "Email" },
 ]
 
-export function AboutFooter() {
+export function ContactFooter({ className }: { className?: string }) {
   const reduced = useReducedMotion() ?? false
   const item = reduced ? undefined : staggerItem(8)
 
@@ -20,7 +21,7 @@ export function AboutFooter() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.4 }}
       variants={reduced ? undefined : staggerContainer(0.07, 0.05)}
-      className="mt-12 flex flex-col items-center text-center"
+      className={cn("mt-12 flex flex-col items-center text-center", className)}
     >
       <motion.span
         aria-hidden
