@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils"
 export const metadata: Metadata = {
   metadataBase: new URL("https://nafisazizir.com"),
   title: {
-    default: "Nafis Azizi Riza",
-    template: "%s · Nafis Azizi Riza",
+    default: "Nafis Riza",
+    template: "%s · Nafis Riza",
   },
 }
 

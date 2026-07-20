@@ -6,7 +6,7 @@ import { AboutFooter } from "@/components/about-footer"
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Nafis Azizi Riza — a software engineer in Brisbane building at the intersection of AI and developer tooling.",
+    "Nafis Riza — a software engineer in Brisbane building at the intersection of AI and developer tooling.",
 }
 
 export default function AboutPage() {
