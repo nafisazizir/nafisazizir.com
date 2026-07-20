@@ -34,8 +34,7 @@ export default function RootLayout({
         "dark antialiased",
         fontMono.variable,
         "font-sans",
-        inter.variable,
-        "tracking-tight"
+        inter.variable
       )}
     >
       <body>
