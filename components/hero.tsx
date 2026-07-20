@@ -33,16 +33,16 @@ export function Hero() {
             variants={item}
             className="max-w-[20ch] text-4xl leading-[1.05] tracking-tighter text-balance sm:text-5xl sm:leading-[1.02] xl:text-6xl 2xl:text-7xl"
           >
-            Curious about most things, building a few of them.
+            My curiosity usually goes nowhere. Sometimes it becomes software.
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-sm lg:text-right lg:text-lg"
+            className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
           >
             Currently at Avenue Labs. Voice agents and the AI tooling around
-            them are a few of the things I&apos;ve built. Off the clock I&apos;m
-            usually tinkering and poking at whatever just shipped.
+            them are a few of the things I&apos;ve built. Off the clock, always
+            on a side quest, chasing the wrong turns.
           </motion.p>
         </div>
       </motion.div>
