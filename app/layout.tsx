@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
-import { Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono } from "next/font/google"
+import localFont from "next/font/local"
 
 import "./globals.css"
 import { Nav } from "@/components/nav"
@@ -51,7 +52,23 @@ const personJsonLd = {
   sameAs: [site.github, site.twitter],
 }
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+// InterVariable from the official rsms 4.1 release — same files satori's
+// static cuts are instanced from, so site and OG images match.
+const inter = localFont({
+  src: [
+    {
+      path: "../assets/fonts/InterVariable.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/InterVariable-Italic.woff2",
+      weight: "100 900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-sans",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
