@@ -16,7 +16,7 @@ export async function generateMetadata({
   const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post || post.frontmatter.type !== "blog") return {}
-  const { title, description, cover } = post.frontmatter
+  const { title, description, cover, date, tags } = post.frontmatter
   return {
     title,
     description,
@@ -24,6 +24,8 @@ export async function generateMetadata({
       type: "article",
       title,
       description,
+      publishedTime: date,
+      tags,
       images: cover ? [{ url: cover }] : undefined,
     },
   }
