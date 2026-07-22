@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { SIGNATURE_PALETTES } from "@/components/shaders/gradient-presets"
 import { cn } from "@/lib/utils"
 
-const VERT = `#version 300 es
+export const GRADIENT_VERT = `#version 300 es
 layout(location = 0) in vec3 position;
 out vec2 vPosition;
 void main() {
@@ -12,7 +12,7 @@ void main() {
   vPosition = position.xy;
 }`
 
-const FRAG = `#version 300 es
+export const GRADIENT_FRAG = `#version 300 es
 precision highp float;
 
 uniform vec3  u_color1, u_color2, u_color3, u_color4, u_color5;
@@ -339,8 +339,8 @@ export function GradientShader({
       return
     }
 
-    const vs = compile(gl, gl.VERTEX_SHADER, VERT)
-    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG)
+    const vs = compile(gl, gl.VERTEX_SHADER, GRADIENT_VERT)
+    const fs = compile(gl, gl.FRAGMENT_SHADER, GRADIENT_FRAG)
     if (!vs || !fs) return
     const program = gl.createProgram()!
     gl.attachShader(program, vs)
