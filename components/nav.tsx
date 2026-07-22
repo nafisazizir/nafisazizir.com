@@ -100,6 +100,7 @@ export function Nav() {
   // once open so focus rings on the items aren't cut off by the edges.
   const [expanded, setExpanded] = useState(false)
   const pathname = usePathname()
+  const onKnownRoute = links.some((l) => l.href === pathname)
   const active = links.find((l) => isActive(l.href, pathname))
   const currentLabel = active?.label ?? "Home"
   const activeHref = active?.href ?? "/"
@@ -222,6 +223,8 @@ export function Nav() {
         : (start - 1 + items.length) % items.length
     items[next]?.focus()
   }
+
+  if (!onKnownRoute) return null
 
   return (
     <nav className="fixed inset-x-0 top-4 z-50 flex justify-center">
