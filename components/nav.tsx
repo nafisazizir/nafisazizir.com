@@ -100,7 +100,7 @@ export function Nav() {
   // once open so focus rings on the items aren't cut off by the edges.
   const [expanded, setExpanded] = useState(false)
   const pathname = usePathname()
-  const onKnownRoute = links.some((l) => l.href === pathname)
+  const onKnownRoute = links.some((l) => isActive(l.href, pathname))
   const active = links.find((l) => isActive(l.href, pathname))
   const currentLabel = active?.label ?? "Home"
   const activeHref = active?.href ?? "/"
