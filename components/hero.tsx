@@ -28,7 +28,7 @@ export function Hero() {
         variants={reduced ? undefined : staggerContainer(0.12, 0.6)}
         className="absolute inset-0 z-10 flex flex-col justify-end p-6 text-foreground sm:p-8 md:p-12"
       >
-        <div className="mx-auto flex w-full max-w-[110rem] flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+        <div className="flex w-full flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <motion.h1
             variants={item}
             className="max-w-[20ch] text-4xl leading-[1.05] tracking-tighter text-balance sm:text-5xl sm:leading-[1.02] xl:text-6xl 2xl:text-7xl"
