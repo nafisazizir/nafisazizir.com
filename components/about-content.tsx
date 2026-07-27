@@ -22,15 +22,44 @@ export function AboutContent() {
       </motion.p>
 
       <motion.p variants={item}>
-        I work at a startup where I build AI agent systems. Mostly voice and
-        call agents, living deep in TypeScript and the full-stack tooling around
-        it. On the side I build developer tools at the intersection of AI and
-        productivity: small, sharp things that remove friction from the way I
-        actually work. A CLI for indexing agent skills into passive context. An
-        SDK for voice call agents. A personal MCP server that turns my own
-        training data into something an agent can reason about. I like tools
-        that are opinionated, fast, and genuinely useful to the person who made
-        them first.
+        Currently at Avenue Labs. Previously Telkom Indonesia. I build AI agent
+        systems, mostly voice and call agents, living deep in TypeScript and the
+        full-stack tooling around it. On the side I build developer tools at the
+        intersection of AI and productivity: small, sharp things that remove
+        friction from the way I actually work. A CLI for indexing agent skills
+        into passive context. An SDK for voice call agents. A personal MCP
+        server that turns my own training data into something an agent can
+        reason about. I like tools that are opinionated, fast, and genuinely
+        useful to the person who made them first.
+      </motion.p>
+
+      <motion.p variants={item}>
+        I&apos;ve also shipped two apps to the Canva Apps Marketplace,{" "}
+        <a
+          href="https://www.canva.com/apps/AAFqLcWRTT0/wave-generator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Wave Generator
+        </a>{" "}
+        and{" "}
+        <a
+          href="https://www.canva.com/apps/AAFrrz7ML5E/shade"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Shade
+        </a>
+        , which together reach hundreds of thousands of people a month. Canva
+        featured Wave Generator in their{" "}
+        <a
+          href="https://www.canva.com/newsroom/news/developer-connect-apis/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Connect APIs announcement
+        </a>
+        , writing about their Developer Innovation Fund.
       </motion.p>
 
       <motion.p variants={item}>
@@ -38,9 +67,9 @@ export function AboutContent() {
         of Queensland and the University of Indonesia, majoring in data science,
         with a semester on exchange at the National University of Singapore.
         Along the way I won a few hackathons, including NASA Space Apps. Taught
-        machine learning, and shipped tools that ended up serving thousands of
-        people. That habit stuck. I still learn fastest by building the thing
-        and putting it in front of someone.
+        machine learning, and shipped a lot of small things to real users. That
+        habit stuck. I still learn fastest by building the thing and putting it
+        in front of someone.
       </motion.p>
     </motion.article>
   )
