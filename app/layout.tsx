@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google"
 import localFont from "next/font/local"
 
 import "./globals.css"
+import { PostHogProvider } from "@/components/analytics/posthog-provider"
 import { Nav } from "@/components/nav"
 import { ThemeProvider } from "@/components/theme-provider"
 import { site } from "@/lib/site"
@@ -96,10 +97,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <ThemeProvider>
-          <Nav />
-          {children}
-        </ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider>
+            <Nav />
+            {children}
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   )

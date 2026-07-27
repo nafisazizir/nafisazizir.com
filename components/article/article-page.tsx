@@ -1,3 +1,4 @@
+import { ArticleAnalytics } from "@/components/analytics/article-analytics"
 import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
@@ -35,6 +36,7 @@ export function ArticlePage({ post }: { post: Post }) {
           __html: JSON.stringify(articleJsonLd(post)),
         }}
       />
+      <ArticleAnalytics slug={post.slug} kind={post.frontmatter.type} />
       <div className="relative mx-auto w-full max-w-270 px-6 pt-28 pb-32 sm:pt-32">
         <Toc items={post.toc} />
         <main className="mx-auto max-w-160">
