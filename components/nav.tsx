@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { MenuTwoLineIcon, MinusSignIcon } from "@hugeicons/core-free-icons"
 
+import { track } from "@/lib/analytics/events"
 import { Button } from "@/components/ui/button"
 import {
   close as closeSound,
@@ -160,11 +161,13 @@ export function Nav() {
   const openMenu = useCallback(() => {
     openSound()
     setOpen(true)
-  }, [])
+    track("nav opened", { path: pathname })
+  }, [pathname])
   const dismiss = useCallback(() => {
     closeSound()
     closeMenu()
-  }, [closeMenu])
+    track("nav closed", { path: pathname })
+  }, [closeMenu, pathname])
 
   useEffect(() => {
     if (!open) return
@@ -276,6 +279,11 @@ export function Nav() {
               onClick={() => {
                 tapSound()
                 closeMenu()
+                track("nav link clicked", {
+                  from: pathname,
+                  to: activeHref,
+                  label: currentLabel,
+                })
               }}
               onMouseEnter={(e) =>
                 moveDotToLabel(
@@ -378,6 +386,11 @@ export function Nav() {
                       onClick={() => {
                         tapSound()
                         closeMenu()
+                        track("nav link clicked", {
+                          from: pathname,
+                          to: href,
+                          label,
+                        })
                       }}
                       render={<Link href={href} />}
                       className="w-full justify-start hover:bg-foreground/8 dark:hover:bg-foreground/8"

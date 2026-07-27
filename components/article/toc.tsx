@@ -1,8 +1,10 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { track } from "@/lib/analytics/events"
 import { tap as tapSound } from "@/lib/audio"
 import type { TocItem } from "@/lib/content"
 import { useScrollSpy } from "@/lib/hooks/use-scroll-spy"
@@ -13,6 +15,7 @@ const TOC_ITEM_H = 28
 export function Toc({ items }: { items: TocItem[] }) {
   const reduced = useReducedMotion() ?? false
   const [wide, setWide] = useState(false)
+  const slug = usePathname().split("/").pop() ?? ""
   const { active, scrollToId } = useScrollSpy({
     ids: items.map((it) => it.id),
     topOffset: 96,
@@ -44,6 +47,7 @@ export function Toc({ items }: { items: TocItem[] }) {
               e.preventDefault()
               tapSound()
               scrollToId(it.id)
+              track("toc link clicked", { slug, heading: it.label })
             }}
             style={{ height: TOC_ITEM_H }}
             className={cn(

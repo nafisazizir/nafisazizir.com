@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 
 import { ContactFooter } from "@/components/contact-footer"
+import { track } from "@/lib/analytics/events"
 import { EASE_OUT } from "@/lib/motion"
 import { formatDate } from "@/lib/utils"
 
@@ -41,6 +42,14 @@ export function PostList({
             >
               <Link
                 href={`${basePath}/${item.slug}`}
+                onClick={() =>
+                  track("post opened", {
+                    slug: item.slug,
+                    kind: basePath === "/projects" ? "project" : "blog",
+                    from: basePath,
+                    position: i + 1,
+                  })
+                }
                 className="group block rounded-xl px-4 py-3 transition-all duration-200 hover:bg-muted/50"
               >
                 <div className="flex items-baseline justify-between gap-4">
