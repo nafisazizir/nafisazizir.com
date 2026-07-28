@@ -2,8 +2,10 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 
+import { track } from "@/lib/analytics/events"
 import { GradientShader } from "@/components/shaders/gradient-shader"
 import { staggerContainer, staggerItem } from "@/lib/motion"
+import { socialLinks } from "@/lib/site"
 
 export function Hero() {
   const reduced = useReducedMotion() ?? false
@@ -36,14 +38,37 @@ export function Hero() {
             My curiosity usually goes nowhere. Sometimes it becomes software.
           </motion.h1>
 
-          <motion.p
-            variants={item}
-            className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
-          >
-            Currently at Avenue Labs. Voice agents and the AI tooling around
-            them are a few of the things I&apos;ve built. Off the clock, always
-            on a side quest, chasing the wrong turns.
-          </motion.p>
+          <div className="flex flex-col gap-4 sm:gap-5 lg:items-end">
+            <motion.p
+              variants={item}
+              className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
+            >
+              Currently at Avenue Labs. Voice agents and the AI tooling around
+              them are a few of the things I&apos;ve built. Off the clock,
+              always on a side quest, chasing the wrong turns.
+            </motion.p>
+
+            <motion.ul
+              variants={item}
+              className="flex flex-wrap items-center gap-x-6 gap-y-2 lg:justify-end"
+            >
+              {socialLinks.map(({ href, label }) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    target={href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel="noreferrer"
+                    onClick={() =>
+                      track("outbound link clicked", { href, label, path: "/" })
+                    }
+                    className="text-sm text-foreground/80 underline decoration-foreground/30 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-foreground hover:decoration-foreground hover:underline-offset-[5px] sm:text-[15px]"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </motion.ul>
+          </div>
         </div>
       </motion.div>
     </section>

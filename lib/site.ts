@@ -8,3 +8,9 @@ export const site = {
   twitter: "https://x.com/nafisazizir",
   twitterHandle: "@nafisazizir",
 } as const
+
+export const socialLinks = [
+  { href: site.github, label: "GitHub" },
+  { href: site.twitter, label: "X / Twitter" },
+  { href: `mailto:${site.email}`, label: "Email" },
+] as const

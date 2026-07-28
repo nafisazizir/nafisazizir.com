@@ -5,13 +5,8 @@ import { usePathname } from "next/navigation"
 
 import { track } from "@/lib/analytics/events"
 import { staggerContainer, staggerItem } from "@/lib/motion"
+import { socialLinks } from "@/lib/site"
 import { cn } from "@/lib/utils"
-
-const links = [
-  { href: "https://github.com/nafisazizir", label: "GitHub" },
-  { href: "https://x.com/nafisazizir", label: "X / Twitter" },
-  { href: "mailto:hello@nafisazizir.com", label: "Email" },
-]
 
 export function ContactFooter({ className }: { className?: string }) {
   const reduced = useReducedMotion() ?? false
@@ -36,7 +31,7 @@ export function ContactFooter({ className }: { className?: string }) {
         variants={item}
         className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
       >
-        {links.map(({ href, label }) => (
+        {socialLinks.map(({ href, label }) => (
           <li key={href}>
             <a
               href={href}
