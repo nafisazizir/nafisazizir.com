@@ -22,7 +22,11 @@ export function AboutContent() {
       </motion.p>
 
       <motion.p variants={item}>
-        Currently at Avenue Labs. Previously Telkom Indonesia. I build AI agent
+        Currently at{" "}
+        <a href="https://www.avenue2.au/" target="_blank" rel="noreferrer">
+          Avenue Labs
+        </a>
+        . Previously Telkom Indonesia. I build AI agent
         systems, mostly voice and call agents, living deep in TypeScript and the
         full-stack tooling around it. On the side I build developer tools at the
         intersection of AI and productivity: small, sharp things that remove
