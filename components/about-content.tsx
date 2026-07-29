@@ -33,8 +33,7 @@ export function AboutContent() {
         friction from the way I actually work. A CLI for indexing agent skills
         into passive context. An SDK for voice call agents. A personal MCP
         server that turns my own training data into something an agent can
-        reason about. I like tools that are opinionated, fast, and genuinely
-        useful to the person who made them first.
+        reason about.
       </motion.p>
 
       <motion.p variants={item}>
