@@ -83,17 +83,16 @@
   }
 
   .typeset :where(code) {
-    @apply text-copy-13-mono;
+    @apply rounded-sm text-copy-13-mono;
     color: var(--ds-gray-1000);
     background: var(--ds-gray-alpha-100);
-    border-radius: var(--radius-sm);
     padding: 0.15em 0.36em;
   }
   .typeset :where(pre code) {
+    @apply rounded-none;
     background: transparent;
     padding: 0;
     font-size: inherit;
-    border-radius: 0;
   }
 
   .typeset :where(blockquote) {
@@ -110,9 +109,9 @@
   }
 
   .typeset :where(img) {
+    @apply rounded-lg;
     max-width: 100%;
     height: auto;
-    border-radius: var(--radius);
   }
 
   .typeset :where(strong) {
@@ -146,11 +145,10 @@
 }
 
 .typeset pre.shiki {
+  @apply rounded-lg text-copy-13-mono;
   margin-block-start: var(--typeset-flow);
   padding: 16px 18px;
-  border-radius: var(--radius);
   overflow-x: auto;
-  @apply text-copy-13-mono;
   background: var(--ds-gray-alpha-100);
 }
 .typeset pre.shiki,
