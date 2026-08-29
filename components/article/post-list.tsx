@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
+import Image from "next/image"
 import Link from "next/link"
 
 import { ContactFooter } from "@/components/contact-footer"
@@ -14,6 +15,7 @@ export interface PostListItem {
   description?: string
   date: string
   tags: string[]
+  cover?: string
 }
 
 export function PostList({
@@ -27,8 +29,8 @@ export function PostList({
 
   return (
     <div className="relative min-h-screen overflow-x-clip">
-      <div className="mx-auto w-full max-w-160 px-6 pt-28 pb-24 sm:pt-32">
-        <ul className="flex flex-col gap-4">
+      <div className="mx-auto w-full max-w-336 px-6 pt-28 pb-24 sm:pt-32">
+        <ul className="grid grid-cols-1 gap-x-17 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => (
             <motion.li
               key={item.slug}
@@ -50,24 +52,39 @@ export function PostList({
                     position: i + 1,
                   })
                 }
-                className="group block rounded-xl px-4 py-3 transition-all duration-200 hover:bg-gray-alpha-100"
+                className="group flex h-full flex-col outline-none focus-visible:ring-2 focus-visible:ring-gray-alpha-600 focus-visible:ring-offset-4 focus-visible:ring-offset-background-100"
               >
-                <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="text-heading-16 text-gray-1000">
-                    {item.title}
-                  </h2>
-                  <time
-                    dateTime={item.date}
-                    className="shrink-0 text-label-12 text-gray-900"
-                  >
-                    {formatDate(item.date)}
-                  </time>
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gray-100">
+                  {item.cover ? (
+                    <Image
+                      src={item.cover}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover grayscale"
+                    />
+                  ) : null}
                 </div>
+
+                <h2 className="mt-5 text-heading-20 text-balance text-gray-1000">
+                  {item.title}
+                </h2>
+
                 {item.description ? (
-                  <p className="mt-1.5 line-clamp-2 text-copy-14 text-gray-900">
+                  <p className="mt-2 line-clamp-3 text-copy-14 text-gray-900">
                     {item.description}
                   </p>
                 ) : null}
+
+                <div className="mt-auto flex items-center gap-1.5 pt-5 text-label-13 text-gray-900">
+                  <time dateTime={item.date}>{formatDate(item.date)}</time>
+                  <span
+                    aria-hidden
+                    className="-translate-x-1 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+                  >
+                    →
+                  </span>
+                </div>
               </Link>
             </motion.li>
           ))}

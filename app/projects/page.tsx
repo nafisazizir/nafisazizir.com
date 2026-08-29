@@ -15,6 +15,7 @@ export default function ProjectsPage() {
     description: p.frontmatter.description,
     date: p.frontmatter.date,
     tags: p.frontmatter.tags,
+    cover: p.frontmatter.cover,
   }))
 
   return <PostList items={items} basePath="/projects" />
