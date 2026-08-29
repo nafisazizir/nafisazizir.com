@@ -54,7 +54,7 @@ export function PostList({
                 }
                 className="group flex h-full flex-col outline-none focus-visible:ring-2 focus-visible:ring-gray-alpha-600 focus-visible:ring-offset-4 focus-visible:ring-offset-background-100"
               >
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                   {item.cover ? (
                     <Image
                       src={item.cover}
