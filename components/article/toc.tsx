@@ -51,7 +51,7 @@ export function Toc({ items }: { items: TocItem[] }) {
             }}
             style={{ height: TOC_ITEM_H }}
             className={cn(
-              "flex items-center text-sm no-underline transition-colors duration-200",
+              "flex items-center text-label-14 no-underline transition-colors duration-200",
               i === active
                 ? "text-gray-1000"
                 : "text-gray-900 hover:text-gray-1000"

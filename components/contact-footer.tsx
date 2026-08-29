@@ -40,7 +40,7 @@ export function ContactFooter({ className }: { className?: string }) {
               onClick={() =>
                 track("outbound link clicked", { href, label, path: pathname })
               }
-              className="text-[15px] text-gray-1000 underline decoration-gray-900 underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-200 hover:decoration-gray-1000 hover:underline-offset-[5px]"
+              className="text-label-16 text-gray-1000 underline decoration-gray-900 underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-200 hover:decoration-gray-1000 hover:underline-offset-[5px]"
             >
               {label}
             </a>

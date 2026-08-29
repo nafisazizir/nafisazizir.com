@@ -264,7 +264,7 @@ export function Nav() {
             aria-label={open ? "Close menu" : "Open menu"}
             className={cn(
               "group w-full justify-between aria-expanded:bg-transparent",
-              open ? "font-medium" : "font-semibold"
+              !open && "font-semibold"
             )}
           >
             <AnimatedLabel label={currentLabel} />
@@ -298,7 +298,7 @@ export function Nav() {
               onMouseLeave={hideDot}
               render={<Link href={activeHref} />}
               aria-label={`Go to ${currentLabel}`}
-              className="group min-w-0 flex-1 justify-start font-medium"
+              className="group min-w-0 flex-1 justify-start"
             >
               <AnimatedLabel label={currentLabel} />
             </Button>

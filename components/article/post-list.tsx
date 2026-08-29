@@ -53,18 +53,18 @@ export function PostList({
                 className="group block rounded-xl px-4 py-3 transition-all duration-200 hover:bg-gray-alpha-100"
               >
                 <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="text-[15px] font-[450] tracking-tight text-gray-1000">
+                  <h2 className="text-heading-16 text-gray-1000">
                     {item.title}
                   </h2>
                   <time
                     dateTime={item.date}
-                    className="shrink-0 text-xs text-gray-900"
+                    className="shrink-0 text-label-12 text-gray-900"
                   >
                     {formatDate(item.date)}
                   </time>
                 </div>
                 {item.description ? (
-                  <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-gray-900">
+                  <p className="mt-1.5 line-clamp-2 text-copy-14 text-gray-900">
                     {item.description}
                   </p>
                 ) : null}

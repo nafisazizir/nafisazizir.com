@@ -33,7 +33,7 @@ export function Hero() {
         <div className="flex w-full flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <motion.h1
             variants={item}
-            className="max-w-[20ch] text-4xl leading-[1.05] tracking-tighter text-balance sm:text-5xl sm:leading-[1.02] xl:text-6xl 2xl:text-7xl"
+            className="max-w-[20ch] text-heading-40 text-balance sm:text-heading-48 xl:text-heading-56 2xl:text-heading-72"
           >
             My curiosity usually goes nowhere. Sometimes it becomes software.
           </motion.h1>
@@ -41,7 +41,7 @@ export function Hero() {
           <div className="flex flex-col gap-4 sm:gap-5 lg:items-end">
             <motion.p
               variants={item}
-              className="max-w-sm text-sm leading-snug tracking-tight text-gray-1000 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
+              className="max-w-sm text-copy-14 text-gray-1000 sm:text-copy-16 lg:max-w-lg lg:text-right lg:text-copy-18"
             >
               Currently at{" "}
               <a
@@ -77,7 +77,7 @@ export function Hero() {
                     onClick={() =>
                       track("outbound link clicked", { href, label, path: "/" })
                     }
-                    className="text-sm text-gray-900 underline decoration-gray-900 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-gray-1000 hover:decoration-gray-1000 hover:underline-offset-[5px] sm:text-[15px]"
+                    className="text-label-14 text-gray-900 underline decoration-gray-900 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-gray-1000 hover:decoration-gray-1000 hover:underline-offset-[5px] sm:text-label-16"
                   >
                     {label}
                   </a>
