@@ -53,8 +53,8 @@ export function Toc({ items }: { items: TocItem[] }) {
             className={cn(
               "flex items-center text-sm no-underline transition-colors duration-200",
               i === active
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-gray-1000"
+                : "text-gray-900 hover:text-gray-1000"
             )}
           >
             <span className="truncate">{it.label}</span>

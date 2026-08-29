@@ -24,7 +24,7 @@ export function ContactFooter({ className }: { className?: string }) {
       <motion.span
         aria-hidden
         variants={item}
-        className="h-px w-15 bg-foreground/15"
+        className="h-px w-15 bg-gray-alpha-400"
       />
 
       <motion.ul
@@ -40,7 +40,7 @@ export function ContactFooter({ className }: { className?: string }) {
               onClick={() =>
                 track("outbound link clicked", { href, label, path: pathname })
               }
-              className="text-[15px] text-foreground underline decoration-foreground/40 underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-200 hover:decoration-foreground hover:underline-offset-[5px]"
+              className="text-[15px] text-gray-1000 underline decoration-gray-900 underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-200 hover:decoration-gray-1000 hover:underline-offset-[5px]"
             >
               {label}
             </a>

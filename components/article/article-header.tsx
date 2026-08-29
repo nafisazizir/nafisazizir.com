@@ -29,7 +29,7 @@ export function ArticleHeader({
       <motion.time
         variants={item}
         dateTime={date}
-        className="text-muted-foreground text-sm"
+        className="text-gray-900 text-sm"
       >
         {displayDate}
       </motion.time>

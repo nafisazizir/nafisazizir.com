@@ -30,7 +30,7 @@ const isActive = (href: string, pathname: string) =>
 
 function ToggleIcon({ open }: { open: boolean }) {
   return (
-    <span className="relative grid size-4 place-items-center text-muted-foreground transition-colors group-hover:text-foreground">
+    <span className="relative grid size-4 place-items-center text-gray-900 transition-colors group-hover:text-gray-1000">
       <HugeiconsIcon
         icon={MenuTwoLineIcon}
         className={cn(
@@ -242,7 +242,7 @@ export function Nav() {
             : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms",
         }}
         className={cn(
-          "rounded-3xl border border-border bg-card/20 text-card-foreground shadow-[0_16px_40px_-12px_color-mix(in_oklab,var(--background)_50%,transparent)] backdrop-blur-sm backdrop-saturate-150",
+          "rounded-3xl border border-gray-alpha-400 bg-background-100/20 text-gray-1000 shadow-2xl backdrop-blur-sm backdrop-saturate-150",
           open ? "w-52 p-2" : "w-26 p-0"
         )}
       >
@@ -263,7 +263,7 @@ export function Nav() {
             aria-controls="nav-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             className={cn(
-              "group w-full justify-between hover:bg-foreground/8 aria-expanded:bg-transparent dark:hover:bg-foreground/8",
+              "group w-full justify-between aria-expanded:bg-transparent",
               open ? "font-medium" : "font-semibold"
             )}
           >
@@ -298,7 +298,7 @@ export function Nav() {
               onMouseLeave={hideDot}
               render={<Link href={activeHref} />}
               aria-label={`Go to ${currentLabel}`}
-              className="group min-w-0 flex-1 justify-start font-medium hover:bg-foreground/8 dark:hover:bg-foreground/8"
+              className="group min-w-0 flex-1 justify-start font-medium"
             >
               <AnimatedLabel label={currentLabel} />
             </Button>
@@ -311,7 +311,7 @@ export function Nav() {
               aria-expanded={open}
               aria-controls="nav-menu"
               aria-label={open ? "Close menu" : "Open menu"}
-              className="group shrink-0 hover:bg-foreground/8 aria-expanded:bg-transparent dark:hover:bg-foreground/8"
+              className="group shrink-0 aria-expanded:bg-transparent"
             >
               <ToggleIcon open={open} />
             </Button>
@@ -348,7 +348,7 @@ export function Nav() {
                   transform: `translate(${dot.x - 2}px, ${dot.y - 2}px)`,
                 }}
                 className={cn(
-                  "pointer-events-none absolute top-0 left-0 size-1 rounded-full bg-foreground transition-[transform,opacity] duration-300 ease-out",
+                  "pointer-events-none absolute top-0 left-0 size-1 rounded-full bg-gray-1000 transition-[transform,opacity] duration-300 ease-out",
                   dot.visible ? "opacity-100" : "opacity-0"
                 )}
               />
@@ -393,7 +393,7 @@ export function Nav() {
                         })
                       }}
                       render={<Link href={href} />}
-                      className="w-full justify-start hover:bg-foreground/8 dark:hover:bg-foreground/8"
+                      className="w-full justify-start"
                     >
                       <span data-nav-label>{label}</span>
                     </Button>

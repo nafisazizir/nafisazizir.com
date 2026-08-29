@@ -12,7 +12,7 @@ export function Hero() {
   const item = reduced ? undefined : staggerItem()
 
   return (
-    <section className="relative h-dvh w-full overflow-hidden bg-background">
+    <section className="relative h-dvh w-full overflow-hidden bg-background-100">
       <motion.div
         initial={reduced ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -28,7 +28,7 @@ export function Hero() {
         initial={reduced ? false : "hidden"}
         animate="visible"
         variants={reduced ? undefined : staggerContainer(0.12, 0.6)}
-        className="absolute inset-0 z-10 flex flex-col justify-end p-6 text-foreground sm:p-8 md:p-12"
+        className="absolute inset-0 z-10 flex flex-col justify-end p-6 text-gray-1000 sm:p-8 md:p-12"
       >
         <div className="flex w-full flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <motion.h1
@@ -41,7 +41,7 @@ export function Hero() {
           <div className="flex flex-col gap-4 sm:gap-5 lg:items-end">
             <motion.p
               variants={item}
-              className="max-w-sm text-sm leading-snug tracking-tight text-foreground/90 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
+              className="max-w-sm text-sm leading-snug tracking-tight text-gray-1000 sm:text-base lg:max-w-lg lg:text-right lg:text-lg"
             >
               Currently at{" "}
               <a
@@ -55,7 +55,7 @@ export function Hero() {
                     path: "/",
                   })
                 }
-                className="underline decoration-foreground/30 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-foreground hover:decoration-foreground hover:underline-offset-[5px]"
+                className="underline decoration-gray-900 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-gray-1000 hover:decoration-gray-1000 hover:underline-offset-[5px]"
               >
                 Avenue Labs
               </a>
@@ -77,7 +77,7 @@ export function Hero() {
                     onClick={() =>
                       track("outbound link clicked", { href, label, path: "/" })
                     }
-                    className="text-sm text-foreground/80 underline decoration-foreground/30 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-foreground hover:decoration-foreground hover:underline-offset-[5px] sm:text-[15px]"
+                    className="text-sm text-gray-900 underline decoration-gray-900 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-gray-1000 hover:decoration-gray-1000 hover:underline-offset-[5px] sm:text-[15px]"
                   >
                     {label}
                   </a>
