@@ -34,3 +34,8 @@ export function formatDate(iso: string) {
     timeZone: "UTC",
   })
 }
+
+/** Covers are stills by default; a clip extension switches to the video path. */
+export function isVideoCover(src: string) {
+  return /\.(mp4|webm|mov)$/i.test(src)
+}

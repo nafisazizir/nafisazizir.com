@@ -4,6 +4,8 @@ import path from "node:path"
 import GithubSlugger from "github-slugger"
 import matter from "gray-matter"
 
+import { isVideoCover } from "@/lib/utils"
+
 const CONTENT_DIR = path.join(process.cwd(), "content")
 
 export type PostType = "blog" | "project"
@@ -14,7 +16,10 @@ export interface PostFrontmatter {
   date: string
   type: PostType
   tags: string[]
+  /** Card cover: an image, or a short clip (`.mp4`/`.webm`) played on hover. */
   cover?: string
+  /** First frame of a video cover — the paused state, and the OG/JSON-LD still. */
+  coverPoster?: string
 }
 
 export interface TocItem {
@@ -79,8 +84,16 @@ function parseFile(fileName: string): Post {
     type: (data.type === "project" ? "project" : "blog") as PostType,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     cover: data.cover ? String(data.cover) : undefined,
+    coverPoster: data.coverPoster ? String(data.coverPoster) : undefined,
   }
   return { slug, frontmatter, content, toc: extractToc(content) }
+}
+
+/** The still to use where a video can't go: OG images and JSON-LD. */
+export function coverStill(frontmatter: PostFrontmatter): string | undefined {
+  const { cover, coverPoster } = frontmatter
+  if (!cover) return undefined
+  return isVideoCover(cover) ? coverPoster : cover
 }
 
 let cache: Post[] | null = null

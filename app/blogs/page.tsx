@@ -16,6 +16,7 @@ export default function BlogsPage() {
     date: p.frontmatter.date,
     tags: p.frontmatter.tags,
     cover: p.frontmatter.cover,
+    coverPoster: p.frontmatter.coverPoster,
   }))
 
   return <PostList items={items} basePath="/blogs" />

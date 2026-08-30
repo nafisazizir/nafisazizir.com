@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { ArticlePage } from "@/components/article/article-page"
-import { getPostBySlug, getPostsByType } from "@/lib/content"
+import { coverStill, getPostBySlug, getPostsByType } from "@/lib/content"
 
 export function generateStaticParams() {
   return getPostsByType("blog").map((p) => ({ slug: p.slug }))
@@ -16,7 +16,9 @@ export async function generateMetadata({
   const { slug } = await params
   const post = getPostBySlug(slug)
   if (!post || post.frontmatter.type !== "blog") return {}
-  const { title, description, cover, date, tags } = post.frontmatter
+  const { title, description, date, tags } = post.frontmatter
+  // A video cover can't be an OG image; fall back to its poster frame.
+  const image = coverStill(post.frontmatter)
   return {
     title,
     description,
@@ -26,7 +28,7 @@ export async function generateMetadata({
       description,
       publishedTime: date,
       tags,
-      images: cover ? [{ url: cover }] : undefined,
+      images: image ? [{ url: image }] : undefined,
     },
   }
 }

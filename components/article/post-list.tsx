@@ -1,9 +1,10 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
-import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 
+import { PostCover } from "@/components/article/post-cover"
 import { ContactFooter } from "@/components/contact-footer"
 import { track } from "@/lib/analytics/events"
 import { EASE_OUT } from "@/lib/motion"
@@ -16,6 +17,7 @@ export interface PostListItem {
   date: string
   tags: string[]
   cover?: string
+  coverPoster?: string
 }
 
 const FEATURED_COUNT = 3
@@ -28,6 +30,8 @@ export function PostList({
   basePath: string
 }) {
   const reduced = useReducedMotion() ?? false
+  // Which featured card is hovered or focused; drives video-cover playback.
+  const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
   const featured = items.slice(0, FEATURED_COUNT)
   const rest = items.slice(FEATURED_COUNT)
@@ -60,16 +64,23 @@ export function PostList({
               <Link
                 href={`${basePath}/${item.slug}`}
                 onClick={() => trackOpen(item, i)}
+                onMouseEnter={() => setActiveSlug(item.slug)}
+                onMouseLeave={() =>
+                  setActiveSlug((s) => (s === item.slug ? null : s))
+                }
+                onFocus={() => setActiveSlug(item.slug)}
+                onBlur={() =>
+                  setActiveSlug((s) => (s === item.slug ? null : s))
+                }
                 className="group flex h-full flex-col outline-none focus-visible:ring-2 focus-visible:ring-gray-alpha-600 focus-visible:ring-offset-4 focus-visible:ring-offset-background-100"
               >
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                   {item.cover ? (
-                    <Image
+                    <PostCover
                       src={item.cover}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover grayscale"
+                      poster={item.coverPoster}
+                      active={activeSlug === item.slug}
+                      reduced={reduced}
                     />
                   ) : null}
                 </div>

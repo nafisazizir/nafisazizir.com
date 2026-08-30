@@ -3,12 +3,13 @@ import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
 import { ContactFooter } from "@/components/contact-footer"
-import type { Post } from "@/lib/content"
+import { coverStill, type Post } from "@/lib/content"
 import { site } from "@/lib/site"
 import { formatDate } from "@/lib/utils"
 
 function articleJsonLd(post: Post) {
-  const { title, description, date, type, cover } = post.frontmatter
+  const { title, description, date, type } = post.frontmatter
+  const image = coverStill(post.frontmatter)
   const url = `${site.url}/${type === "blog" ? "blogs" : "projects"}/${post.slug}`
   return {
     "@context": "https://schema.org",
@@ -18,7 +19,7 @@ function articleJsonLd(post: Post) {
     datePublished: date,
     url,
     mainEntityOfPage: url,
-    image: cover ? `${site.url}${cover}` : undefined,
+    image: image ? `${site.url}${image}` : undefined,
     author: {
       "@type": "Person",
       name: site.name,
