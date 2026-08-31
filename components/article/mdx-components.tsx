@@ -2,6 +2,7 @@ import type { MDXComponents } from "mdx/types"
 import Link from "next/link"
 import type { ComponentPropsWithoutRef } from "react"
 
+import { TweetEmbed } from "@/components/article/tweet-embed"
 import { revealBlocks } from "@/components/motion/reveal-block"
 
 /*
@@ -27,4 +28,5 @@ function Anchor({ href = "", ...props }: ComponentPropsWithoutRef<"a">) {
 export const mdxComponents: MDXComponents = {
   ...revealBlocks,
   a: Anchor,
+  Tweet: TweetEmbed,
 }
