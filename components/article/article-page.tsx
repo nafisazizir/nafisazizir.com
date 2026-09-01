@@ -3,14 +3,15 @@ import { ArticleHeader } from "@/components/article/article-header"
 import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
 import { ContactFooter } from "@/components/contact-footer"
-import { coverStill, type Post } from "@/lib/content"
+import type { Post } from "@/lib/content"
 import { site } from "@/lib/site"
 import { formatDate } from "@/lib/utils"
 
 function articleJsonLd(post: Post) {
   const { title, description, date, type } = post.frontmatter
-  const image = coverStill(post.frontmatter)
   const url = `${site.url}/${type === "blog" ? "blogs" : "projects"}/${post.slug}`
+  // The OG route, not the raw cover: most covers are transparent PNGs.
+  const image = `${url}/opengraph-image`
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -19,7 +20,7 @@ function articleJsonLd(post: Post) {
     datePublished: date,
     url,
     mainEntityOfPage: url,
-    image: image ? `${site.url}${image}` : undefined,
+    image,
     author: {
       "@type": "Person",
       name: site.name,

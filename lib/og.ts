@@ -32,3 +32,22 @@ export async function loadOgFonts() {
     { name: "Inter", data: medium, weight: 500, style: "normal" },
   ] as const
 }
+
+const coverMime: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+}
+
+/** A post cover, inlined for satori. Returns null if it isn't a readable image. */
+export async function loadOgCover(src: string): Promise<string | null> {
+  const mime = coverMime[path.extname(src).toLowerCase()]
+  if (!mime) return null
+  try {
+    const file = await readFile(path.join(process.cwd(), "public", src))
+    return `data:${mime};base64,${file.toString("base64")}`
+  } catch {
+    return null
+  }
+}

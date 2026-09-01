@@ -1,11 +1,15 @@
-import { getPostBySlug } from "@/lib/content"
+import { coverStill, getPostBySlug, getPostsByType } from "@/lib/content"
 import { ogSize } from "@/lib/og"
-import { ogImageResponse } from "@/lib/og-image"
+import { ogCoverResponse, ogImageResponse } from "@/lib/og-image"
 import { site } from "@/lib/site"
 
 export const alt = `Project · ${site.name}`
 export const size = ogSize
 export const contentType = "image/png"
+
+export function generateStaticParams() {
+  return getPostsByType("project").map((p) => ({ slug: p.slug }))
+}
 
 export default async function Image({
   params,
@@ -14,6 +18,12 @@ export default async function Image({
 }) {
   const { slug } = await params
   const post = getPostBySlug(slug)
+  // A video cover can't be an OG image; coverStill falls back to its poster frame.
+  const cover = post ? coverStill(post.frontmatter) : undefined
+  if (cover) {
+    const image = await ogCoverResponse(cover)
+    if (image) return image
+  }
   return ogImageResponse({
     seed: slug,
     variant: "post",
