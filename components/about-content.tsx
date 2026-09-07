@@ -23,7 +23,11 @@ export function AboutContent() {
 
       <motion.p variants={item}>
         Currently at{" "}
-        <a href="https://www.avenue2.au/" target="_blank" rel="noreferrer">
+        <a
+          href="https://www.onlyavenue.com/?utm_source=nafisazizir&utm_medium=referral&utm_campaign=personal-site&utm_content=about"
+          target="_blank"
+          rel="noreferrer"
+        >
           Avenue Labs
         </a>
         . Previously Telkom Indonesia. I build AI agent

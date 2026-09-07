@@ -45,12 +45,12 @@ export function Hero() {
             >
               Currently at{" "}
               <a
-                href="https://www.avenue2.au/"
+                href="https://www.onlyavenue.com/?utm_source=nafisazizir&utm_medium=referral&utm_campaign=personal-site&utm_content=home"
                 target="_blank"
                 rel="noreferrer"
                 onClick={() =>
                   track("outbound link clicked", {
-                    href: "https://www.avenue2.au/",
+                    href: "https://www.onlyavenue.com/?utm_source=nafisazizir&utm_medium=referral&utm_campaign=personal-site&utm_content=home",
                     label: "Avenue Labs",
                     path: "/",
                   })
