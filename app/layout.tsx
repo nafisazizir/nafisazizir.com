@@ -50,7 +50,7 @@ const personJsonLd = {
   email: site.email,
   jobTitle: "Software Engineer",
   description: site.description,
-  sameAs: [site.github, site.twitter],
+  sameAs: [site.github, site.linkedin, site.twitter],
 }
 
 // InterVariable from the official rsms 4.1 release — same files satori's
