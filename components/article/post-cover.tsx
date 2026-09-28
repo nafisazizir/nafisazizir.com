@@ -3,7 +3,8 @@
 import Image from "next/image"
 import { useEffect, useRef } from "react"
 
-import { cn, isVideoCover } from "@/lib/utils"
+import { isVideoCover } from "@/lib/format"
+import { cn } from "@/lib/utils"
 
 const COVER_SIZES = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
 
@@ -66,7 +67,7 @@ export function PostCover({
       tabIndex={-1}
       className={cn(
         "absolute inset-0 size-full object-cover grayscale",
-        className,
+        className
       )}
     />
   )
