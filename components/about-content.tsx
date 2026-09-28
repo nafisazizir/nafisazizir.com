@@ -13,7 +13,7 @@ export function AboutContent() {
       initial={reduced ? false : "hidden"}
       animate="visible"
       variants={reduced ? undefined : staggerContainer(0.09, 0.05)}
-      className="typeset typeset-article"
+      className="typeset"
     >
       <motion.p variants={item}>
         I&apos;m Nafis, a software engineer based in Brisbane, Australia. These
@@ -30,14 +30,13 @@ export function AboutContent() {
         >
           Avenue Labs
         </a>
-        . Previously Telkom Indonesia. I build AI agent
-        systems, mostly voice and call agents, living deep in TypeScript and the
-        full-stack tooling around it. On the side I build developer tools at the
-        intersection of AI and productivity: small, sharp things that remove
-        friction from the way I actually work. A CLI for indexing agent skills
-        into passive context. An SDK for voice call agents. A personal MCP
-        server that turns my own training data into something an agent can
-        reason about.
+        . Previously Telkom Indonesia. I build AI agent systems, mostly voice
+        and call agents, living deep in TypeScript and the full-stack tooling
+        around it. On the side I build developer tools at the intersection of AI
+        and productivity: small, sharp things that remove friction from the way
+        I actually work. A CLI for indexing agent skills into passive context.
+        An SDK for voice call agents. A personal MCP server that turns my own
+        training data into something an agent can reason about.
       </motion.p>
 
       <motion.p variants={item}>

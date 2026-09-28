@@ -4,7 +4,7 @@ import path from "node:path"
 import GithubSlugger from "github-slugger"
 import matter from "gray-matter"
 
-import { isVideoCover } from "@/lib/utils"
+import { isVideoCover } from "@/lib/format"
 
 const CONTENT_DIR = path.join(process.cwd(), "content")
 

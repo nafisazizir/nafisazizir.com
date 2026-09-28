@@ -43,7 +43,5 @@ export const revealBlocks = {
   ul: makeReveal("ul"),
   ol: makeReveal("ol"),
   blockquote: makeReveal("blockquote"),
-  pre: makeReveal("pre"),
-  table: makeReveal("table"),
   hr: makeReveal("hr"),
 }

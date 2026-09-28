@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { MenuTwoLineIcon, MinusSignIcon } from "@hugeicons/core-free-icons"
+import { IconMenu2, IconMinus } from "@tabler/icons-react"
 
 import { track } from "@/lib/analytics/events"
 import { Button } from "@/components/ui/button"
@@ -31,8 +30,7 @@ const isActive = (href: string, pathname: string) =>
 function ToggleIcon({ open }: { open: boolean }) {
   return (
     <span className="relative grid size-4 place-items-center text-gray-900 transition-colors group-hover:text-gray-1000">
-      <HugeiconsIcon
-        icon={MenuTwoLineIcon}
+      <IconMenu2
         className={cn(
           "col-start-1 row-start-1 transition-all duration-300 ease-out",
           open
@@ -40,8 +38,7 @@ function ToggleIcon({ open }: { open: boolean }) {
             : "scale-100 rotate-0 opacity-100"
         )}
       />
-      <HugeiconsIcon
-        icon={MinusSignIcon}
+      <IconMinus
         className={cn(
           "col-start-1 row-start-1 transition-all duration-300 ease-out",
           open
@@ -249,6 +246,7 @@ export function Nav() {
         {onSectionRoot || !open ? (
           <Button
             variant="ghost"
+            shape="rounded"
             data-nav-item
             data-nav-trigger
             onClick={() => (open ? dismiss() : openMenu())}
@@ -274,6 +272,7 @@ export function Nav() {
           <div className="flex w-full items-center">
             <Button
               variant="ghost"
+              shape="rounded"
               nativeButton={false}
               data-nav-item
               onClick={() => {
@@ -304,6 +303,7 @@ export function Nav() {
             </Button>
             <Button
               variant="ghost"
+              shape="rounded"
               size="icon"
               data-nav-item
               data-nav-trigger
@@ -381,6 +381,7 @@ export function Nav() {
                   >
                     <Button
                       variant="ghost"
+                      shape="rounded"
                       nativeButton={false}
                       data-nav-item
                       onClick={() => {

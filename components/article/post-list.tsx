@@ -8,7 +8,7 @@ import { PostCover } from "@/components/article/post-cover"
 import { ContactFooter } from "@/components/contact-footer"
 import { track } from "@/lib/analytics/events"
 import { EASE_OUT } from "@/lib/motion"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/lib/format"
 
 export interface PostListItem {
   slug: string
