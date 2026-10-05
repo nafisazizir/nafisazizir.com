@@ -19,8 +19,12 @@ export interface PostListItem {
   art: ReactNode
 }
 
-// Card art and the article header's art share one ratio.
-export const CARD_RATIO = 8 / 5
+// The stage a card's pattern is placed on. At 8:5 the stage's half-height
+// cap doesn't bind, so the frame takes 90% of the width under a 5% margin
+// and its bottom edge lands at 5% + 90% × 5/16 = 33.125% of the width,
+// where the card cuts the art off.
+const STAGE_RATIO = 8 / 5
+const ART_HEIGHT = "33.125%"
 
 // Past this many cards the stagger stops growing, so a long list doesn't
 // keep its last cards waiting.
@@ -82,12 +86,14 @@ export function PostList({
   )
 }
 
-// The 8:5 art with the title set inside it, bottom left, then the date, a
-// three-line description and a pill pushed to the card's bottom edge so
-// every card in a row ends level. The pattern hangs from the top of its
-// panel, which leaves the bottom clear for the title. The title steps down
-// with the card (24px from 400px wide, 20px from 336px, 16px below) so three
-// lines never reach the art.
+// A panel of the post's pattern over its title, then the date, a three-line
+// description and a pill pushed to the card's bottom edge so every card in
+// a row ends level. The art is cut off at the pattern's frame, which nothing
+// leaves through the bottom, so the panel grows with the title rather than
+// with the card's width. The title is 24px at every width in a 16px pad,
+// bottom-aligned in room for three lines so last lines align across a row;
+// a longer title grows the panel instead of reaching the art. Its box is
+// trimmed to cap height and baseline, so the pad is measured to the ink.
 function Card({
   item,
   href,
@@ -115,17 +121,24 @@ function Card({
         aria-hidden
         tabIndex={-1}
         onClick={onOpen}
-        className="block"
+        className="block bg-gray-100"
       >
-        <AspectRatio
-          ratio={CARD_RATIO}
-          className="@container w-full overflow-hidden bg-gray-100"
+        <div
+          className="relative overflow-hidden"
+          style={{ paddingBottom: ART_HEIGHT }}
         >
-          <div className="absolute inset-0">{item.art}</div>
-          <p className="absolute inset-x-4 bottom-4 text-heading-16 text-balance text-gray-1000 @min-[21rem]:text-heading-20 @min-[25rem]:text-heading-24">
+          <AspectRatio
+            ratio={STAGE_RATIO}
+            className="absolute inset-x-0 top-0"
+          >
+            {item.art}
+          </AspectRatio>
+        </div>
+        <div className="flex min-h-[calc(2lh+1cap+2rem)] flex-col justify-end p-4 text-heading-24">
+          <p className="text-balance text-gray-1000 [text-box:trim-both_cap_alphabetic]">
             {item.title}
           </p>
-        </AspectRatio>
+        </div>
       </Link>
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex flex-col gap-1.5">
