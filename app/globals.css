@@ -13,4 +13,11 @@
   /* Pre-ziiz value, deliberately kept: the system's own default is
      0.875rem (Large). The whole rounded-* scale derives from this. */
   --radius: 0.625rem;
+
+  /* The floating nav's band: the pill (an h-9 button plus its 1px border)
+     inset from the top, with the same inset again below it. The frosted
+     viewport edges take this depth, so the pill sits centred in the fade. */
+  --nav-inset: 1rem;
+  --nav-pill: 2.375rem;
+  --nav-band: calc(var(--nav-pill) + var(--nav-inset) * 2);
 }

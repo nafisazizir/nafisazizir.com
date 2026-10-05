@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 
 import { AboutContent } from "@/components/about-content"
 import { ContactFooter } from "@/components/contact-footer"
+import { EdgeFade } from "@/components/edge-fade"
 
 export const metadata: Metadata = {
   title: "About",
@@ -12,10 +13,12 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="relative min-h-screen overflow-x-clip">
+      <EdgeFade side="top" />
       <div className="relative mx-auto w-full max-w-160 px-6 pt-28 pb-24 sm:pt-32">
         <AboutContent />
         <ContactFooter />
       </div>
+      <EdgeFade side="bottom" />
     </div>
   )
 }

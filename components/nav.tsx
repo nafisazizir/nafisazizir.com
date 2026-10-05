@@ -227,7 +227,7 @@ export function Nav() {
   if (!onKnownRoute) return null
 
   return (
-    <nav className="fixed inset-x-0 top-4 z-50 flex justify-center">
+    <nav className="fixed inset-x-0 top-(--nav-inset) z-50 flex justify-center">
       <div
         ref={pillRef}
         onKeyDown={onKeyDown}
