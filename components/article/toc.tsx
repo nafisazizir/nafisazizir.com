@@ -11,6 +11,9 @@ import { useScrollSpy } from "@/lib/hooks/use-scroll-spy"
 import { cn } from "@/lib/utils"
 
 const TOC_ITEM_H = 28
+// The 720px column centred in the page's 1120px leaves 200px beside it, and
+// only once the page has its full width: 1120 plus the 24px gutters.
+const TOC_MIN_WIDTH = 1168
 
 export function Toc({ items }: { items: TocItem[] }) {
   const reduced = useReducedMotion() ?? false
@@ -22,7 +25,7 @@ export function Toc({ items }: { items: TocItem[] }) {
   })
 
   useEffect(() => {
-    const setW = () => setWide(window.innerWidth >= 1080)
+    const setW = () => setWide(window.innerWidth >= TOC_MIN_WIDTH)
     setW()
     window.addEventListener("resize", setW)
     return () => window.removeEventListener("resize", setW)
@@ -31,12 +34,17 @@ export function Toc({ items }: { items: TocItem[] }) {
   if (!wide || items.length === 0) return null
 
   return (
-    <aside aria-label="Contents" className="absolute top-0 right-0 h-full w-49">
+    // The padding puts the first 28px row on the centre of the body's first
+    // line, which starts 48px down.
+    <aside
+      aria-label="Contents"
+      className="absolute top-0 right-0 h-full w-49 pt-11.5"
+    >
       <motion.nav
         initial={reduced ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={reduced ? { duration: 0 } : { duration: 0.4, delay: 0.15 }}
-        className="sticky top-32 mt-0 flex flex-col pl-3"
+        className="sticky top-32 flex flex-col pl-3"
       >
         {items.map((it, i) => (
           <a
