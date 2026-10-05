@@ -18,6 +18,8 @@ export function PostCover({
   poster,
   active,
   reduced,
+  sizes = COVER_SIZES,
+  priority,
   className,
 }: {
   src: string
@@ -25,6 +27,10 @@ export function PostCover({
   /** The card is hovered or keyboard-focused. */
   active: boolean
   reduced: boolean
+  /** Defaults to the list grid's column widths. */
+  sizes?: string
+  /** The cover is above the fold (an article's own), so load it eagerly. */
+  priority?: boolean
   className?: string
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -46,7 +52,8 @@ export function PostCover({
         src={src}
         alt=""
         fill
-        sizes={COVER_SIZES}
+        sizes={sizes}
+        priority={priority}
         className={cn("object-cover grayscale", className)}
       />
     )
