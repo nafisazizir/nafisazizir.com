@@ -1,6 +1,6 @@
-import { coverStill, getPostBySlug, getPostsByType } from "@/lib/content"
+import { getPostBySlug, getPostsByType } from "@/lib/content"
 import { ogSize } from "@/lib/og"
-import { ogCoverResponse, ogImageResponse } from "@/lib/og-image"
+import { ogImageResponse, ogPostResponse } from "@/lib/og-image"
 import { site } from "@/lib/site"
 
 export const alt = `Blog · ${site.name}`
@@ -18,16 +18,12 @@ export default async function Image({
 }) {
   const { slug } = await params
   const post = getPostBySlug(slug)
-  // A video cover can't be an OG image; coverStill falls back to its poster frame.
-  const cover = post ? coverStill(post.frontmatter) : undefined
-  if (cover) {
-    const image = await ogCoverResponse(cover)
-    if (image) return image
-  }
+  // The card the list shows; the shader card only for a slug that's gone.
+  if (post) return ogPostResponse(post)
   return ogImageResponse({
     seed: slug,
     variant: "post",
     eyebrow: "blog/",
-    title: post?.frontmatter.title ?? site.name,
+    title: site.name,
   })
 }
