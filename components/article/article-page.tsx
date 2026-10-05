@@ -4,9 +4,11 @@ import { MDXContent } from "@/components/article/mdx-content"
 import { Toc } from "@/components/article/toc"
 import { ContactFooter } from "@/components/contact-footer"
 import { EdgeFade } from "@/components/edge-fade"
+import { PatternStage } from "@/components/patterns"
 import type { Post, PostType } from "@/lib/content"
 import { site } from "@/lib/site"
 import { formatDate } from "@/lib/format"
+import { patternFor } from "@/lib/post-art"
 
 const SECTIONS: Record<PostType, { href: string; label: string }> = {
   blog: { href: "/blogs", label: "Blogs" },
@@ -16,7 +18,7 @@ const SECTIONS: Record<PostType, { href: string; label: string }> = {
 function articleJsonLd(post: Post) {
   const { title, description, date, type } = post.frontmatter
   const url = `${site.url}/${type === "blog" ? "blogs" : "projects"}/${post.slug}`
-  // The OG route, not the raw cover: most covers are transparent PNGs.
+  // The OG route: the post's pattern with its title, as the list shows it.
   const image = `${url}/opengraph-image`
   return {
     "@context": "https://schema.org",
@@ -40,7 +42,7 @@ function articleJsonLd(post: Post) {
 // 720px prose column centred under the rule with the contents beside it. The
 // top and bottom of the viewport are frosted rather than cut.
 export function ArticlePage({ post }: { post: Post }) {
-  const { title, date, type, cover, coverPoster } = post.frontmatter
+  const { title, date, type } = post.frontmatter
 
   return (
     <div className="relative min-h-screen overflow-x-clip">
@@ -59,8 +61,12 @@ export function ArticlePage({ post }: { post: Post }) {
             date={date}
             displayDate={formatDate(date)}
             section={SECTIONS[type]}
-            cover={cover}
-            coverPoster={coverPoster}
+            art={
+              <PatternStage
+                pattern={patternFor(post).Component}
+                className="size-full"
+              />
+            }
           />
           <div className="relative">
             <Toc items={post.toc} />

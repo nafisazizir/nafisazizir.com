@@ -3,9 +3,8 @@
 import { IconChevronLeft } from "@tabler/icons-react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import { useState } from "react"
+import type { ReactNode } from "react"
 
-import { PostCover } from "@/components/article/post-cover"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,13 +15,11 @@ import { Button } from "@/components/ui/button"
 import { tap as tapSound } from "@/lib/audio"
 import { staggerContainer, staggerItem } from "@/lib/motion"
 
-const COVER_SIZES = "(min-width: 1024px) 400px, 100vw"
-
 /**
  * A post's opening, on the geometry of the ziiz X clone's: a row from lg with
- * the way back and title on the left and the cover (400x244) on the right,
- * the section link level with the cover's top and the title and date sitting on
- * its bottom, then a rule. Below lg it stacks, the cover under the date at
+ * the way back and title on the left and the post's pattern (400x244) on the
+ * right, the section link level with the art's top and the title and date
+ * sitting on its bottom, then a rule. Below lg it stacks, the art under the date at
  * 2:1. The ghost back button hangs into the gutter so the chevron's ink, not
  * its hit area, lines up with the title.
  */
@@ -31,27 +28,27 @@ export function ArticleHeader({
   date,
   displayDate,
   section,
-  cover,
-  coverPoster,
+  art,
 }: {
   title: string
   date: string
   displayDate: string
   /** The list this post belongs to, where the back button returns. */
   section: { href: string; label: string }
-  cover?: string
-  coverPoster?: string
+  /** The post's pattern, staged on the server. */
+  art: ReactNode
 }) {
+  // The server renders the hidden state, so variants stay on even when
+  // motion is reduced (without them nothing animates it back in); reduced
+  // motion keeps the fade and drops the rise.
   const reduced = useReducedMotion() ?? false
-  const item = reduced ? undefined : staggerItem()
-  // A clip cover runs only while the pointer is on it, as it does in the list.
-  const [coverActive, setCoverActive] = useState(false)
+  const item = staggerItem(reduced ? 0 : 12)
 
   return (
     <motion.header
-      initial={reduced ? false : "hidden"}
+      initial="hidden"
       animate="visible"
-      variants={reduced ? undefined : staggerContainer(0.08, 0.04)}
+      variants={staggerContainer(0.08, 0.04)}
       className="flex flex-col border-b border-gray-alpha-400 pb-6 lg:flex-row lg:items-start lg:justify-between lg:gap-4 lg:pb-30"
     >
       <div className="flex min-w-0 flex-col lg:min-h-61 lg:max-w-180 lg:flex-1">
@@ -101,23 +98,9 @@ export function ArticleHeader({
       <motion.div
         variants={item}
         aria-hidden
-        onMouseEnter={() => setCoverActive(true)}
-        onMouseLeave={() => setCoverActive(false)}
         className="relative mt-6 aspect-2/1 w-full shrink-0 overflow-hidden lg:mt-0 lg:aspect-auto lg:h-61 lg:w-100"
       >
-        {cover ? (
-          <PostCover
-            src={cover}
-            poster={coverPoster}
-            active={coverActive}
-            reduced={reduced}
-            sizes={COVER_SIZES}
-            priority
-          />
-        ) : (
-          // No art yet: the slot holds its place so the row keeps its shape.
-          <div className="absolute inset-0 bg-gray-100" />
-        )}
+        {art}
       </motion.div>
     </motion.header>
   )

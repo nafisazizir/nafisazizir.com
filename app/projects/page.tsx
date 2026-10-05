@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 
-import { PostList } from "@/components/article/post-list"
-import { getPostsByType } from "@/lib/content"
+import { ListPage } from "@/components/article/list-page"
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -9,15 +8,11 @@ export const metadata: Metadata = {
 }
 
 export default function ProjectsPage() {
-  const items = getPostsByType("project").map((p) => ({
-    slug: p.slug,
-    title: p.frontmatter.title,
-    description: p.frontmatter.description,
-    date: p.frontmatter.date,
-    tags: p.frontmatter.tags,
-    cover: p.frontmatter.cover,
-    coverPoster: p.frontmatter.coverPoster,
-  }))
-
-  return <PostList items={items} basePath="/projects" />
+  return (
+    <ListPage
+      type="project"
+      title="Things I've built:"
+      subtitle="tools, apps, and experiments"
+    />
+  )
 }
