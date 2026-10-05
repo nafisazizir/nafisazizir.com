@@ -1,10 +1,9 @@
 import { cn } from "@/lib/utils"
 
-// How deep the edge reaches. The strip takes this height and the negative
-// margin gives it straight back, so the two have to stay in step. Tailwind
-// only sees class names written out in full, so they are literals.
-const DEPTH = "h-12"
-const PULL_BACK = { top: "-mb-12", bottom: "-mt-12" }
+// The edge reaches as deep as the nav's band (--nav-band in globals.css). The
+// strip takes that height and the negative margin gives it straight back, so
+// it overlays the page without pushing it down.
+const PULL_BACK = { top: "-mb-(--nav-band)", bottom: "-mt-(--nav-band)" }
 
 // The viewport edge, as frosted glass rather than a hard cut (ported from
 // ziiz). A gradient dissolves the page into the background, and under it a
@@ -29,8 +28,7 @@ export function EdgeFade({ side }: { side: "top" | "bottom" }) {
     <div
       aria-hidden
       className={cn(
-        "pointer-events-none sticky z-30",
-        DEPTH,
+        "pointer-events-none sticky z-30 h-(--nav-band)",
         PULL_BACK[side],
         side === "top" ? "top-0" : "bottom-0"
       )}
