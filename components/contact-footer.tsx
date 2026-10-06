@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
-import { usePathname } from "next/navigation"
 
 import { track } from "@/lib/analytics/events"
 import { staggerContainer, staggerItem } from "@/lib/motion"
@@ -11,7 +10,6 @@ import { cn } from "@/lib/utils"
 export function ContactFooter({ className }: { className?: string }) {
   const reduced = useReducedMotion() ?? false
   const item = reduced ? undefined : staggerItem(8)
-  const pathname = usePathname()
 
   return (
     <motion.footer
@@ -38,7 +36,11 @@ export function ContactFooter({ className }: { className?: string }) {
               target={href.startsWith("mailto:") ? undefined : "_blank"}
               rel="noreferrer"
               onClick={() =>
-                track("outbound link clicked", { href, label, path: pathname })
+                track("outbound link clicked", {
+                  href,
+                  label,
+                  path: window.location.pathname,
+                })
               }
               className="text-label-16 text-gray-1000 underline decoration-gray-900 underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-200 hover:decoration-gray-1000 hover:underline-offset-[5px]"
             >

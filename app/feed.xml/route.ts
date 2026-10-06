@@ -1,7 +1,7 @@
+import { cacheLife } from "next/cache"
+
 import { getAllPosts } from "@/lib/content"
 import { site } from "@/lib/site"
-
-export const dynamic = "force-static"
 
 function escapeXml(value: string): string {
   return value
@@ -12,7 +12,11 @@ function escapeXml(value: string): string {
     .replace(/'/g, "&apos;")
 }
 
-export function GET() {
+// Cached for good: posts only change with a deploy.
+async function getFeed() {
+  "use cache"
+  cacheLife("max")
+
   const items = getAllPosts()
     .map((post) => {
       const { title, description, date, type } = post.frontmatter
@@ -30,7 +34,7 @@ export function GET() {
     })
     .join("\n")
 
-  const feed = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(site.name)}</title>
@@ -42,8 +46,10 @@ ${items}
   </channel>
 </rss>
 `
+}
 
-  return new Response(feed, {
+export async function GET() {
+  return new Response(await getFeed(), {
     headers: { "Content-Type": "application/rss+xml; charset=utf-8" },
   })
 }
