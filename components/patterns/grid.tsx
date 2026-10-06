@@ -1,4 +1,7 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Flip } from "./motion"
+
+// The chosen cell's edge circulates, four windows round its 288 units.
 
 export function PatternGrid(props: PatternProps) {
   return (
@@ -13,11 +16,8 @@ export function PatternGrid(props: PatternProps) {
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path
-        d="M144.5 24.5H240.5V72.5H144.5Z"
-        fill="var(--ds-background-100)"
-        stroke="currentColor"
-      />
+      <path d="M144.5 24.5H240.5V72.5H144.5Z" fill="var(--ds-background-100)" />
+      <Flip d="M144.5 24.5H240.5V72.5H144.5Z" w={24} p={72} speed={3} />
       <rect
         x="141.5"
         y="21.5"

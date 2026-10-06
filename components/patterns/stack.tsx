@@ -1,8 +1,11 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { swing } from "./motion"
 
+// Last in, first out: only the top moves, along the stack pointer. It
+// lifts off, popped, and presses back on, pushed again.
 export function PatternStack(props: PatternProps) {
   return (
-    <PatternFrame {...props}>
+    <PatternFrame loop={6} {...props}>
       <path d="M192 8V-2000" stroke="currentColor" />
       <path
         d="M80 22V98M304 22V98M192 36V112"
@@ -21,12 +24,14 @@ export function PatternStack(props: PatternProps) {
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path
-        d="M80 22L192 8L304 22L192 36Z"
-        fill="var(--ds-background-100)"
-        stroke="currentColor"
-      />
-      <rect x="189" y="5" width="6" height="6" fill="currentColor" />
+      <g {...swing(0, -6)}>
+        <path
+          d="M80 22L192 8L304 22L192 36Z"
+          fill="var(--ds-background-100)"
+          stroke="currentColor"
+        />
+        <rect x="189" y="5" width="6" height="6" fill="currentColor" />
+      </g>
     </PatternFrame>
   )
 }

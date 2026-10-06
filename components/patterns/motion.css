@@ -1,0 +1,128 @@
+/* Pattern motion. An animated frame runs one clock, --pattern-t, from 0 to 1
+   over its loop, and every moving part is a periodic function of it: --u is
+   the part's own phase, --speed whole cycles per loop offset by --phase, so
+   the end of a loop is its start and nothing ever restarts or fades. Parts
+   that exist only to move carry opacity="0", so the server HTML, a stage
+   before hydration and reduced motion all show the static drawing. See
+   README.md, Motion. */
+
+@property --pattern-t {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes pattern-clock {
+  to {
+    --pattern-t: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-animate][data-ready] svg {
+    animation: pattern-clock var(--pattern-loop, 12s) linear infinite paused;
+  }
+
+  [data-animate][data-ready][data-playing] svg {
+    animation-play-state: running;
+  }
+
+  [data-animate][data-ready] [data-motion] {
+    --u: mod(calc(var(--pattern-t) * var(--speed, 1) + var(--phase, 0)), 1);
+    transform-box: view-box;
+    transform-origin: var(--o, 0 0);
+  }
+
+  /* Solid windows --w long, one every --p, sliding along a route; a line
+     that starts --start along the route takes its share of the pattern.
+     The stroke is set in frame units from --hairline (one screen pixel)
+     rather than non-scaling, so the dashes are frame units at every size.
+     A window is a mask's moving hole. */
+  [data-animate][data-ready] :is([data-motion="run"], [data-motion="window"]) {
+    vector-effect: none;
+    stroke-dasharray: var(--w) calc(var(--p) - var(--w));
+    stroke-dashoffset: calc(var(--start, 0) - var(--u) * var(--p));
+    opacity: 1;
+  }
+
+  [data-animate][data-ready] [data-motion="run"] {
+    stroke-width: var(--hairline, 1);
+  }
+
+  /* Shown, or hidden, while u is in [--a, --a + --len), wrapping. */
+  [data-animate][data-ready] [data-motion="on"] {
+    opacity: clamp(
+      0,
+      (var(--len) - mod(calc(var(--u) - var(--a)), 1)) * 10000,
+      1
+    );
+  }
+
+  [data-animate][data-ready] [data-motion="off"] {
+    opacity: calc(
+      1 - clamp(0, (var(--len) - mod(calc(var(--u) - var(--a)), 1)) * 10000, 1)
+    );
+  }
+
+  /* Whole turns about --o, --dir -1 for counter-clockwise. */
+  [data-animate][data-ready] [data-motion="turn"] {
+    transform: rotate(calc(var(--u) * var(--dir, 1) * 360deg));
+  }
+
+  /* A dashed guide running, one 8px dash period per cycle. */
+  [data-animate][data-ready] [data-motion="march"] {
+    stroke-dashoffset: calc(var(--u) * var(--dir, 1) * -8);
+  }
+
+  /* Moved by --dx, --dy each cycle: a conveyor, for a row of parts one pitch
+     apart whose ends are hidden by a clip or a cut-out. */
+  [data-animate][data-ready] [data-motion="slide"] {
+    transform: translate(
+      calc(var(--u) * var(--dx, 0) * 1px),
+      calc(var(--u) * var(--dy, 0) * 1px)
+    );
+    opacity: 1;
+  }
+
+  /* Moved by --dx, --dy each cycle in --n steps, each taken over the first
+     --f of its step on a cosine ease. */
+  [data-animate][data-ready] [data-motion="tick"] {
+    --s: calc(var(--u) * var(--n));
+    --e: clamp(0, (var(--s) - round(down, var(--s), 1)) / var(--f), 1);
+    --k: calc(
+      (round(down, var(--s), 1) + (1 - cos(var(--e) * 180deg)) / 2) / var(--n)
+    );
+    transform: translate(
+      calc(var(--k) * var(--dx, 0) * 1px),
+      calc(var(--k) * var(--dy, 0) * 1px)
+    );
+  }
+
+  /* Up from --dy below over [--a, --a + --len), held there after, and all
+     the way down for --h before. */
+  [data-animate][data-ready] [data-motion="rise"] {
+    --g: clamp(
+      0,
+      (mod(calc(var(--u) - var(--a) + var(--h)), 1) - var(--h)) / var(--len),
+      1
+    );
+    transform: translateY(calc((1 - var(--g)) * var(--dy) * 1px));
+  }
+
+  /* Out by --dx, --dy and back, or by --angle about --o and back, on a
+     sine. */
+  [data-animate][data-ready] [data-motion="swing"] {
+    transform: translate(
+        calc(sin(var(--u) * 360deg) * var(--dx, 0) * 1px),
+        calc(sin(var(--u) * 360deg) * var(--dy, 0) * 1px)
+      )
+      rotate(calc(sin(var(--u) * 360deg) * var(--angle, 0deg)));
+  }
+
+  /* Scaled about --o from 1 to --s each cycle, exponentially, so a copy of
+     a shape flies out at an even perspective pace and lands on the next. */
+  [data-animate][data-ready] [data-motion="zoom"] {
+    transform: scale(pow(var(--s), var(--u)));
+    opacity: 1;
+  }
+}

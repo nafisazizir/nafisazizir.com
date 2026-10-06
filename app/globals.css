@@ -8,6 +8,7 @@
    class, forced by components/theme-provider.tsx. Nothing here speaks the
    shadcn slot vocabulary, so shadcn.css (the slot bridge) is not imported. */
 @import "@nafisazizir/ziiz/theme.css";
+@import "../components/patterns/motion.css";
 
 :root {
   /* Pre-ziiz value, deliberately kept: the system's own default is
@@ -20,4 +21,13 @@
   --nav-inset: 1rem;
   --nav-pill: 2.375rem;
   --nav-band: calc(var(--nav-pill) + var(--nav-inset) * 2);
+}
+
+/* A post card's pattern runs only while the card is hovered (see
+   components/article/post-list.tsx, which plays it). Until then the stage's
+   clock holds, even on screen. Touch screens keep the stage's own rule. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-hover-play] [data-animate][data-ready][data-playing] svg {
+    animation-play-state: paused;
+  }
 }

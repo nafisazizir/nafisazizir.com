@@ -1,4 +1,8 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Flip, Run } from "./motion"
+
+// The cut runs from the corner down to the vertical and on under the notch.
+const cut = { w: 32, length: 448.14 }
 
 export function PatternCornerNotch(props: PatternProps) {
   return (
@@ -8,8 +12,9 @@ export function PatternCornerNotch(props: PatternProps) {
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path d="M0.5 0.5L204.5 60.5" stroke="currentColor" />
+      <Flip d="M0.5 0.5L204.5 60.5" {...cut} />
       <path d="M204.5 60.5H2400" stroke="currentColor" strokeDasharray="4 4" />
+      <Run d="M204.5 60.5H440" start={212.64} {...cut} />
       <rect
         x="212.5"
         y="0.5"

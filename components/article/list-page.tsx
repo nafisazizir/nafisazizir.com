@@ -16,7 +16,8 @@ const BASE_PATHS: Record<PostType, string> = {
 // than an article's 1120px, so three cards across each get the 410px of
 // x.com's blog cards.
 // Patterns are staged here, on the server, so the client list never ships
-// the whole set; it gets each post's art as a finished node.
+// the whole set; it gets each post's art as a finished node. They're staged
+// animated, and the card decides when the loop runs (see post-list).
 export function ListPage({
   type,
   title,
@@ -35,6 +36,7 @@ export function ListPage({
       <PatternStage
         pattern={patternFor(post).Component}
         anchor="top"
+        animate
         className="size-full"
       />
     ),

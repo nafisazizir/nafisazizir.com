@@ -1,4 +1,11 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Clip, during, turn, zoom } from "./motion"
+
+// Self-similarity: one quarter turn about the spiral's pole and a scale of
+// 1/φ carry each square onto the next. A ghost of the first square makes
+// that move once a quarter loop, landing on the next square as the next
+// ghost leaves the first, so the construction keeps folding inward.
+const pole = [330.28, 86.61] as const
 
 export function PatternGolden(props: PatternProps) {
   return (
@@ -17,6 +24,22 @@ export function PatternGolden(props: PatternProps) {
         fill="var(--ds-background-100)"
         stroke="currentColor"
       />
+      <Clip x={190.95} y={0.5} width={192.55} height={119}>
+        {[0, 1, 2, 3].map((quarter) => (
+          <g key={quarter} {...during(quarter / 4, 1 / 4)}>
+            <g {...turn(...pole)}>
+              <g {...zoom(...pole, 0.618, { speed: 4 })}>
+                <path
+                  d="M190.95 0.5H309.95V119.5H190.95Z"
+                  stroke="currentColor"
+                  strokeDasharray="4 4"
+                  transform={`rotate(${-90 * quarter} ${pole.join(" ")})`}
+                />
+              </g>
+            </g>
+          </g>
+        ))}
+      </Clip>
       <path
         d="M309.95 0.5V119.5M309.95 74.05H383.5M338.05 74.05V119.5M309.95 91.41H338.05M327.32 74.05V91.41"
         stroke="currentColor"

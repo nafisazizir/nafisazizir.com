@@ -2,13 +2,23 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import { useState, type ReactNode } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type PointerEvent,
+  type ReactNode,
+  type RefObject,
+} from "react"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { track } from "@/lib/analytics/events"
 import { formatDate } from "@/lib/format"
 import { EASE_OUT, staggerItem } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 
 export interface PostListItem {
   slug: string
@@ -29,6 +39,13 @@ const ART_HEIGHT = "33.125%"
 // Past this many cards the stagger stops growing, so a long list doesn't
 // keep its last cards waiting.
 const MAX_STAGGER = 8
+
+// How long a pattern's clock takes to come up to speed when a card is
+// hovered, and to wind down when it's left, in ms. The rate eases rather
+// than switching, so the loop starts and stops like a machine, not a video.
+const SPIN_UP = 450
+const SPIN_DOWN = 800
+const easeOut = (t: number) => 1 - (1 - t) ** 3
 
 /**
  * Every post at once, newest first: a two-line headline set as x.com sets
@@ -63,7 +80,7 @@ export function PostList({
         {title}
         <span className="block text-gray-900">{subtitle}</span>
       </motion.h1>
-      <ul className="grid grid-cols-1 gap-x-4 gap-y-10 md:auto-rows-fr md:grid-cols-2 xl:grid-cols-3">
+      <ul className="group/list grid grid-cols-1 gap-x-4 gap-y-10 md:auto-rows-fr md:grid-cols-2 xl:grid-cols-3">
         {items.map((item, i) => (
           <Card
             key={item.slug}
@@ -94,6 +111,9 @@ export function PostList({
 // bottom-aligned in room for three lines so last lines align across a row;
 // a longer title grows the panel instead of reaching the art. Its box is
 // trimmed to cap height and baseline, so the pad is measured to the ink.
+// The whole card is one link. Hovering it runs its pattern and dims the
+// others, as the X clone's feature grid does; the dim sits on the <li>
+// because framer leaves an inline opacity on the entrance wrapper.
 function Card({
   item,
   href,
@@ -107,70 +127,168 @@ function Card({
   delay: number
   onOpen: () => void
 }) {
+  const link = useRef<HTMLAnchorElement>(null)
+  const play = usePatternPlay(link)
+
   // The list's links prefetch the article's shell, which is shared by every
   // post. Once the card has the pointer or focus, it asks for this post too,
   // so a click usually lands on the finished article rather than its skeleton.
   const [intent, setIntent] = useState(false)
   const prefetch = intent ? true : null
-  const onIntent = () => setIntent(true)
 
   return (
-    <motion.li
-      onPointerEnter={onIntent}
-      onFocus={onIntent}
-      onTouchStart={onIntent}
-      initial={reduced ? false : { opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={
-        reduced ? { duration: 0 } : { duration: 0.28, ease: EASE_OUT, delay }
-      }
-      className="flex flex-col gap-2 md:h-full"
-    >
-      <Link
-        href={href}
-        prefetch={prefetch}
-        aria-hidden
-        tabIndex={-1}
-        onClick={onOpen}
-        className="block bg-gray-100"
+    <li className="transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-has-[li:hover]/list:not-hover:opacity-50 md:h-full">
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={
+          reduced ? { duration: 0 } : { duration: 0.28, ease: EASE_OUT, delay }
+        }
+        className="md:h-full"
       >
-        <div
-          className="relative overflow-hidden"
-          style={{ paddingBottom: ART_HEIGHT }}
-        >
-          <AspectRatio ratio={STAGE_RATIO} className="absolute inset-x-0 top-0">
-            {item.art}
-          </AspectRatio>
-        </div>
-        <div className="flex min-h-[calc(2lh+1cap+2rem)] flex-col justify-end p-4 text-heading-24">
-          <p className="text-balance text-gray-1000 [text-box:trim-both_cap_alphabetic]">
-            {item.title}
-          </p>
-        </div>
-      </Link>
-      <div className="flex flex-1 flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <time dateTime={item.date} className="text-label-13 text-gray-900">
-            {formatDate(item.date)}
-          </time>
-          {item.description ? (
-            <p className="line-clamp-3 text-copy-13 text-gray-900">
-              {item.description}
-            </p>
-          ) : null}
-        </div>
-        <Button
-          shape="rounded"
-          size="sm"
-          variant="secondary"
-          className="mt-auto w-min"
-          nativeButton={false}
+        <Link
+          ref={link}
+          href={href}
+          prefetch={prefetch}
           onClick={onOpen}
-          render={<Link href={href} prefetch={prefetch} />}
+          onPointerEnter={(e) => {
+            setIntent(true)
+            play.onPointerEnter(e)
+          }}
+          onPointerLeave={play.onPointerLeave}
+          onFocus={(e) => {
+            setIntent(true)
+            play.onFocus(e)
+          }}
+          onBlur={play.onBlur}
+          onTouchStart={() => setIntent(true)}
+          data-hover-play
+          className="group/card flex flex-col gap-2 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-600 md:h-full"
         >
-          Read more
-        </Button>
-      </div>
-    </motion.li>
+          <div className="bg-gray-100">
+            <div
+              className="relative overflow-hidden"
+              style={{ paddingBottom: ART_HEIGHT }}
+            >
+              <AspectRatio
+                ratio={STAGE_RATIO}
+                className="absolute inset-x-0 top-0"
+              >
+                {item.art}
+              </AspectRatio>
+            </div>
+            <div className="flex min-h-[calc(2lh+1cap+2rem)] flex-col justify-end p-4 text-heading-24">
+              <p className="text-balance text-gray-1000 [text-box:trim-both_cap_alphabetic]">
+                {item.title}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <time
+                dateTime={item.date}
+                className="text-label-13 text-gray-900"
+              >
+                {formatDate(item.date)}
+              </time>
+              {item.description ? (
+                <p className="line-clamp-3 text-copy-13 text-gray-900">
+                  {item.description}
+                </p>
+              ) : null}
+            </div>
+            {/* A button's look, not a button: the card is the link. */}
+            <span
+              className={cn(
+                buttonVariants({
+                  variant: "secondary",
+                  size: "sm",
+                  shape: "rounded",
+                }),
+                "mt-auto w-min group-hover/card:bg-gray-200"
+              )}
+            >
+              Read more
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </li>
   )
 }
+
+// Runs a card's pattern while the card is hovered, or focused from the
+// keyboard. The stage's clock is a CSS animation, held paused on hover
+// devices by globals.css; this takes it over through the Web Animations API
+// and eases its playback rate up and down. Touch screens have no hover, so
+// there the stage plays while it's on screen, as ziiz stages do. Under
+// reduced motion the clock doesn't exist and none of this does anything.
+function usePatternPlay(ref: RefObject<HTMLElement | null>) {
+  const state = useRef({ hover: false, focus: false, frame: 0 })
+
+  useEffect(() => {
+    const s = state.current
+    return () => cancelAnimationFrame(s.frame)
+  }, [])
+
+  const update = useCallback(() => {
+    const s = state.current
+    const to = s.hover || s.focus ? 1 : 0
+    const clocks = ref.current?.querySelector("svg")?.getAnimations() ?? []
+    if (!clocks.length) return
+
+    cancelAnimationFrame(s.frame)
+    const from = clocks[0].playState === "running" ? clocks[0].playbackRate : 0
+    if (from === to) return
+    const duration = (to ? SPIN_UP : SPIN_DOWN) * Math.abs(to - from)
+    const start = performance.now()
+    if (to) {
+      for (const clock of clocks) {
+        clock.playbackRate = from
+        clock.play()
+      }
+    }
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const rate = from + (to - from) * easeOut(t)
+      for (const clock of clocks) clock.playbackRate = rate
+      if (t < 1) s.frame = requestAnimationFrame(step)
+      else if (!to) for (const clock of clocks) clock.pause()
+    }
+    s.frame = requestAnimationFrame(step)
+  }, [ref])
+
+  const onPointerEnter = useCallback(
+    (e: PointerEvent) => {
+      if (e.pointerType === "touch" || !hovers()) return
+      state.current.hover = true
+      update()
+    },
+    [update]
+  )
+  const onPointerLeave = useCallback(
+    (e: PointerEvent) => {
+      if (e.pointerType === "touch" || !hovers()) return
+      state.current.hover = false
+      update()
+    },
+    [update]
+  )
+  const onFocus = useCallback(
+    (e: FocusEvent) => {
+      if (!hovers() || !e.currentTarget.matches(":focus-visible")) return
+      state.current.focus = true
+      update()
+    },
+    [update]
+  )
+  const onBlur = useCallback(() => {
+    if (!state.current.focus) return
+    state.current.focus = false
+    update()
+  }, [update])
+
+  return { onPointerEnter, onPointerLeave, onFocus, onBlur }
+}
+
+const hovers = () => window.matchMedia("(hover: hover)").matches
