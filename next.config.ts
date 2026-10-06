@@ -5,6 +5,8 @@ import { POSTHOG_PROXY_PATH, postHogHosts } from "./lib/analytics/hosts"
 const posthog = postHogHosts()
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
+  partialPrefetching: true,
   // Short, presentable links for profile/bio fields that render the raw URL
   // (GitHub, X) — they redirect onto the UTM-tagged destination. Temporary so
   // the campaign values stay editable; a 308 would be cached by browsers.

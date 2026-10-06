@@ -6,6 +6,14 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 
 import {
+  HEADER,
+  HEADER_ART,
+  HEADER_BACK,
+  HEADER_DATE,
+  HEADER_HEADLINE,
+  HEADER_TITLE,
+} from "@/components/article/article-layout"
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -13,95 +21,127 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { tap as tapSound } from "@/lib/audio"
-import { staggerContainer, staggerItem } from "@/lib/motion"
+import { staggerItem } from "@/lib/motion"
+import { cn } from "@/lib/utils"
+
+// The entrance is a stagger, but the way back is in the route's shell and the
+// rest streams in with the post, so each piece carries its own delay rather
+// than waiting on a parent to orchestrate it.
+const STAGGER = { back: 0.04, title: 0.12, date: 0.2, art: 0.28 }
+
+// The server renders the hidden state, so variants stay on even when motion
+// is reduced (without them nothing animates it back in); reduced motion keeps
+// the fade and drops the rise.
+function useItem(delay: number) {
+  const reduced = useReducedMotion() ?? false
+  return staggerItem(reduced ? 0 : 12, delay)
+}
 
 /**
  * A post's opening, on the geometry of the ziiz X clone's: a row from lg with
  * the way back and title on the left and the post's pattern (400x244) on the
  * right, the section link level with the art's top and the title and date
- * sitting on its bottom, then a rule. Below lg it stacks, the art under the date at
- * 2:1. The ghost back button hangs into the gutter so the chevron's ink, not
- * its hit area, lines up with the title.
+ * sitting on its bottom, then a rule. Below lg it stacks, the art under the
+ * date at 2:1. The ghost back button hangs into the gutter so the chevron's
+ * ink, not its hit area, lines up with the title.
+ *
+ * The way back only knows the section, so it renders with the route's shell;
+ * `children` is the headline, which waits on the post.
  */
 export function ArticleHeader({
+  section,
+  children,
+}: {
+  /** The list this post belongs to, where the back button returns. */
+  section: { href: string; label: string }
+  children: ReactNode
+}) {
+  const item = useItem(STAGGER.back)
+
+  return (
+    <header className={HEADER}>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={item}
+        className={HEADER_BACK}
+      >
+        <Button
+          variant="ghost"
+          shape="rounded"
+          size="icon-sm"
+          aria-label={`Back to ${section.label}`}
+          nativeButton={false}
+          onClick={() => tapSound()}
+          className="-ms-3 text-gray-900"
+          render={<Link href={section.href} />}
+        >
+          <IconChevronLeft />
+        </Button>
+        <Breadcrumb className="min-w-0">
+          <BreadcrumbList className="flex-nowrap">
+            <BreadcrumbItem className="shrink-0">
+              <BreadcrumbLink
+                onClick={() => tapSound()}
+                render={<Link href={section.href} />}
+              >
+                {section.label}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </motion.div>
+      {children}
+    </header>
+  )
+}
+
+/** The title, date and art: two cells of the header's grid. */
+export function ArticleHeadline({
   title,
   date,
   displayDate,
-  section,
   art,
 }: {
   title: string
   date: string
   displayDate: string
-  /** The list this post belongs to, where the back button returns. */
-  section: { href: string; label: string }
   /** The post's pattern, staged on the server. */
   art: ReactNode
 }) {
-  // The server renders the hidden state, so variants stay on even when
-  // motion is reduced (without them nothing animates it back in); reduced
-  // motion keeps the fade and drops the rise.
-  const reduced = useReducedMotion() ?? false
-  const item = staggerItem(reduced ? 0 : 12)
+  const titleItem = useItem(STAGGER.title)
+  const dateItem = useItem(STAGGER.date)
+  const artItem = useItem(STAGGER.art)
 
   return (
-    <motion.header
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer(0.08, 0.04)}
-      className="flex flex-col border-b border-gray-alpha-400 pb-6 lg:flex-row lg:items-start lg:justify-between lg:gap-4 lg:pb-30"
-    >
-      <div className="flex min-w-0 flex-col lg:min-h-61 lg:max-w-180 lg:flex-1">
-        <motion.div
-          variants={item}
-          className="flex min-w-0 shrink-0 items-center gap-4"
+    <>
+      <div className={HEADER_HEADLINE}>
+        <motion.h1
+          initial="hidden"
+          animate="visible"
+          variants={titleItem}
+          className={cn(HEADER_TITLE, "text-balance text-gray-1000")}
         >
-          <Button
-            variant="ghost"
-            shape="rounded"
-            size="icon-sm"
-            aria-label={`Back to ${section.label}`}
-            nativeButton={false}
-            onClick={() => tapSound()}
-            className="-ms-3 text-gray-900"
-            render={<Link href={section.href} />}
-          >
-            <IconChevronLeft />
-          </Button>
-          <Breadcrumb className="min-w-0">
-            <BreadcrumbList className="flex-nowrap">
-              <BreadcrumbItem className="shrink-0">
-                <BreadcrumbLink
-                  onClick={() => tapSound()}
-                  render={<Link href={section.href} />}
-                >
-                  {section.label}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </motion.div>
-
-        <div className="flex flex-1 flex-col justify-end gap-4 pt-6 lg:pt-8">
-          <motion.h1
-            variants={item}
-            className="text-heading-32 text-balance text-gray-1000 sm:text-heading-40 lg:text-heading-48"
-          >
-            {title}
-          </motion.h1>
-          <motion.p variants={item} className="text-label-13 text-gray-900">
-            <time dateTime={date}>{displayDate}</time>
-          </motion.p>
-        </div>
+          {title}
+        </motion.h1>
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={dateItem}
+          className={cn(HEADER_DATE, "text-gray-900")}
+        >
+          <time dateTime={date}>{displayDate}</time>
+        </motion.p>
       </div>
-
       <motion.div
-        variants={item}
+        initial="hidden"
+        animate="visible"
+        variants={artItem}
         aria-hidden
-        className="relative mt-6 aspect-2/1 w-full shrink-0 overflow-hidden lg:mt-0 lg:aspect-auto lg:h-61 lg:w-100"
+        className={HEADER_ART}
       >
         {art}
       </motion.div>
-    </motion.header>
+    </>
   )
 }

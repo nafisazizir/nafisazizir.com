@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
 
 import { ArticlePage } from "@/components/article/article-page"
 import { getPostBySlug, getPostsByType } from "@/lib/content"
@@ -30,14 +29,10 @@ export async function generateMetadata({
   }
 }
 
-export default async function ProjectPost({
+export default function ProjectPost({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
-  const { slug } = await params
-  const post = getPostBySlug(slug)
-  if (!post || post.frontmatter.type !== "project") notFound()
-
-  return <ArticlePage post={post} />
+  return <ArticlePage type="project" params={params} />
 }

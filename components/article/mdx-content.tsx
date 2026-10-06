@@ -1,12 +1,18 @@
 import { ziizShikiOptions } from "@nafisazizir/ziiz/shiki"
 import rehypeShiki from "@shikijs/rehype"
+import { cacheLife } from "next/cache"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 
 import { mdxComponents } from "@/components/article/mdx-components"
 
-export function MDXContent({ source }: { source: string }) {
+// Keyed on the source, so an edited post recompiles in dev; in production it
+// only changes with a deploy.
+export async function MDXContent({ source }: { source: string }) {
+  "use cache"
+  cacheLife("max")
+
   return (
     <MDXRemote
       source={source}

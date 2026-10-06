@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Button } from "@/components/ui/button"
@@ -107,8 +107,18 @@ function Card({
   delay: number
   onOpen: () => void
 }) {
+  // The list's links prefetch the article's shell, which is shared by every
+  // post. Once the card has the pointer or focus, it asks for this post too,
+  // so a click usually lands on the finished article rather than its skeleton.
+  const [intent, setIntent] = useState(false)
+  const prefetch = intent ? true : null
+  const onIntent = () => setIntent(true)
+
   return (
     <motion.li
+      onPointerEnter={onIntent}
+      onFocus={onIntent}
+      onTouchStart={onIntent}
       initial={reduced ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={
@@ -118,6 +128,7 @@ function Card({
     >
       <Link
         href={href}
+        prefetch={prefetch}
         aria-hidden
         tabIndex={-1}
         onClick={onOpen}
@@ -127,10 +138,7 @@ function Card({
           className="relative overflow-hidden"
           style={{ paddingBottom: ART_HEIGHT }}
         >
-          <AspectRatio
-            ratio={STAGE_RATIO}
-            className="absolute inset-x-0 top-0"
-          >
+          <AspectRatio ratio={STAGE_RATIO} className="absolute inset-x-0 top-0">
             {item.art}
           </AspectRatio>
         </div>
@@ -158,7 +166,7 @@ function Card({
           className="mt-auto w-min"
           nativeButton={false}
           onClick={onOpen}
-          render={<Link href={href} />}
+          render={<Link href={href} prefetch={prefetch} />}
         >
           Read more
         </Button>
