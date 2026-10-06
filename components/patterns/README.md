@@ -21,7 +21,9 @@ non-scaling-stroke`, so a stroke is 1px whether the frame is 358 or 1100
    any filled path may touch an edge, never cross it.
 2. **Only straight lines cross an edge,** plus the filled bands between two
    such lines. They are drawn to ±2000 (−2000 up and left, 2400 right) and
-   the container clips them.
+   the container clips them. A time series is the one exception: its past
+   may run out a side with the area under it (Latency), since a chart's
+   history does not start where the frame does.
 3. **Nothing leaves through the bottom.** That is where a cover's title sits.
    A line may lie on the bottom edge (y 119.5) and run out a side.
 4. **A sloped line that leaves a side must still be above the bottom 22 units
@@ -118,6 +120,58 @@ a persistent tree is two roots sharing a subtree. The structure must be
 true; a linked list whose last pointer is null has nothing after it. The
 one familiar silhouette allowed is the database cylinder.
 
+## Motion
+
+Every pattern has an idle loop. It runs only on `<PatternStage animate>`,
+only while the stage is on screen, and never under reduced motion.
+Everywhere else (server HTML, Open Graph, a stage before hydration) the
+pattern is the static drawing.
+
+- **Periodic, never a sequence.** `motion.css` runs one clock over the
+  frame's `loop` (12s unless the pattern passes another to `PatternFrame`)
+  and every moving part is a periodic function of it: `speed` whole cycles
+  per loop, offset by `phase`. Nothing starts, ends, rests or fades. A loop
+  has no first frame you could point to.
+- **Animate the lines.** Most motion is the drawing changing state along
+  itself: a `Run` slides solid windows along a dashed guide, a `Flip` turns
+  a solid line dashed where the same windows pass. A run follows a route
+  through several lines, each placed by `start`, and anything on the route
+  can change state as a window covers it (`on`, `off`). Dashed guides can
+  `march`; dashed circles, or circles carrying markers, `turn`.
+- **Things enter and leave hidden.** A run's window comes out from under a
+  node or from past the container's edge and goes back under or out. A
+  conveyor (`slide`) moves a row of copies one pitch per cycle between the
+  ends of a `Clip` or under cut-outs; a `tick` takes the same trip in even
+  steps. A bar can `rise` out from under its axis. A `zoom` copy starts on
+  one shape and lands on another. Never fade a part in or out.
+- **The motion is the structure working.** A data structure moves by its
+  semantics: a queue is first in, first out; a list is walked pointer by
+  pointer to null; a lookup goes root to leaf down the one pointer the key
+  selects; a backoff's waits double because its arcs do. A geometric
+  pattern moves by its construction: a corridor streams in perspective, a
+  belt drives its pulleys at the ratio of their radii. If the motion could
+  be anything, it is wrong.
+- **One motion, with at most a slow one under it.** A single idea per
+  pattern, plus perhaps a quiet continuous one (a march, a turn).
+- **The edges still hold.** Closed shapes stay inside the frame at every
+  moment; only lines and runs cross an edge. Nothing moves through the
+  bottom.
+- **Calm.** Constant speeds along routes, sines for anything that swings.
+  A run's window is 24 to 40 units; it covers a route in several seconds.
+- **A chart moves like a chart, not like line art.** Either it is live,
+  history scrolling away from now as new data comes in (Latency; Bars,
+  whose current interval fills dashed before the chart steps on), or it is
+  being read, a cursor showing what the data says where it stands (the
+  share below a percentile, the spans on the stack). Recorded data never
+  changes shape, and a run along a chart's outline is not a reading.
+
+Parts that only exist to move carry `opacity="0"` so the static drawing is
+untouched. A pattern takes no hooks of its own: anything that needs an id
+(a mask, a clip) comes from a helper in `motion.tsx` (`Flip`, `Clip`,
+`Reveal`), so a renderer that walks the tree outside React, such as an Open
+Graph route, can draw every helper it knows. Scrub a loop by pausing the svg's animation and setting its
+`currentTime`.
+
 ## Adding one
 
 1. Draw it in `components/patterns/<name>.tsx`, a server component that
@@ -126,7 +180,8 @@ one familiar silhouette allowed is the database cylinder.
 2. Name it for its form, not its use: `PatternEclipse`, not `PatternHero2`.
    Never `index.tsx`, which shadows the folder's `index.ts`.
 3. Add it to `patterns` in `index.ts` with its family, and to the exports.
-4. Open the catalogue, switch through Frame, Cover, 16:9, Open Graph, 4:3
-   and 1:1, in light and dark. Check the rules above at each, then delete
-   whatever does not earn its place.
-5. `pnpm exec prettier --write` the files you touched.
+4. Give it an idle loop (see Motion).
+5. Open the catalogue, switch through Frame, Cover, 16:9, Open Graph, 4:3
+   and 1:1, in light and dark, with Motion on and off. Check the rules
+   above at each, then delete whatever does not earn its place.
+6. `pnpm exec prettier --write` the files you touched.

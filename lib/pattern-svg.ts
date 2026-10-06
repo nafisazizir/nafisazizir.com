@@ -1,6 +1,7 @@
 import { Fragment, isValidElement, type ReactNode } from "react"
 
 import type { PatternProps } from "@/components/patterns/frame"
+import { Clip, Flip, Reveal } from "@/components/patterns/motion"
 
 type Pattern = (props: PatternProps) => ReactNode
 
@@ -40,28 +41,57 @@ function paint(value: string, ink: PatternInk) {
 }
 
 // Walks the element tree a pattern returns, calling components (the pattern,
-// then PatternFrame) until only SVG elements are left. Patterns are server
-// components of literal shapes, so there are no hooks to honour.
-function serialize(node: ReactNode, ink: PatternInk): string {
+// then PatternFrame and the motion helpers) until only SVG elements are
+// left. What's written is the static drawing: parts that exist only to move
+// (opacity 0) are dropped, and so are the motion attributes and styles.
+// Patterns take ids (from useId, which can't run outside a render) only
+// through these helpers, so they're drawn here: a Flip at rest is its solid
+// line, a Clip a clip path and a Reveal a mask at its resting place, with
+// ids counted per SVG.
+function serialize(node: ReactNode, ink: PatternInk, ids = { n: 0 }): string {
   if (node == null || typeof node === "boolean") return ""
-  if (Array.isArray(node)) return node.map((n) => serialize(n, ink)).join("")
+  if (Array.isArray(node))
+    return node.map((n) => serialize(n, ink, ids)).join("")
   if (!isValidElement<Record<string, unknown>>(node)) return ""
 
   const { type, props } = node
-  if (type === Fragment) return serialize(props.children as ReactNode, ink)
+  const children = props.children as ReactNode
+  if (type === Fragment) return serialize(children, ink, ids)
+  if (type === Flip) {
+    return `<path d="${props.d}" stroke="${ink.line}"></path>`
+  }
+  if (type === Clip) {
+    const id = `clip-${ids.n++}`
+    const { x, y, width, height } = props
+    return (
+      `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${width}" height="${height}"></rect></clipPath>` +
+      `<g clip-path="url(#${id})">${serialize(children, ink, ids)}</g>`
+    )
+  }
+  if (type === Reveal) {
+    const id = `reveal-${ids.n++}`
+    const { x, y, width, height } = props
+    return (
+      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="4400" height="4400"><rect x="${x}" y="${y}" width="${width}" height="${height}" fill="#fff"></rect></mask>` +
+      `<g mask="url(#${id})">${serialize(children, ink, ids)}</g>`
+    )
+  }
   if (typeof type === "function") {
-    return serialize((type as Pattern)(props as PatternProps), ink)
+    return serialize((type as Pattern)(props as PatternProps), ink, ids)
   }
   if (typeof type !== "string") return ""
+  if (Number(props.opacity) === 0) return ""
 
   let attrs = ""
   for (const [key, value] of Object.entries(props)) {
-    if (key === "children" || key === "className" || value == null) continue
+    if (skipped.has(key) || key.startsWith("data-") || value == null) continue
     const name = attrNames[key] ?? key
     attrs += ` ${name}="${paint(String(value), ink)}"`
   }
-  return `<${type}${attrs}>${serialize(props.children as ReactNode, ink)}</${type}>`
+  return `<${type}${attrs}>${serialize(children, ink, ids)}</${type}>`
 }
+
+const skipped = new Set(["children", "className", "style"])
 
 /**
  * A pattern as a standalone SVG of `width` by `height`, placed the way

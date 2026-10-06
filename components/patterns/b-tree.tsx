@@ -1,18 +1,25 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Flip } from "./motion"
+
+// A lookup, then a range scan, along M192.5 -200V84.5H600: down the root
+// pointer, through the root and down the one child pointer the key
+// selects, into the leaf holding it, then on along the leaf links.
+const lookup = { length: 692, w: 28 }
 
 export function PatternBTree(props: PatternProps) {
   return (
-    <PatternFrame {...props}>
-      <path d="M192.5 12.5V-2000" stroke="currentColor" />
+    <PatternFrame loop={10} {...props}>
+      <Flip d="M192.5 -2000V12.5" start={-1800} {...lookup} />
       <path d="M24.5 84.5H-2000" stroke="currentColor" strokeDasharray="4 4" />
-      <path d="M360.5 84.5H2400" stroke="currentColor" />
-      <path d="M108.5 84.5H150.5M234.5 84.5H276.5" stroke="currentColor" />
+      <Flip d="M360.5 84.5H2400" start={452.5} {...lookup} />
+      <path d="M108.5 84.5H150.5" stroke="currentColor" />
+      <Flip d="M234.5 84.5H276.5" start={326.5} {...lookup} />
       <path
         d="M164.5 36.5L66.5 72.5M220.5 36.5L318.5 72.5"
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path d="M192.5 36.5V72.5" stroke="currentColor" />
+      <Flip d="M192.5 36.5V72.5" start={236.5} {...lookup} />
       <rect
         x="164.5"
         y="12.5"

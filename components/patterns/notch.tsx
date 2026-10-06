@@ -1,4 +1,10 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Run } from "./motion"
+
+// The offset is constructed: a window traces the dashed guide 8 out from
+// the notch, along the bottom, up to the middle square, and out under the
+// pill it sets.
+const trace = { length: 524, w: 32 }
 
 export function PatternNotch(props: PatternProps) {
   return (
@@ -14,6 +20,7 @@ export function PatternNotch(props: PatternProps) {
         strokeDasharray="4 4"
       />
       <path d="M204.5 56.5H2400" stroke="currentColor" strokeDasharray="4 4" />
+      <Run d="M-40 116.5H204.5V56.5H424" {...trace} />
       <rect
         x="212.5"
         y="0.5"

@@ -1,14 +1,37 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Flip, Run } from "./motion"
+
+// Backpropagation: the error comes in at the output and runs backwards,
+// down every edge into the layer, and the layer passes it back to the
+// inputs once its longest edge has delivered (at 416), then out along
+// them. Positions count back from x 600.
+const grad = { length: 667.4, w: 24 }
+const H = 416
+const I = 531.4
+
+const edges = [
+  ["M192 20L96 36", H],
+  ["M192 60L96 36", H],
+  ["M192 100L96 36", H],
+  ["M192 20L96 84", H],
+  ["M192 60L96 84", H],
+  ["M192 100L96 84", H],
+  ["M288 60L192 20", 312],
+  ["M288 60L192 60", 312],
+  ["M288 60L192 100", 312],
+] as const
 
 export function PatternNetwork(props: PatternProps) {
   return (
-    <PatternFrame {...props}>
+    <PatternFrame loop={10} {...props}>
       <path
         d="M96 36H-2000M96 84H-2000"
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path d="M288 60H2400" stroke="currentColor" />
+      <Run d="M96 36H-40" start={I} {...grad} />
+      <Run d="M96 84H-40" start={I} {...grad} />
+      <Flip d="M2400 60H288" start={-1800} {...grad} />
       <rect
         x="172"
         y="0.5"
@@ -19,10 +42,9 @@ export function PatternNetwork(props: PatternProps) {
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path
-        d="M96 36L192 20M96 36L192 60M96 36L192 100M96 84L192 20M96 84L192 60M96 84L192 100M192 20L288 60M192 60L288 60M192 100L288 60"
-        stroke="currentColor"
-      />
+      {edges.map(([d, start]) => (
+        <Flip key={d} d={d} start={start} {...grad} />
+      ))}
       <circle
         cx="96"
         cy="36"

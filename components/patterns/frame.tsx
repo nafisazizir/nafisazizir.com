@@ -6,14 +6,20 @@ export type PatternProps = React.SVGProps<SVGSVGElement>
 // background. Closed shapes stay inside it. Only straight lines, and the
 // bands between them, cross an edge, and they are drawn far past it so
 // whatever holds the pattern does the clipping. Nothing leaves through the
-// bottom, which is where a title goes.
-export function PatternFrame(props: PatternProps) {
+// bottom, which is where a title goes. `loop` is the length in seconds of
+// the pattern's idle motion, which runs only on an animated stage.
+export function PatternFrame({
+  loop = 12,
+  style,
+  ...props
+}: PatternProps & { loop?: number }) {
   return (
     <svg
       viewBox="0 0 384 120"
       fill="none"
       overflow="visible"
       aria-hidden="true"
+      style={{ "--pattern-loop": `${loop}s`, ...style } as React.CSSProperties}
       {...props}
     />
   )

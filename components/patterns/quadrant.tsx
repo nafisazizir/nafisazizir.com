@@ -1,4 +1,9 @@
 import { PatternFrame, type PatternProps } from "./frame"
+import { Flip, Run } from "./motion"
+
+// Flow comes in down the dashed diagonal to the origin and leaves along
+// both axes that bound the quadrant.
+const flow = { length: 600, w: 32 }
 
 export function PatternQuadrant(props: PatternProps) {
   return (
@@ -8,7 +13,9 @@ export function PatternQuadrant(props: PatternProps) {
         stroke="currentColor"
         strokeDasharray="4 4"
       />
-      <path d="M192 -2000V116.5H2400" stroke="currentColor" />
+      <Run d="M-64.6 -38.9L192 116.5" {...flow} />
+      <Flip d="M192 116.5V-2000" start={300} {...flow} />
+      <Flip d="M192 116.5H2400" start={300} {...flow} />
       <path
         d="M200 -2000V16.75A91.75 91.75 0 0 0 383.5 16.75V-2000"
         fill="var(--ds-background-100)"
