@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next"
 import { Geist_Mono } from "next/font/google"
 import localFont from "next/font/local"
+import { Suspense } from "react"
 
 import "./globals.css"
 import { PostHogProvider } from "@/components/analytics/posthog-provider"
-import { Nav } from "@/components/nav"
+import { Nav, NavFallback } from "@/components/nav"
 import { ThemeProvider } from "@/components/theme-provider"
 import { site } from "@/lib/site"
 import { cn } from "@/lib/utils"
@@ -99,7 +100,9 @@ export default function RootLayout({
         />
         <PostHogProvider>
           <ThemeProvider>
-            <Nav />
+            <Suspense fallback={<NavFallback />}>
+              <Nav />
+            </Suspense>
             {children}
           </ThemeProvider>
         </PostHogProvider>

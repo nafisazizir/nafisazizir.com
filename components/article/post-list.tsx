@@ -6,6 +6,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useState,
   type FocusEvent,
   type PointerEvent,
   type ReactNode,
@@ -129,6 +130,12 @@ function Card({
   const link = useRef<HTMLAnchorElement>(null)
   const play = usePatternPlay(link)
 
+  // The list's links prefetch the article's shell, which is shared by every
+  // post. Once the card has the pointer or focus, it asks for this post too,
+  // so a click usually lands on the finished article rather than its skeleton.
+  const [intent, setIntent] = useState(false)
+  const prefetch = intent ? true : null
+
   return (
     <li className="transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-has-[li:hover]/list:not-hover:opacity-50 md:h-full">
       <motion.div
@@ -142,11 +149,19 @@ function Card({
         <Link
           ref={link}
           href={href}
+          prefetch={prefetch}
           onClick={onOpen}
-          onPointerEnter={play.onPointerEnter}
+          onPointerEnter={(e) => {
+            setIntent(true)
+            play.onPointerEnter(e)
+          }}
           onPointerLeave={play.onPointerLeave}
-          onFocus={play.onFocus}
+          onFocus={(e) => {
+            setIntent(true)
+            play.onFocus(e)
+          }}
           onBlur={play.onBlur}
+          onTouchStart={() => setIntent(true)}
           data-hover-play
           className="group/card flex flex-col gap-2 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-600 md:h-full"
         >

@@ -15,6 +15,10 @@ import {
 } from "@/lib/audio"
 import { cn } from "@/lib/utils"
 
+const BAND = "fixed inset-x-0 top-(--nav-inset) z-50 flex justify-center"
+const PILL =
+  "rounded-3xl border border-gray-alpha-400 bg-background-100/20 text-gray-1000 shadow-2xl backdrop-blur-sm backdrop-saturate-150"
+
 const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
@@ -89,6 +93,19 @@ function AnimatedLabel({ label }: { label: string }) {
         </span>
       )}
     </span>
+  )
+}
+
+/**
+ * The closed pill, empty, for the moment the path isn't known yet: a post's
+ * shell is shared by every slug, so the nav streams in with the post. Same
+ * band, same 104x38 pill, so the label fills in without anything moving.
+ */
+export function NavFallback() {
+  return (
+    <div aria-hidden className={BAND}>
+      <div className={cn(PILL, "h-(--nav-pill) w-26")} />
+    </div>
   )
 }
 
@@ -227,7 +244,7 @@ export function Nav() {
   if (!onKnownRoute) return null
 
   return (
-    <nav className="fixed inset-x-0 top-(--nav-inset) z-50 flex justify-center">
+    <nav className={BAND}>
       <div
         ref={pillRef}
         onKeyDown={onKeyDown}
@@ -238,10 +255,7 @@ export function Nav() {
             ? "width 300ms ease-out 0ms, padding 300ms ease-out 300ms"
             : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms",
         }}
-        className={cn(
-          "rounded-3xl border border-gray-alpha-400 bg-background-100/20 text-gray-1000 shadow-2xl backdrop-blur-sm backdrop-saturate-150",
-          open ? "w-52 p-2" : "w-26 p-0"
-        )}
+        className={cn(PILL, open ? "w-52 p-2" : "w-26 p-0")}
       >
         {onSectionRoot || !open ? (
           <Button

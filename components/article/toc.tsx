@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
-import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { track } from "@/lib/analytics/events"
@@ -15,10 +14,9 @@ const TOC_ITEM_H = 28
 // only once the page has its full width: 1120 plus the 24px gutters.
 const TOC_MIN_WIDTH = 1168
 
-export function Toc({ items }: { items: TocItem[] }) {
+export function Toc({ slug, items }: { slug: string; items: TocItem[] }) {
   const reduced = useReducedMotion() ?? false
   const [wide, setWide] = useState(false)
-  const slug = usePathname().split("/").pop() ?? ""
   const { active, scrollToId } = useScrollSpy({
     ids: items.map((it) => it.id),
     topOffset: 96,

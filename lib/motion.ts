@@ -34,11 +34,11 @@ export const staggerContainer = (
   },
 })
 
-export const staggerItem = (y = 12): Variants => ({
+export const staggerItem = (y = 12, delay = 0): Variants => ({
   hidden: { opacity: 0, y },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: DURATION.base, ease: EASE_OUT },
+    transition: { duration: DURATION.base, ease: EASE_OUT, delay },
   },
 })
