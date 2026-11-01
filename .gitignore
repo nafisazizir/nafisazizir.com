@@ -37,3 +37,6 @@ pnpm-debug.log*
 next-env.d.ts
 scripts/covers/sheet.html
 scripts/covers/sheet.png
+
+# reference library (2.2G, local only)
+/assets/references/elevenlabs/
