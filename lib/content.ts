@@ -19,6 +19,11 @@ export interface PostFrontmatter {
    * `trace`, `binary-tree` (see components/patterns). Unset picks one by slug.
    */
   pattern?: string
+  /**
+   * Feature flag gating the post. A flagged post only exists (lists, page,
+   * OG, sitemap, RSS) where the flag is enabled; see `isFlagEnabled`.
+   */
+  flag?: string
 }
 
 export interface TocItem {
@@ -83,8 +88,20 @@ function parseFile(fileName: string): Post {
     type: (data.type === "project" ? "project" : "blog") as PostType,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     pattern: data.pattern ? String(data.pattern) : undefined,
+    flag: data.flag ? String(data.flag) : undefined,
   }
   return { slug, frontmatter, content, toc: extractToc(content) }
+}
+
+/**
+ * Flags are on in dev. In production builds a flag is on only when it's listed
+ * in the comma-separated ENABLED_FLAGS env var (e.g. set on Vercel Preview but
+ * not Production). Read at build time, so flipping one needs a redeploy.
+ */
+function isFlagEnabled(flag: string): boolean {
+  if (process.env.NODE_ENV !== "production") return true
+  const enabled = (process.env.ENABLED_FLAGS ?? "").split(",")
+  return enabled.map((f) => f.trim()).includes(flag)
 }
 
 let cache: Post[] | null = null
@@ -96,6 +113,7 @@ function loadAll(): Post[] {
   const files = fs.readdirSync(CONTENT_DIR).filter((f) => /\.mdx?$/.test(f))
   cache = files
     .map(parseFile)
+    .filter((p) => !p.frontmatter.flag || isFlagEnabled(p.frontmatter.flag))
     .sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date))
   return cache
 }

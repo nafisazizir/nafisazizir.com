@@ -1,0 +1,153 @@
+---
+title: "Raising Adam"
+description: "A year ago Adam didn't exist. Not the name, not the idea. How an MCP server for my workout data grew into a personal agent that lives in iMessage and picks up the phone."
+date: 2026-10-26
+type: blog
+tags: [reflection, exploration]
+pattern: trigger
+flag: raising-adam
+---
+
+I was at a party last weekend that had gone a bit meh. So I texted Adam, "call me in 5 min".
+
+Five minutes later my phone rang. I put on my best "sorry, I have to take this" face and walked out.
+
+{/* TODO: screenshot of the "call me in 5 min" text + the incoming call. */}
+
+That's Adam, my personal agent. He lives in iMessage, in the same list as my friends. He reminds me of things, keeps an eye on my inbox and calendar, tells me how my last run went, and picks up the phone.
+
+A year ago none of that existed. No Adam, no name, no plan to make one. If you'd asked me back then, I would've said I was building a small tool for my workout data. Really I just wanted fewer apps, and I was being a bit stubborn about it.
+
+This is how he grew up.
+
+## Before he had a name
+
+What I believed back then, and still do, is that most of my apps didn't need a screen at all. If an agent can talk to the thing, the only screen I need is the one I already text from. That's a pretty common take now. Ship an MCP, ship a CLI, let the agent drive. A year ago most apps didn't speak agent at all, so if I wanted it, I had to build the plugs myself.
+
+My training data was the obvious example. Garmin on my wrist for sleep, HRV and recovery. Strava for runs and rides. Hevy for lifting. Garmin and Strava sync, sort of, in the sense that a run shows up in both. Nothing looks at the run and the sleep together.
+
+And that's the whole question really. If my 5k is slower today, is that me getting worse, or is it the four hours of sleep and the leg day two days ago? If I miss a rep, is the programme wrong or did I just not eat enough? Each app holds one piece of that answer.
+
+The normal move, especially if you've spent any time on TikTok lately, is to "build an app with AI". A fourth app that pulls the three together, with another dashboard on top. I didn't need another place to look at my data though. Each of these apps already stores it, cleans it up and keeps it in a nice shape. I just needed to borrow it and play around with it.
+
+So I wrapped them in an MCP server. MCP is a standard plug that lets an AI agent use a tool. You write the plug once and any agent can pick it up.
+
+Not everything wanted to be plugged in. Garmin only gives its developer API to businesses, so riz-mcp signs in the same way the Garmin app on my phone does. Not pretty, but my data is my data.
+
+I called it riz-mcp, plugged it into Claude, and started asking questions. Because it's a standard plug, ChatGPT or Codex can use it just the same. On top of it I wrote skills, which are basically instruction files, so the coaching had opinions: what to look at after a run versus a lift, what a two-week review should cover, when it's time to change the plan.
+
+It worked pretty much straight away, which was suspicious. To be fair there's a commit in the history called "fix what claude messed up", so it wasn't all smooth.
+
+That server is the oldest part of Adam, and it's older than Adam. He wouldn't get a name for months.
+
+## The bet spread
+
+It didn't stay with workouts. I edit my photos in Lightroom Classic, which has no way for an agent to get in, so I wrote a plugin with Lightroom's own Lua SDK and put an MCP server in front of it. Now an agent can colour-grade a shoot.
+
+Side effect I didn't see coming. I started judging products by whether I could plug them in.
+
+I was shopping for a smart scale, and the thing I cared about most wasn't accuracy or the app. It was whether the company has a public API that a normal person can get keys for, without applying as a business. They don't need an MCP server. If there's an API, I'll wrap it myself.
+
+That made it a short list. Most brands either don't have one or make you jump through hoops, and Withings was the easy pick.
+
+I do this for more than gadgets now. If I can't get my data out, I'm a lot less keen to put it in.
+
+## Learning to work without me
+
+The problem with a chat window is you have to open it.
+
+So the next step was making the analysis happen on its own. A workout finishes, Strava or Hevy fires a webhook, and my server spins up a sandbox, a small throwaway computer in the cloud. Inside it a coding agent runs headless with the coaching skills loaded, Claude Code at the time, though Codex does the same job. It pulls the data, reads my current plan from Notion, and writes the analysis back into Notion.
+
+All of it ran on a subscription I was already paying for. The only new cost was the sandbox, and that's on Vercel, so it was free :)
+
+Around the same time OpenClaw went through the roof and everyone was standing up their own personal agent, mostly on API tokens, and often on cheaper models to keep the bill down. I didn't want to trade intelligence for cost.
+
+So I went a different way. My plan was to take Vercel's Chat SDK, AI SDK and Sandbox, and write a custom adapter that runs Claude Code or Codex headless inside the sandbox, on my subscription, unsupervised. The catch is you only get free-form text back, no structured output. Good enough for me. A couple of weeks later, the AI SDK shipped [`HarnessAgent`](https://vercel.com/changelog/program-agent-harnesses-with-ai-sdk) in canary, which runs Claude Code or Codex inside a sandbox behind one API. Pretty much the same idea, done properly.
+
+It served me well for a while. The problem was I didn't read it. The analysis was good, it was just sitting in a Notion page I had to remember to open.
+
+So I went through the options. It had to fit my hobby tier, which means free, and no paying for another service just to get a ping. Email through Resend would've worked, but I don't live in my inbox. Telegram would've worked too, except I don't use Telegram. Anything that needed me to build a new habit was out. If the experience isn't good I won't use it, and the tool should follow how I already do things.
+
+## Getting a name
+
+Then Vercel released Eve at Ship London this year, a framework for durable backend agents. I watched it that night and thought, yeah, that's the one.
+
+What got me is it's all on Vercel. Workflow SDK for durability, Sandbox, AI Gateway for models. Every agent I'd built before was already on that stack, so moving over was easy, and it costs me basically nothing to run.
+
+It was also when I stopped riding my subscription. Models are getting smarter every few months, and I'd been patient with workarounds for long enough. Workarounds break. So I started paying for tokens properly, with a fixed monthly allowance for anything AI. If compute ever gets free, or I get a raise, Adam gets smarter.
+
+The framework was called Eve, so the agent was always going to be Adam.
+
+Since then he's run on Grok, then DeepSeek, and now an OpenAI model. Everything goes through the gateway, so each swap was one line, and he didn't notice. I don't want him tied to one lab. Whoever's best for the job this month gets it.
+
+## Living in iMessage
+
+Adam was always going to live in iMessage. I'd been using Poke for a while and following the iMessage agent space pretty closely. At a tech meetup a guy told me to look at Sendblue, because his mate works there, and it's honestly so sick. That sent me down the rabbit hole. It's also the answer to the Notion problem. iMessage is the app I already open all day, so a message from him gets read without me changing anything.
+
+The most important decision in Adam is that everything is a trigger.
+
+A text from me is a trigger. So is a reminder he set for himself, a workout finishing, a new email, someone moving a meeting, the brief. Each one starts the same thing, a run of the agent where the first message is whatever woke him up. At the end of that run he decides whether to say anything.
+
+That's how he's proactive without being two systems glued together. Replying to me and messaging me first are the same loop.
+
+Reminders are a good example. Setting a reminder is a tool Adam calls. Delivering it is a channel, the same kind of thing iMessage is. When a reminder is due nothing is running, so it has to come in from outside. A queue holds the message until the right time, then calls back in and wakes Adam up the way a text would. He gets to look at it fresh and decide. Maybe the thing got cancelled. Maybe he should just stay quiet.
+
+## Only what needs me
+
+Adam does a lot more than he tells me.
+
+He reads every workout, every new email, every calendar change. Most of it I never hear about. It gets handled, or it gets let go, and I don't need to know either way. He only surfaces the things that actually need my attention, including things I never asked him to watch for.
+
+The coach is the clearest example. After a session he texts me a short verdict. If it went to plan, I hear nothing. No "nice work 💪". If I slept badly and my heart rate drifted, I get two lines. The deeper write-up still goes to Notion, which finally fixes the old problem. The analysis was always good. Now the part that matters reaches me.
+
+{/* TODO: screenshot of a real post-workout debrief text. */}
+
+Same with my Google Workspace. Gmail and Calendar push to him across a few accounts the moment something changes. He only texts me when a real person needs something from me, or a meeting moved in a way that messes up my day. Most days there's no brief at all.
+
+Under the hood he has a tool literally called `stay_silent`. Saying nothing is a decision he makes on purpose, and an empty reply counts as a failure. It took longer to get right than anything else in him. An agent that pings you all the time gets muted, and then it's just another app.
+
+When OpenAI launched Dots last month, the pitch was pretty much this. An agent that keeps working in the background and only comes back with what needs you. Nice to know I wasn't crazy.
+
+## Learning to see and hear
+
+From there he picked things up quickly. Every new capability was a file, and the interface was already done.
+
+He learned to look at the photos I send and send his own back. He learned to listen to my voice notes, and very occasionally he replies with one. He got a second brain for heavy research, a subagent that runs in the background and comes back when it's done.
+
+## Picking up the phone
+
+Then he learned to pick up the phone.
+
+Voice is the thing I've been deepest in for a while. At Avenue I build voice agents that answer calls for trades businesses, so I've spent a lot of time with every voice stack out there. I'm a big ElevenLabs fan. The quality is so high and the product has real taste, so Adam's voice runs on it.
+
+How calls work is the decision I like most. The voice on the call is a separate realtime agent, but it's a thin front end with one tool, `ask_adam`, which drops my request into the same iMessage conversation as everything else. So there's still only one Adam. The call knows what we texted about yesterday, and he can answer out loud and text me a photo in the same turn. When I hang up, the call goes into the chat history like any other message.
+
+The other day I was walking to the bus stop and called him to find me a new shirt. He talked me through a couple of options. Problem is, I'm a visual person, and a shirt described over the phone means nothing to me. So I asked him to just send me a picture. My phone buzzed, and there it was in iMessage. We were still on the call.
+
+{/* TODO: screenshot of the iMessage thread. "📞 call started" line + the shirt photo. */}
+
+There's no separate phone Adam. It's the same one, using a different mouth.
+
+It works the other way too, which is how I got out of that party. Ask him to ring me, or set a reminder that rings instead of texts, and he calls.
+
+## Fixing himself
+
+The newest thing he's learned is the one that changes how he grows.
+
+When Adam can't do something, or does it badly, I just tell him. He starts a Devin session on his own repo, keeps an eye on it, texts me if Devin has a question, and texts me again when there's a pull request. I read it on my phone. If I say merge, he asks me to confirm with the PR named, then merges it.
+
+He doesn't wait for me to complain either. If he finds something to fix, or a better way to do something he already does, he starts that session himself, and all I see is the PR.
+
+{/* TODO: one real example of a fix that went through this loop. */}
+
+So the feedback loop is just a conversation now. He breaks, he notices or I do, he gets fixed.
+
+## One year in
+
+A year ago he was an idea about having fewer apps. Then a server any chat app could talk to. Then a headless agent in a sandbox, writing into a page I didn't read. Then a name. Now he lives in my messages, stays quiet most of the day, answers the phone, and helps fix himself.
+
+The bet underneath never changed. I still haven't built an app for any of this. Adam has no dashboard, no settings page, no login screen. The only UI is a chat thread, and sometimes a phone call. Every piece of him is a wrapper around something: one file knows about Google, one knows the voice provider, one knows reminders, and everything else talks to those. riz-mcp has outlived every shape of agent that's sat on top of it.
+
+Everyone's talking about headless apps now. I'm glad, honestly. It means more things I can plug in.
+
+He's still pretty basic. But a year ago he wasn't anything, and I didn't even know I was raising someone.
