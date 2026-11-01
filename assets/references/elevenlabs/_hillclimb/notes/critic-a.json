@@ -1,0 +1,92 @@
+{
+  "sdr-amber": {"grade": 3, "fixes": [
+    "Blue region is too big and sits too far right: in the reference it hugs the left edge from ~20% down and reaches only ~30% across at the bottom; ours is a diagonal wedge from (0,35%) to ~55-60% across the bottom edge",
+    "The burst centre (lower middle, ~45-50% x, 85-100% y) is dark amber/burnt-orange streaks in the reference; ours is a pale cream-white glow there",
+    "White highlight streaks are in the wrong places: the reference has a white streak at top centre (~55-60% x, 0-20% y) and a white burst at lower right (~65-90% x, 75-85% y); ours has a broad cream band running from the upper left to the centre and no top-centre white streak"
+  ]},
+  "elections-green": {"grade": 3, "fixes": [
+    "Ours is filled with many thin, evenly spaced parallel streaks; the reference is mostly broad, soft, blurred masses with only a few defined streaks",
+    "The upper left (0-40% x, 0-35% y) should be mid/dark saturated green with dark diagonal masses; ours is a pale lime-grey wash there",
+    "The reference has a darker green diagonal mass across the upper middle (~30-80% x, 5-35% y), separated from the pale lower area by a softer, wider transition; ours has an even lime tone and a sharper streak-defined boundary around 55-60% height"
+  ]},
+  "support-teal": {"grade": 3, "fixes": [
+    "The top of the teal mass sits too low: in the reference the plateau is at ~28% height from ~48% x to the right edge; ours is at ~37-40%",
+    "The mass's left boundary should be a soft, blurred staircase (steps near ~35% x / 62% y and ~15% x / 85% y); ours has a fairly hard vertical edge at ~43% x running from 40% to 85% height, then a single flat step",
+    "The area above the mass on the right is plain soft grey-green in the reference; ours adds grey horizontal streaks near the top-right edge (~10-15% y) and a pale white band just above the mass (~30-40% y) that the reference doesn't have"
+  ]},
+  "fedramp-oxblood": {"grade": 3, "fixes": [
+    "Our prism/rainbow line is far too strong and too long: a sharp, continuous fringe from (35%,0) to (100%,90%). The reference has only a soft white glow band from ~(45%,30%) to (80%,100%) with a faint fringe near (50%,45%)",
+    "The pale highlight should sit at top centre (~30-60% x, 0-35% y); ours is shifted left (~5-35% x)",
+    "The right side (70-100% x, 15-65% y) should be noticeably periwinkle blue; ours is a flat grey-lavender"
+  ]},
+  "letter-sky": {"grade": 3, "fixes": [
+    "Streak direction is wrong: the reference streaks rise clearly from lower left to upper right (~15-20 degrees); ours are close to horizontal with a slight bow",
+    "The reference has pale pink-lilac diagonal streaks on the left half (from ~(0,55%) up to ~(40%,20%)); ours has none",
+    "The dark navy should sit in the bottom-left corner and as a dark band at ~75% height on the left, with magenta-pink filling the bottom right; ours has a uniform dark strip along the whole bottom edge and a flat horizontal magenta band"
+  ]},
+  "belgium-amber": {"grade": 3, "fixes": [
+    "The top-left corner should be clearly blue (blue runs along the whole top edge); ours is pale cream/grey in the top left",
+    "The blue should run down the right edge to ~50% height; ours fades out on the right by ~30%",
+    "The reference has fine, closely spaced striation texture throughout plus a burnt-orange/rust bottom-left corner; ours is smoother, its bottom-left corner is plain mid-amber, and it has one clean curved hairline in the lower right where the reference has several faint, broken dark hairlines descending from ~(30%,75%) to (95%,88%)"
+  ]},
+  "defining-navy": {"grade": 3, "fixes": [
+    "The navy in the upper left should be a lighter, more saturated blue with visible diagonal streaks; ours is a dark, featureless navy-charcoal blob (~0-40% x, 0-60% y)",
+    "Ours has a soft lighter-blue blob at top centre (~40-60% x, 0-20% y); in the reference the top is streaky blue that lightens steadily toward the top-right corner",
+    "The reference shows a faint cyan/prism tint where the oxblood meets the pale band near the bottom (~35-45% x, 85-100% y) and fine streak texture in the pale diagonal band; ours is smooth and has no fringe"
+  ]},
+  "architect-wide": {"grade": 3, "fixes": [
+    "Our cyan hairline from ~(35%,0) to (65%,65%) is too sharp and continuous; the reference has a softer rainbow/prism fringe concentrated around ~40-50% x, 20-50% y",
+    "The navy band on the right (50-90% x) should be a deeper, more saturated blue and should reach lower (~75-80% height); ours is greyer and fades by ~60%",
+    "The left third should have soft periwinkle/blue curved streaks over pale blue-grey; ours has darker lavender-grey streaks"
+  ]},
+  "architect-square": {"grade": 3, "fixes": [
+    "Our streaks curve strongly into concentric arcs; the reference streaks run as nearly straight diagonals from top-left to bottom-right with only a slight curve",
+    "Our sharp pale hairline arc from ~(30%,0) to (65%,40%) isn't in the reference; the reference instead has soft rainbow/prism fringes on the left (~20-30% x, 30-55% y)",
+    "Ours lacks the periwinkle-blue band along the left edge (0-10% x, 30-80% y), and our pale band sweeps across the centre in an arc instead of running from the top left (~5-20% x at the top) to the bottom centre"
+  ]},
+  "agents-pale": {"grade": 3, "fixes": [
+    "The top of our navy mass is a comb of streak tips with fuzzy fingers around 15-25% height; the reference's mass has a broad, smooth, soft top edge",
+    "The bottom-right corner should be a clearly red-brown oxblood reaching up to ~75% x / 75% y; ours is a weak purple-maroon",
+    "The reference has a lighter blue diagonal band running through the middle of the mass (~50-60% x, 0-60% y), splitting it into two lobes; ours is one uniform navy body, and its navy pushes too far toward the right edge at 40-80% height"
+  ]},
+  "detect-navy": {"grade": 3, "fixes": [
+    "Our cyan prism hairline is too long and sharp, running from ~(0,10%) to (35%,100%); in the reference the cyan fringe is short and soft, near the upper left (~3-25% x, 0-55% y)",
+    "Our pale lower-left region reaches too high on the left (from ~20% height); in the reference the left edge stays grey-blue/darkish down to ~35-40%",
+    "The top-right corner should be a lighter periwinkle (~85-100% x, 0-20% y), and the right edge at mid-height should stay navy; ours has a lighter blue patch on the right edge at 40-70% height and a dark top-right"
+  ]},
+  "ads-red": {"grade": 3, "fixes": [
+    "Ours is noticeably desaturated: the reference reds (15-35% x and 80-88% x) are vivid tomato red; ours are muted salmon-brick",
+    "The grey-blue column (~55-68% x) should be wider and more saturated, widening toward the bottom, with a pink-mauve cap above it at the top; ours is narrow and faint",
+    "The reference has a pale peach column at ~33-40% x in the lower half and a yellow-orange bottom-left corner; ours lacks the peach column, and its orange is confined to a thin strip at the left edge"
+  ]},
+  "mcp-coral": {"grade": 3, "fixes": [
+    "Our rays are long, straight, hard-edged stripes alternating red and cream; the reference petals are shorter, softer, fluffy zoom-blurred lobes with feathered edges",
+    "In the reference the red is a dense, saturated mass on the right-centre and bottom centre; ours spreads it into separate thin rays with lots of cream between them",
+    "The bottom-left corner and left edge should be lilac/pale blue-grey; ours is peach/coral there"
+  ]},
+  "workshop-red": {"grade": 3, "fixes": [
+    "The grey-purple at the top should cover only the top centre and right (~45-100% x, 0-20% y), with red-orange in the top-left; ours is a grey-purple band across the full top width",
+    "The pale salmon highlight should sit at the right edge (~90-100% x, ~40-48% y); ours sits further in (~70-85% x)",
+    "Ours has a pink band across the full width at ~15-25% height that the reference doesn't have, and ours is too smooth; the reference has soft horizontal streak texture in the red and orange bands"
+  ]},
+  "lavender-cream": {"grade": 3, "fixes": [
+    "The cream-lavender boundary should be a curved wave (cream dips to ~45% height near 25% x, lavender bulges up to ~37% around 60-70% x); ours is a near-straight horizontal blurred edge at ~45-50% with comb-like streak tips",
+    "The dark olive-black mass in the top right should be bigger, reaching ~30% height at ~75% x and blending into olive/yellow-green tints in the cream; ours is a thinner dark wedge stopping at ~15%",
+    "The reference has a lavender strip down the left edge and in the top-left corner (0-25% x, 0-30% y) and a subtle fine radial line burst in the lower-right lavender (~70-100% x, 60-90% y); ours has cream reaching the left edge and flat, featureless lavender"
+  ]},
+  "sky-burst": {"grade": 3, "fixes": [
+    "The navy funnel converges to a hard pinpoint at ~(27%,77%) in ours; in the reference the bottom of the blob is ragged and feathery, with no sharp vertex",
+    "The secondary blue streak leaving the funnel should run down and right to the bottom edge (~55-60% x) and be a lighter teal; ours runs nearly horizontally to ~60% x / 85% y and is dark navy",
+    "Ours lacks the small blue spot in the top-right corner, and the top-left corner (0-15% x, 0-50% y) should be white cloud; ours has a grey-blue strip down the left edge"
+  ]},
+  "rust-blur": {"grade": 3, "fixes": [
+    "Our dark rust blob is too large and uniform (~10-55% x, 40-80% y); the reference's dark core is smaller (~20-45% x, 45-65% y), with bright saturated orange below and to its right (~45-65% x, 55-90% y), which ours lacks",
+    "The reference has a very dark rust notch at the right edge (~90-100% x, 15-40% y) and dark red at the bottom (~60-75% x, 90-100% y); ours has neither",
+    "The bottom-left corner (0-25% x, 85-100% y) should be a pale cream highlight, and the left edge at 50-80% height should be orange-red; ours is flat peach in both places"
+  ]},
+  "green-peach-blur": {"grade": 3, "fixes": [
+    "The main peach blob should touch the right edge and be elongated diagonally (~55-100% x, 40-80% y); ours is a detached upright oval with a green gap at ~92-100% x",
+    "The top-right peach should run from the top edge down to ~40% (80-100% x) as an elongated vertical shape; ours is a round blob detached from the top edge",
+    "The dark green should be a dark teal patch at the left edge (0-15% x, 15-50% y) plus a darker diagonal region around 35-50% x in the lower half, with light green across the top middle; ours has one continuous dark diagonal band from (0,25%) to (50%,100%) and a more uniform bottom-left"
+  ]}
+}

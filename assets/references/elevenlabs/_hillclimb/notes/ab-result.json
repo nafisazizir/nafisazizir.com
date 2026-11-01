@@ -1,0 +1,317 @@
+[
+ {
+  "id": "sdr-amber",
+  "a": 2,
+  "b": 2,
+  "win": "A",
+  "votes": "A:clear B:slight B:slight",
+  "mA": 27.97,
+  "mB": 29.73
+ },
+ {
+  "id": "elections-green",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "B:slight A:slight A:slight",
+  "mA": 16.74,
+  "mB": 16.09
+ },
+ {
+  "id": "support-teal",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "B:slight A:slight A:slight",
+  "mA": 14.07,
+  "mB": 12.99
+ },
+ {
+  "id": "fedramp-oxblood",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "A:slight B:slight A:slight",
+  "mA": 17.26,
+  "mB": 18.76
+ },
+ {
+  "id": "letter-sky",
+  "a": 0,
+  "b": 4,
+  "win": "B",
+  "votes": "B:slight B:slight B:clear",
+  "mA": 21.55,
+  "mB": 25.71
+ },
+ {
+  "id": "belgium-amber",
+  "a": 0,
+  "b": 3,
+  "win": "B",
+  "votes": "B:slight B:slight B:slight",
+  "mA": 12.58,
+  "mB": 11.77
+ },
+ {
+  "id": "defining-navy",
+  "a": 4,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:slight A:clear",
+  "mA": 11.79,
+  "mB": 13.74
+ },
+ {
+  "id": "architect-wide",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "A:slight B:slight A:slight",
+  "mA": 16.51,
+  "mB": 19.49
+ },
+ {
+  "id": "architect-square",
+  "a": 0,
+  "b": 3,
+  "win": "B",
+  "votes": "B:slight B:slight B:slight",
+  "mA": 19.51,
+  "mB": 20.15
+ },
+ {
+  "id": "agents-pale",
+  "a": 3,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:slight A:slight",
+  "mA": 10.83,
+  "mB": 13.57
+ },
+ {
+  "id": "detect-navy",
+  "a": 3,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:slight A:slight",
+  "mA": 17.54,
+  "mB": 17.42
+ },
+ {
+  "id": "ads-red",
+  "a": 0,
+  "b": 5,
+  "win": "B",
+  "votes": "B:clear B:slight B:clear",
+  "mA": 24.23,
+  "mB": 29.39
+ },
+ {
+  "id": "mcp-coral",
+  "a": 6,
+  "b": 0,
+  "win": "A",
+  "votes": "A:clear A:clear A:clear",
+  "mA": 30.72,
+  "mB": 34.87
+ },
+ {
+  "id": "workshop-red",
+  "a": 1,
+  "b": 2,
+  "win": "B",
+  "votes": "B:slight A:slight B:slight",
+  "mA": 27.99,
+  "mB": 35.27
+ },
+ {
+  "id": "lavender-cream",
+  "a": 4,
+  "b": 0,
+  "win": "A",
+  "votes": "A:clear A:slight A:slight",
+  "mA": 19.48,
+  "mB": 21.98
+ },
+ {
+  "id": "sky-burst",
+  "a": 0,
+  "b": 5,
+  "win": "B",
+  "votes": "B:slight B:clear B:clear",
+  "mA": 14.37,
+  "mB": 20.74
+ },
+ {
+  "id": "rust-blur",
+  "a": 0,
+  "b": 6,
+  "win": "B",
+  "votes": "B:clear B:clear B:clear",
+  "mA": 20.46,
+  "mB": 24.32
+ },
+ {
+  "id": "green-peach-blur",
+  "a": 5,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:clear A:clear",
+  "mA": 18.18,
+  "mB": 20.98
+ },
+ {
+  "id": "reader-pastel",
+  "a": 4,
+  "b": 0,
+  "win": "A",
+  "votes": "A:clear A:slight A:slight",
+  "mA": 28.24,
+  "mB": 29.06
+ },
+ {
+  "id": "sdr-oxblood",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "B:slight A:slight A:slight",
+  "mA": 17.91,
+  "mB": 19.83
+ },
+ {
+  "id": "api-grey",
+  "a": 0,
+  "b": 6,
+  "win": "B",
+  "votes": "B:clear B:clear B:clear",
+  "mA": 14.5,
+  "mB": 23.97
+ },
+ {
+  "id": "atom-band",
+  "a": 4,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:slight A:clear",
+  "mA": 22.02,
+  "mB": 18.97
+ },
+ {
+  "id": "silk-blue",
+  "a": 4,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:clear A:slight",
+  "mA": 15.45,
+  "mB": 16.24
+ },
+ {
+  "id": "v4-turbo",
+  "a": 0,
+  "b": 3,
+  "win": "B",
+  "votes": "B:slight B:slight B:slight",
+  "mA": 20.7,
+  "mB": 25.33
+ },
+ {
+  "id": "cobalt-openai",
+  "a": 5,
+  "b": 0,
+  "win": "A",
+  "votes": "A:clear A:slight A:clear",
+  "mA": 19.25,
+  "mB": 19.68
+ },
+ {
+  "id": "netherlands-amber",
+  "a": 0,
+  "b": 5,
+  "win": "B",
+  "votes": "B:clear B:slight B:clear",
+  "mA": 18.26,
+  "mB": 18.7
+ },
+ {
+  "id": "reception-green",
+  "a": 2,
+  "b": 1,
+  "win": "A",
+  "votes": "B:slight A:slight A:slight",
+  "mA": 27.89,
+  "mB": 29.27
+ },
+ {
+  "id": "scribe-green",
+  "a": 1,
+  "b": 2,
+  "win": "B",
+  "votes": "B:slight A:slight B:slight",
+  "mA": 18.37,
+  "mB": 18.23
+ },
+ {
+  "id": "sfx-grey",
+  "a": 0,
+  "b": 4,
+  "win": "B",
+  "votes": "B:clear B:slight B:slight",
+  "mA": 13.76,
+  "mB": 15.77
+ },
+ {
+  "id": "social-cream",
+  "a": 1,
+  "b": 2,
+  "win": "B",
+  "votes": "B:slight A:slight B:slight",
+  "mA": 26.64,
+  "mB": 37.67
+ },
+ {
+  "id": "social-ember",
+  "a": 0,
+  "b": 6,
+  "win": "B",
+  "votes": "B:clear B:clear B:clear",
+  "mA": 37.67,
+  "mB": 38.27
+ },
+ {
+  "id": "coral-green",
+  "a": 2,
+  "b": 3,
+  "win": "B",
+  "votes": "B:slight A:clear B:clear",
+  "mA": 30.38,
+  "mB": 29.94
+ },
+ {
+  "id": "coral-pink",
+  "a": 3,
+  "b": 0,
+  "win": "A",
+  "votes": "A:slight A:slight A:slight",
+  "mA": 16.75,
+  "mB": 17.89
+ },
+ {
+  "id": "pink-lilac",
+  "a": 0,
+  "b": 6,
+  "win": "B",
+  "votes": "B:clear B:clear B:clear",
+  "mA": 15.7,
+  "mB": 15.37
+ },
+ {
+  "id": "red-burst",
+  "a": 0,
+  "b": 4,
+  "win": "B",
+  "votes": "B:slight B:slight B:clear",
+  "mA": 38.14,
+  "mB": 33.2
+ }
+]

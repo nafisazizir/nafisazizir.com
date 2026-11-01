@@ -1,0 +1,3 @@
+# Library is ignored by default; the metadata, the _hillclimb notes/tools and the
+# reference images the streaks studio shows are force-added (git add -f).
+*
