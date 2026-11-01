@@ -1,0 +1,438 @@
+{
+  "version": 1,
+  "updated": "2026-10-28T01:37:46.004Z",
+  "picks": {
+    "gradient-titled/site_ai-sdr.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "yellow/blue"
+    },
+    "gradient-titled/site_cover0-1.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "green/blue"
+    },
+    "gradient-titled/site_customer-support-agent-article-cover.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "green/cream"
+    },
+    "gradient-titled/site_elevenlabs-fedramp-square-1080x1080.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "navy/red/blue"
+    },
+    "gradient-titled/site_frame-2147256633.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "blue/orange"
+    },
+    "gradient-titled/site_image-18.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "tan/blue"
+    },
+    "gradient-titled/site_post-cover-17.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "navy/purple/orange"
+    },
+    "gradient-titled/site_post-cover-3.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "elevenlabs.io",
+      "palette": "blue/orange"
+    },
+    "gradient-titled/web_yt-thumb-ads-engine-red.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "youtube",
+      "palette": "red, orange, pink"
+    },
+    "gradient-titled/web_yt-thumb-avatars-red.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "youtube",
+      "palette": "red, orange, coral"
+    },
+    "gradient-titled/web_yt-thumb-mcp-creative-orange.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "youtube",
+      "palette": "orange, coral, peach, white haze"
+    },
+    "gradient-titled/x-ec-join-us-today-1-orange-red-81943.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "x",
+      "palette": "orange/red"
+    },
+    "gradient-titled/x-ec-stay-brand-ease-whatever-lavender-cream-14056.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "x",
+      "palette": "lavender/cream"
+    },
+    "gradient-titled/x-el-customer-support-agent-cream-teal-26097-t2.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "x",
+      "palette": "cream/teal"
+    },
+    "gradient-titled/x-el-run-own-customer-support-cream-teal-26097.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "gradient-titled",
+      "source": "x",
+      "palette": "cream/teal"
+    },
+    "photo-blur/site_blog-01.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "elevenlabs.io",
+      "palette": "blue/white"
+    },
+    "photo-blur/site_creative-1-18030cd4.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "elevenlabs.io",
+      "palette": "orange/rust"
+    },
+    "photo-blur/site_creative-20-adb7c7e5.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "elevenlabs.io",
+      "palette": "green/peach"
+    },
+    "photo-blur/site_elevenreadervoicechat.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "elevenlabs.io",
+      "palette": "lavender/green"
+    },
+    "photo-blur/web_linkedin-cover-blue-sky.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "linkedin",
+      "palette": "blue, white"
+    },
+    "photo-blur/web_yt-banner-channel-blue-sky.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "photo-blur",
+      "source": "youtube",
+      "palette": "blue, white, pale grey"
+    },
+    "streak/site_agents-bg.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/white"
+    },
+    "streak/site_ai-sdr-cover-3.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/gray"
+    },
+    "streak/site_api-gradient-1.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "grey"
+    },
+    "streak/site_api-gradient-2.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "grey"
+    },
+    "streak/site_api-gradient-3.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "grey"
+    },
+    "streak/site_architect-web-1.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/gray"
+    },
+    "streak/site_architect-web-6.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/red"
+    },
+    "streak/site_atom-bento-extra-large-card.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "navy/maroon"
+    },
+    "streak/site_creatives-bg.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "coral/lilac"
+    },
+    "streak/site_educational-01.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/white"
+    },
+    "streak/site_eleven-v45-1.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "orange/red"
+    },
+    "streak/site_eleven-v49.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "orange/red"
+    },
+    "streak/site_elevenapi-openai-marketplace.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/white"
+    },
+    "streak/site_multilingual-05.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "blue/white"
+    },
+    "streak/site_netherlands.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "orange/cream"
+    },
+    "streak/site_reception-blog-square.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "green/blue"
+    },
+    "streak/site_scribe-v2-medical.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "green/blue"
+    },
+    "streak/site_sfx-5c77e017.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "grey"
+    },
+    "streak/site_social-02.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "orange/cream"
+    },
+    "streak/site_social-05.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "orange/red"
+    },
+    "streak/site_tts-cover-01.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "coral/green"
+    },
+    "streak/site_tts-cover-02.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "coral/pink"
+    },
+    "streak/site_tts-cover-04.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "pink/lilac"
+    },
+    "streak/site_uzcwj1ni2ys-background-03.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "red/orange"
+    },
+    "streak/site_v4-turbo-og.webp": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "elevenlabs.io",
+      "palette": "red/orange"
+    },
+    "streak/web_linkedin-video-cover-green-haze.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "linkedin",
+      "palette": "sage green, teal, cream"
+    },
+    "streak/web_yt-thumb-architect-slate-blue.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "youtube",
+      "palette": "slate blue, grey, ochre"
+    },
+    "streak/web_yt-thumb-eleven-v4-red.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "youtube",
+      "palette": "red, green, orange"
+    },
+    "streak/x-dev-all-features-architect-available-amber-blue-47375.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "x",
+      "palette": "amber/blue"
+    },
+    "streak/x-ec-create-more-get-paid-green-lime-86504.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "x",
+      "palette": "green/lime"
+    },
+    "streak/x-el-agent-has-sound-human-blue-cream-75207-t1.png": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "x",
+      "palette": "blue/cream"
+    },
+    "streak/x-el-agent-has-sound-human-blue-lavender-75207.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "x",
+      "palette": "blue/lavender"
+    },
+    "streak/x-el-elevenlabs-fedramp-20x-class-blue-orange-61821.jpg": {
+      "tags": [],
+      "note": "",
+      "verdict": "love",
+      "category": "streak",
+      "source": "x",
+      "palette": "blue/orange"
+    }
+  }
+}

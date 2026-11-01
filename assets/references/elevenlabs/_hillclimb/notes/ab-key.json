@@ -1,0 +1,146 @@
+{
+ "A": "snapshots/r4",
+ "B": "snapshots/r6",
+ "key": {
+  "sdr-amber": {
+   "X": "B",
+   "Y": "A"
+  },
+  "elections-green": {
+   "X": "B",
+   "Y": "A"
+  },
+  "support-teal": {
+   "X": "B",
+   "Y": "A"
+  },
+  "fedramp-oxblood": {
+   "X": "A",
+   "Y": "B"
+  },
+  "letter-sky": {
+   "X": "A",
+   "Y": "B"
+  },
+  "belgium-amber": {
+   "X": "A",
+   "Y": "B"
+  },
+  "defining-navy": {
+   "X": "A",
+   "Y": "B"
+  },
+  "architect-wide": {
+   "X": "A",
+   "Y": "B"
+  },
+  "architect-square": {
+   "X": "B",
+   "Y": "A"
+  },
+  "agents-pale": {
+   "X": "B",
+   "Y": "A"
+  },
+  "detect-navy": {
+   "X": "B",
+   "Y": "A"
+  },
+  "ads-red": {
+   "X": "B",
+   "Y": "A"
+  },
+  "mcp-coral": {
+   "X": "A",
+   "Y": "B"
+  },
+  "workshop-red": {
+   "X": "B",
+   "Y": "A"
+  },
+  "lavender-cream": {
+   "X": "A",
+   "Y": "B"
+  },
+  "sky-burst": {
+   "X": "B",
+   "Y": "A"
+  },
+  "rust-blur": {
+   "X": "A",
+   "Y": "B"
+  },
+  "green-peach-blur": {
+   "X": "A",
+   "Y": "B"
+  },
+  "reader-pastel": {
+   "X": "B",
+   "Y": "A"
+  },
+  "sdr-oxblood": {
+   "X": "B",
+   "Y": "A"
+  },
+  "api-grey": {
+   "X": "B",
+   "Y": "A"
+  },
+  "atom-band": {
+   "X": "B",
+   "Y": "A"
+  },
+  "silk-blue": {
+   "X": "A",
+   "Y": "B"
+  },
+  "v4-turbo": {
+   "X": "B",
+   "Y": "A"
+  },
+  "cobalt-openai": {
+   "X": "A",
+   "Y": "B"
+  },
+  "netherlands-amber": {
+   "X": "A",
+   "Y": "B"
+  },
+  "reception-green": {
+   "X": "B",
+   "Y": "A"
+  },
+  "scribe-green": {
+   "X": "A",
+   "Y": "B"
+  },
+  "sfx-grey": {
+   "X": "A",
+   "Y": "B"
+  },
+  "social-cream": {
+   "X": "A",
+   "Y": "B"
+  },
+  "social-ember": {
+   "X": "B",
+   "Y": "A"
+  },
+  "coral-green": {
+   "X": "A",
+   "Y": "B"
+  },
+  "coral-pink": {
+   "X": "B",
+   "Y": "A"
+  },
+  "pink-lilac": {
+   "X": "B",
+   "Y": "A"
+  },
+  "red-burst": {
+   "X": "A",
+   "Y": "B"
+  }
+ }
+}
