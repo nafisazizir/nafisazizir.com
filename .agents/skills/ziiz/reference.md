@@ -43,7 +43,8 @@ Ladders in practice:
   step. Hovering an already selected control deepens one more step
   (`gray-alpha-300` on the alpha ladder, `gray-950` on inverted fills).
 - Borders default to `gray-alpha-400`, step to `gray-alpha-500` on hover.
-  On focus the hairline is replaced by solid `gray-600` plus the halo.
+  On focus the hairline is replaced by solid `gray-600` plus the halo; a
+  text field's hairline darkens to `gray-800` instead, with no halo.
 - Inverted fills (the default button) are `bg-gray-1000 text-background-100`,
   `hover:bg-gray-950`, `active:bg-gray-900`.
 - Destructive is `bg-red-700 text-white hover:bg-red-800 active:bg-red-900`;

@@ -123,13 +123,22 @@ to roles with a fixed rhythm. Mark a subtree `not-typeset` to opt out.
    there.
 4. Hover steps the ramp, never opacity. `hover:bg-gray-200`, not
    `hover:bg-gray-100/80`. Opacity is for state only (`disabled:opacity-50`).
-5. Focus is one signature on every control:
+5. Focus has two signatures. Click controls (buttons, toggles, tabs,
+   checkboxes, select triggers) take the halo:
    `focus-visible:border-gray-600 focus-visible:ring-3 focus-visible:ring-gray-600/50`.
-   Invalid state is `aria-invalid:border-red-800 aria-invalid:ring-red-800/20`.
+   Text fields (input, textarea, input group, combobox input) take none:
+   the default field darkens its border to `gray-800`, secondary and ghost
+   fields stay as they rest, and the caret shows focus. Invalid is
+   `aria-invalid:border-red-800 aria-invalid:ring-red-800/20` on a click
+   control, and a `red-800` border on a `red-100` fill, no ring, on a
+   field or select trigger.
 6. No `dark:` color overrides. Both themes share the token names; the ramp
    flips underneath.
 7. Radius uses the generic `rounded-*` scale, which derives from `--radius`.
-   No arbitrary pixel radii or border widths.
+   No arbitrary pixel radii or border widths. Corners draw as squircles
+   where supported, with the scale grown by `--radius-scale` (1.4 there);
+   a pill or circle is `rounded-full`, which stays round. A px cap on a
+   radius scales too: `rounded-[min(var(--radius-md),calc(10px*var(--radius-scale)))]`.
 8. No press animation on buttons. Transitions are `transition-colors`, not
    `transition-all`.
 9. `cn` comes from `@/lib/utils`, which re-exports `@nafisazizir/ziiz/cn`. Its
@@ -137,7 +146,7 @@ to roles with a fixed rhythm. Mark a subtree `not-typeset` to opt out.
    resolves an override correctly. A stock `cn` does not.
 10. Compose with the registry's components before writing new markup. When
     a new component is needed, build it from the same vocabulary and the
-    same focus signature.
+    same focus signatures.
 11. One text inset per height. A control at 32 or 36px pads `px-3`,
     24px pads `px-2.5`, 40px pads `px-4`, square or pill alike, and popup
     items pad `px-2` inside a `p-1` content with a transparent 1px border,
@@ -188,5 +197,6 @@ grep -nE "\btext-(xs|sm|base|lg|xl|[2-9]xl)\b|\bfont-(medium|semibold|bold)\b|\b
 grep -nE "shadow-(xs|sm|md|lg)|hover:[a-z-]+/[0-9]+|active:.*translate-y|\bdark:(bg|text|border)-" <files>
 ```
 
-Then check both themes and tab through every control: the focus halo must
-appear on each one, unchanged.
+Then check both themes and tab through every control: the halo must appear
+on each click control, and each text field must darken its border (or keep
+its fill) with no halo.
