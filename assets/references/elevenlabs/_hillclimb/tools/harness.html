@@ -1,0 +1,328 @@
+<!doctype html>
+<html><body style="margin:0;background:#000">
+<script type="module">
+// Loaded by server.mjs in headless Chrome. Uses the site's real renderer.
+let R = null, ver = "", presets = null
+async function ensure() {
+  const v = await (await fetch("/version", { cache: "no-store" })).text()
+  if (v === ver && R) return
+  const r = await import(`/mod/renderer.js?v=${v}`)
+  presets = await import(`/mod/presets.js?v=${v}`)
+  R?.dispose()
+  R = r.createStreakRenderer()
+  ver = v
+}
+
+function full(p) {
+  const P = { ...presets.STREAK_DEFAULTS, ...p }
+  const clamped = []
+  for (const s of presets.STREAK_PARAMS) {
+    let v = +P[s.key]
+    if (!Number.isFinite(v)) v = presets.STREAK_DEFAULTS[s.key]
+    const c = Math.min(s.max, Math.max(s.min, v))
+    if (c !== v) clamped.push(s.key)
+    P[s.key] = c
+  }
+  return { P, clamped }
+}
+
+function canvas(w, h) { const c = document.createElement("canvas"); c.width = w; c.height = h; return c }
+
+function render(p, W, H, samples = 40) {
+  const c = canvas(W, H), ctx = c.getContext("2d", { willReadFrequently: true })
+  R.render(ctx, W, H, p, { samples })
+  return c
+}
+
+const imgCache = new Map()
+async function loadImg(path) {
+  if (imgCache.has(path)) return imgCache.get(path)
+  const im = new Image()
+  im.src = "/ref/" + path.split("/").map(encodeURIComponent).join("/")
+  await im.decode()
+  imgCache.set(path, im)
+  return im
+}
+function drawImg(im, W, H, crop) {
+  const c = canvas(W, H), ctx = c.getContext("2d", { willReadFrequently: true })
+  ctx.imageSmoothingQuality = "high"
+  if (crop) {
+    const [x, y, w, h] = crop
+    ctx.drawImage(im, x * im.naturalWidth, y * im.naturalHeight, w * im.naturalWidth, h * im.naturalHeight, 0, 0, W, H)
+  } else ctx.drawImage(im, 0, 0, W, H)
+  return c
+}
+const pixels = (c) => c.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, c.width, c.height).data
+
+// ---- metric --------------------------------------------------------------
+const lin = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4))
+const LUT = new Float32Array(256).map((_, i) => lin(i / 255))
+function labOf(d, n) {
+  const out = new Float32Array(3 * n)
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116)
+  for (let i = 0; i < n; i++) {
+    const r = LUT[d[4 * i]], g = LUT[d[4 * i + 1]], b = LUT[d[4 * i + 2]]
+    const X = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047
+    const Y = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    const Z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883
+    const fx = f(X), fy = f(Y), fz = f(Z)
+    out[3 * i] = 116 * fy - 16; out[3 * i + 1] = 500 * (fx - fy); out[3 * i + 2] = 200 * (fy - fz)
+  }
+  return out
+}
+// Area-average resize of a k-channel float image, weighted by mask m (1 = use).
+function resize(a, k, W, H, w, h, m) {
+  const s = new Float32Array(k * w * h), cnt = new Float32Array(w * h)
+  for (let y = 0; y < H; y++) {
+    const ty = Math.min(h - 1, Math.floor((y * h) / H))
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x
+      const wt = m ? m[i] : 1
+      if (!wt) continue
+      const t = ty * w + Math.min(w - 1, Math.floor((x * w) / W))
+      for (let c = 0; c < k; c++) s[k * t + c] += a[k * i + c] * wt
+      cnt[t] += wt
+    }
+  }
+  for (let t = 0; t < w * h; t++) if (cnt[t]) for (let c = 0; c < k; c++) s[k * t + c] /= cnt[t]
+  return { s, cnt, area: (W / w) * (H / h) }
+}
+// Text and UI overlays: strong local high-pass (well above grain and the
+// art's own hairlines), dilated. Plus any hand-placed rects.
+function autoMask(c, thr = 22) {
+  const W = c.width, H = c.height, n = W * H, d = pixels(c)
+  const L = new Float32Array(n)
+  for (let i = 0; i < n; i++) L[i] = 0.2126 * LUT[d[4 * i]] + 0.7152 * LUT[d[4 * i + 1]] + 0.0722 * LUT[d[4 * i + 2]]
+  for (let i = 0; i < n; i++) L[i] = 116 * Math.cbrt(Math.max(L[i], 0.008856)) - 16
+  const b = blur(L, W, H, Math.max(1.5, W / 120))
+  const hit = new Uint8Array(n)
+  for (let i = 0; i < n; i++) hit[i] = Math.abs(L[i] - b[i]) > thr ? 1 : 0
+  // Dilate with a box of radius r (two separable passes over a prefix sum).
+  const r = Math.max(2, Math.round(W / 60)), t = new Uint8Array(n), m = new Uint8Array(n).fill(1)
+  for (let y = 0; y < H; y++) { let run = -1e9; for (let x = 0; x < W; x++) { if (hit[y * W + x]) run = x; t[y * W + x] = x - run <= r ? 1 : 0 } run = 1e9; for (let x = W - 1; x >= 0; x--) { if (hit[y * W + x]) run = x; if (run - x <= r) t[y * W + x] = 1 } }
+  for (let x = 0; x < W; x++) { let run = -1e9; for (let y = 0; y < H; y++) { if (t[y * W + x]) run = y; if (y - run <= r) m[y * W + x] = 0 } run = 1e9; for (let y = H - 1; y >= 0; y--) { if (t[y * W + x]) run = y; if (run - y <= r) m[y * W + x] = 0 } }
+  return m
+}
+function maskFor(W, H, rects, base) {
+  const m = base ? Uint8Array.from(base) : new Uint8Array(W * H).fill(1)
+  for (const [x0, y0, x1, y1] of rects || [])
+    for (let y = Math.floor(y0 * H); y < Math.ceil(y1 * H); y++)
+      for (let x = Math.floor(x0 * W); x < Math.ceil(x1 * W); x++) if (x >= 0 && y >= 0 && x < W && y < H) m[y * W + x] = 0
+  return m
+}
+const dE = (a, b, i) => Math.hypot(a[3 * i] - b[3 * i], a[3 * i + 1] - b[3 * i + 1], a[3 * i + 2] - b[3 * i + 2])
+function meanDE(A, B, cnt, area) {
+  let s = 0, n = 0
+  for (let i = 0; i < cnt.length; i++) if (cnt[i] > 0.5 * area) { s += dE(A, B, i); n++ }
+  return n ? s / n : 0
+}
+function blur(a, W, H, sigma) {
+  const r = Math.ceil(3 * sigma), k = new Float32Array(2 * r + 1)
+  let ks = 0
+  for (let i = -r; i <= r; i++) ks += k[i + r] = Math.exp((-i * i) / (2 * sigma * sigma))
+  for (let i = 0; i < k.length; i++) k[i] /= ks
+  const t = new Float32Array(W * H), o = new Float32Array(W * H)
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let s = 0
+    for (let i = -r; i <= r; i++) s += k[i + r] * a[y * W + Math.min(W - 1, Math.max(0, x + i))]
+    t[y * W + x] = s
+  }
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let s = 0
+    for (let i = -r; i <= r; i++) s += k[i + r] * t[Math.min(H - 1, Math.max(0, y + i)) * W + x]
+    o[y * W + x] = s
+  }
+  return o
+}
+const DIRS = Array.from({ length: 24 }, (_, i) => {
+  // Fibonacci sphere, Lab axes scaled so L and chroma count about equally.
+  const z = 1 - (2 * (i + 0.5)) / 24, r = Math.sqrt(1 - z * z), a = i * 2.39996
+  return [z, r * Math.cos(a), r * Math.sin(a)]
+})
+function swd(A, B, m) {
+  const ia = [], n = m.length
+  for (let i = 0; i < n; i++) if (m[i]) ia.push(i)
+  if (!ia.length) return 0
+  let tot = 0
+  const pa = new Float32Array(ia.length), pb = new Float32Array(ia.length)
+  for (const d of DIRS) {
+    ia.forEach((i, j) => { pa[j] = A[3 * i] * d[0] + A[3 * i + 1] * d[1] + A[3 * i + 2] * d[2]; pb[j] = B[3 * i] * d[0] + B[3 * i + 1] * d[1] + B[3 * i + 2] * d[2] })
+    pa.sort(); pb.sort()
+    let s = 0
+    for (let j = 0; j < pa.length; j++) s += Math.abs(pa[j] - pb[j])
+    tot += s / pa.length
+  }
+  return tot / DIRS.length
+}
+function detail(L, W, H, m) {
+  // L: luminance (0..100). Light de-grain first, then band energies and the
+  // structure tensor per cell.
+  const base = blur(L, W, H, (1.5 * W) / 480)
+  const sig = [3, 6, 12, 24, 48].map((s) => (s * W) / 480)
+  const bl = sig.map((s) => blur(base, W, H, s))
+  const lv = [base, ...bl]
+  const bands = []
+  for (let b = 0; b < sig.length; b++) {
+    let e = 0, n = 0
+    for (let i = 0; i < W * H; i++) if (m[i]) { const d = lv[b][i] - lv[b + 1][i]; e += d * d; n++ }
+    bands.push(n ? e / n : 0)
+  }
+  const G = 4, cells = []
+  for (let cy = 0; cy < G; cy++) for (let cx = 0; cx < G; cx++) cells.push({ xx: 0, yy: 0, xy: 0 })
+  const mags = []
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+    const i = y * W + x
+    if (!m[i]) continue
+    const gx = base[i + 1] - base[i - 1], gy = base[i + W] - base[i - W]
+    const c = cells[Math.floor((y * G) / H) * G + Math.floor((x * G) / W)]
+    c.xx += gx * gx; c.yy += gy * gy; c.xy += gx * gy
+    if ((x + y) % 3 === 0) mags.push(Math.hypot(gx, gy))
+  }
+  mags.sort((a, b) => a - b)
+  const q = (p) => mags.length ? mags[Math.min(mags.length - 1, Math.floor(p * mags.length))] : 0
+  const tens = cells.map((c) => {
+    const tr = c.xx + c.yy + 1e-9
+    return { ang: (0.5 * Math.atan2(2 * c.xy, c.xx - c.yy) * 180) / Math.PI, coh: Math.hypot(c.xx - c.yy, 2 * c.xy) / tr, en: tr }
+  })
+  return { bands, grad: [q(0.5), q(0.9), q(0.99)], tens }
+}
+function metric(refC, renC, rects, auto = true) {
+  const W = refC.width, H = refC.height, n = W * H
+  const m = maskFor(W, H, rects, auto ? autoMask(refC) : null)
+  const A = labOf(pixels(refC), n), B = labOf(pixels(renC), n)
+  const cw = 12, ch = Math.max(1, Math.round((cw * H) / W))
+  const ra = resize(A, 3, W, H, cw, ch, m), rb = resize(B, 3, W, H, cw, ch, m)
+  const coarse = meanDE(ra.s, rb.s, ra.cnt, ra.area)
+  const mw = 40, mh = Math.max(1, Math.round((mw * H) / W))
+  const ma = resize(A, 3, W, H, mw, mh, m), mb = resize(B, 3, W, H, mw, mh, m)
+  const mid = meanDE(ma.s, mb.s, ma.cnt, ma.area)
+  const pw = 120, ph = Math.max(1, Math.round((pw * H) / W))
+  const pa = resize(A, 3, W, H, pw, ph, m), pb = resize(B, 3, W, H, pw, ph, m)
+  const pm = Uint8Array.from(pa.cnt, (c) => (c > 0.5 * pa.area ? 1 : 0))
+  const pal = swd(pa.s, pb.s, pm)
+  // Detail on luminance at <= 480 wide.
+  const dw = Math.min(W, 480), dh = Math.round((dw * H) / W)
+  const LA = new Float32Array(n), LB = new Float32Array(n)
+  for (let i = 0; i < n; i++) { LA[i] = A[3 * i]; LB[i] = B[3 * i] }
+  const mm = Float32Array.from(m)
+  const la = resize(LA, 1, W, H, dw, dh, null).s, lb = resize(LB, 1, W, H, dw, dh, null).s
+  const dm = Uint8Array.from(resize(mm, 1, W, H, dw, dh, null).s, (v) => (v > 0.99 ? 1 : 0))
+  const da = detail(la, dw, dh, dm), db = detail(lb, dw, dh, dm)
+  const lr = (a, b) => Math.abs(Math.log((b + 1e-3) / (a + 1e-3)))
+  const bands = da.bands.reduce((s, e, i) => s + lr(e, db.bands[i]), 0) / da.bands.length
+  const sharp = da.grad.reduce((s, g, i) => s + lr(g + 0.05, db.grad[i] + 0.05), 0) / 3
+  let ow = 0, os = 0, cd = 0
+  da.tens.forEach((t, i) => {
+    const u = db.tens[i]
+    let d = Math.abs(t.ang - u.ang) % 180; if (d > 90) d = 180 - d
+    const w = t.coh * Math.sqrt(t.en)
+    os += w * d; ow += w; cd += Math.abs(t.coh - u.coh)
+  })
+  const orient = ow ? os / ow : 0, coh = cd / da.tens.length
+  const r2 = (v) => Math.round(v * 100) / 100
+  const score = coarse + 0.5 * mid + 0.5 * pal + 4 * bands + 4 * sharp + orient / 4 + 10 * coh
+  return {
+    score: r2(score), coarse: r2(coarse), mid: r2(mid), pal: r2(pal), bands: r2(bands), sharp: r2(sharp), orient: r2(orient), coh: r2(coh),
+    bandsRef: da.bands.map((e) => r2(Math.sqrt(e))), bandsOurs: db.bands.map((e) => r2(Math.sqrt(e))),
+  }
+}
+
+function heat(refC, renC, rects) {
+  const W = refC.width, H = refC.height, n = W * H, m = maskFor(W, H, rects, autoMask(refC))
+  const A = labOf(pixels(refC), n), B = labOf(pixels(renC), n)
+  const w = 48, h = Math.max(1, Math.round((w * H) / W))
+  const a = resize(A, 3, W, H, w, h, m), b = resize(B, 3, W, H, w, h, m)
+  const small = canvas(w, h), sc = small.getContext("2d"), id = sc.createImageData(w, h)
+  for (let i = 0; i < w * h; i++) {
+    // Signed lightness error in red/blue, chroma error in green.
+    const dl = b.s[3 * i] - a.s[3 * i], dc = Math.hypot(b.s[3 * i + 1] - a.s[3 * i + 1], b.s[3 * i + 2] - a.s[3 * i + 2])
+    id.data[4 * i] = Math.min(255, Math.max(0, dl) * 8); id.data[4 * i + 2] = Math.min(255, Math.max(0, -dl) * 8)
+    id.data[4 * i + 1] = Math.min(255, dc * 6); id.data[4 * i + 3] = a.cnt[i] ? 255 : 60
+  }
+  sc.putImageData(id, 0, 0)
+  const c = canvas(W, H), ctx = c.getContext("2d"); ctx.imageSmoothingEnabled = false; ctx.drawImage(small, 0, 0, W, H)
+  return c
+}
+
+function stack(cs, gap = 6) {
+  const W = cs.reduce((s, c) => s + c.width, 0) + gap * (cs.length - 1), H = Math.max(...cs.map((c) => c.height))
+  const o = canvas(W, H), ctx = o.getContext("2d"); ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H)
+  let x = 0; for (const c of cs) { ctx.drawImage(c, x, 0); x += c.width + gap }
+  return o
+}
+
+window.job = async (j) => {
+  await ensure()
+  const t0 = performance.now()
+  if (j.kind === "sheet") return sheet(j)
+  const { P, clamped } = full(j.params)
+  let W = j.width || 640
+  const im = j.ref ? await loadImg(j.ref) : null
+  const aspect = im ? im.naturalWidth / im.naturalHeight : 16 / 9
+  let H = j.height || Math.round(W / aspect)
+  const out = { clamped }
+  if (im && j.kind !== "render-only") {
+    // Score at a fixed width so numbers are comparable across calls.
+    const sw = j.scoreWidth || 320, sh = Math.round(sw / aspect)
+    out.metric = metric(drawImg(im, sw, sh), render(P, sw, sh, j.samples || 40), j.mask, j.automask !== false)
+  }
+  if (j.kind === "score") { out.ms = Math.round(performance.now() - t0); return out }
+  let ren, ref
+  if (j.crop) {
+    const [, , cw, ch] = j.crop
+    const fw = Math.min(4096, Math.round(W / cw)), fh = Math.round(fw / aspect)
+    const big = render(P, fw, fh, j.samples || 48)
+    H = Math.round((W * ch * fh) / (cw * fw))
+    ren = canvas(W, H); ren.getContext("2d").drawImage(big, j.crop[0] * fw, j.crop[1] * fh, cw * fw, ch * fh, 0, 0, W, H)
+    if (im) ref = drawImg(im, W, H, j.crop)
+  } else {
+    ren = render(P, W, H, j.samples || 40)
+    if (im) ref = drawImg(im, W, H)
+  }
+  out.render = ren.toDataURL("image/png")
+  if (ref) {
+    const parts = [ref, ren]
+    if (j.diff) parts.push(heat(ref, ren, j.mask))
+    out.compare = stack(parts).toDataURL("image/png")
+  }
+  out.ms = Math.round(performance.now() - t0)
+  return out
+}
+
+async function sheet(j) {
+  const cw = j.cellWidth || 300, gap = 8, lab = 22, cols = j.cols || 2
+  const rows = []
+  for (let i = 0; i < j.items.length; i += cols) rows.push(j.items.slice(i, i + cols))
+  const pairs = []
+  for (const it of j.items) {
+    const im = await loadImg(it.ref)
+    const a = im.naturalWidth / im.naturalHeight, h = Math.round(cw / a)
+    const { P } = full(it.params)
+    const ren = render(P, cw * 2, h * 2, 40)
+    const r = canvas(cw, h); r.getContext("2d").drawImage(ren, 0, 0, cw, h)
+    const rc = drawImg(im, cw, h)
+    if (j.showMask) {
+      const m = maskFor(cw, h, it.mask, autoMask(rc)), x = rc.getContext("2d"), id = x.getImageData(0, 0, cw, h)
+      for (let i = 0; i < m.length; i++) if (!m[i]) { id.data[4 * i] = 255; id.data[4 * i + 1] = 0; id.data[4 * i + 2] = 255 }
+      x.putImageData(id, 0, 0)
+    }
+    pairs.push({ it, ref: rc, ren: r, h })
+  }
+  const pw = cw * 2 + 4, W = cols * pw + (cols - 1) * gap * 3
+  const rh = rows.map((_, ri) => Math.max(...pairs.slice(ri * cols, ri * cols + cols).map((p) => p.h)) + lab + gap * 2)
+  const H = rh.reduce((s, h) => s + h, 0)
+  const o = canvas(W, H), ctx = o.getContext("2d")
+  ctx.fillStyle = "#111"; ctx.fillRect(0, 0, W, H); ctx.font = "15px ui-monospace, monospace"
+  let y = 0
+  rows.forEach((row, ri) => {
+    row.forEach((_, ci) => {
+      const p = pairs[ri * cols + ci], x = ci * (pw + gap * 3)
+      ctx.fillStyle = "#ddd"; ctx.fillText(p.it.label || p.it.id, x, y + 16)
+      ctx.drawImage(p.ref, x, y + lab); ctx.drawImage(p.ren, x + cw + 4, y + lab)
+    })
+    y += rh[ri]
+  })
+  return { sheet: o.toDataURL("image/png") }
+}
+</script>
+</body></html>

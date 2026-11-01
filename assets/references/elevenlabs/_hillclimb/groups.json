@@ -1,0 +1,603 @@
+[
+ {
+  "id": "sdr-amber",
+  "name": "AI SDR amber",
+  "primary": "gradient-titled/site_ai-sdr.webp",
+  "width": 924,
+  "height": 738,
+  "variants": [],
+  "note": "yellow/amber radial burst over pale sky blue",
+  "mask": [
+   [
+    0.1,
+    0.28,
+    0.9,
+    0.72
+   ]
+  ]
+ },
+ {
+  "id": "elections-green",
+  "name": "Elections green",
+  "primary": "gradient-titled/site_cover0-1.jpg",
+  "width": 1920,
+  "height": 1920,
+  "variants": [],
+  "note": "green and pale streaks, diagonal",
+  "mask": [
+   [
+    0.3,
+    0.4,
+    0.72,
+    0.58
+   ]
+  ]
+ },
+ {
+  "id": "support-teal",
+  "name": "Support teal",
+  "primary": "gradient-titled/x-el-customer-support-agent-cream-teal-26097-t2.png",
+  "width": 1920,
+  "height": 1080,
+  "variants": [
+   "gradient-titled/site_customer-support-agent-article-cover.png",
+   "gradient-titled/x-el-run-own-customer-support-cream-teal-26097.jpg",
+   "streak/web_linkedin-video-cover-green-haze.jpg"
+  ],
+  "note": "teal mass low-right on cream haze; 003 is a square crop",
+  "mask": [
+   [
+    0.3,
+    0.35,
+    0.7,
+    0.65
+   ]
+  ]
+ },
+ {
+  "id": "fedramp-oxblood",
+  "name": "FedRAMP oxblood",
+  "primary": "gradient-titled/site_elevenlabs-fedramp-square-1080x1080.png",
+  "width": 1080,
+  "height": 1080,
+  "variants": [
+   "streak/x-el-elevenlabs-fedramp-20x-class-blue-orange-61821.jpg"
+  ],
+  "note": "navy + oxblood wedge on pale blue, chromatic fringe",
+  "mask": [
+   [
+    0.02,
+    0.33,
+    0.75,
+    0.58
+   ],
+   [
+    0.02,
+    0.82,
+    0.3,
+    0.98
+   ]
+  ]
+ },
+ {
+  "id": "letter-sky",
+  "name": "Letter sky",
+  "primary": "gradient-titled/site_frame-2147256633.webp",
+  "width": 960,
+  "height": 960,
+  "variants": [],
+  "note": "cyan/blue sky to pink/purple at bottom",
+  "mask": [
+   [
+    0.28,
+    0.25,
+    0.62,
+    0.62
+   ],
+   [
+    0.18,
+    0.72,
+    0.82,
+    0.85
+   ]
+  ]
+ },
+ {
+  "id": "belgium-amber",
+  "name": "Belgium amber",
+  "primary": "gradient-titled/site_image-18.png",
+  "width": 2160,
+  "height": 2160,
+  "variants": [
+   "streak/x-dev-all-features-architect-available-amber-blue-47375.jpg"
+  ],
+  "note": "horizontal amber/tan with pale blue top",
+  "mask": [
+   [
+    0.02,
+    0.42,
+    0.98,
+    0.56
+   ]
+  ]
+ },
+ {
+  "id": "defining-navy",
+  "name": "Defining navy",
+  "primary": "gradient-titled/site_post-cover-17.webp",
+  "width": 3840,
+  "height": 2160,
+  "variants": [],
+  "note": "dark navy left fanning into pale blue",
+  "mask": [
+   [
+    0.12,
+    0.3,
+    0.88,
+    0.65
+   ]
+  ]
+ },
+ {
+  "id": "architect-wide",
+  "name": "Architect wide",
+  "primary": "gradient-titled/site_post-cover-3.webp",
+  "width": 1920,
+  "height": 1080,
+  "variants": [
+   "streak/web_yt-thumb-architect-slate-blue.jpg"
+  ],
+  "note": "pale blue-grey with navy/oxblood strikes, chromatic fringe",
+  "mask": [
+   [
+    0.0,
+    0.4,
+    0.25,
+    0.6
+   ],
+   [
+    0.3,
+    0.38,
+    0.7,
+    0.62
+   ],
+   [
+    0.3,
+    0.85,
+    0.7,
+    0.95
+   ]
+  ]
+ },
+ {
+  "id": "architect-square",
+  "name": "Architect square",
+  "primary": "streak/site_architect-web-1.jpg",
+  "width": 1080,
+  "height": 1080,
+  "variants": [],
+  "note": "square: oxblood/navy streaks from top fanning down over pale blue",
+  "mask": [
+   [
+    0.15,
+    0.38,
+    0.85,
+    0.6
+   ]
+  ]
+ },
+ {
+  "id": "agents-pale",
+  "name": "Agents pale",
+  "primary": "streak/site_agents-bg.webp",
+  "width": 1689,
+  "height": 1704,
+  "variants": [],
+  "note": "pale ice blue with violet/oxblood soft vertical sweep"
+ },
+ {
+  "id": "detect-navy",
+  "name": "Detect navy",
+  "primary": "streak/site_architect-web-6.jpg",
+  "width": 1080,
+  "height": 1080,
+  "variants": [],
+  "note": "dark navy/slate with pale diagonal strikes",
+  "mask": [
+   [
+    0.15,
+    0.38,
+    0.85,
+    0.6
+   ]
+  ]
+ },
+ {
+  "id": "ads-red",
+  "name": "Ads red",
+  "primary": "gradient-titled/web_yt-thumb-ads-engine-red.jpg",
+  "width": 1280,
+  "height": 720,
+  "variants": [
+   "gradient-titled/web_yt-thumb-avatars-red.jpg"
+  ],
+  "note": "vertical red/orange flame streaks",
+  "mask": [
+   [
+    0.25,
+    0.3,
+    0.75,
+    0.68
+   ]
+  ]
+ },
+ {
+  "id": "mcp-coral",
+  "name": "MCP coral burst",
+  "primary": "gradient-titled/web_yt-thumb-mcp-creative-orange.jpg",
+  "width": 1280,
+  "height": 720,
+  "variants": [
+   "streak/site_creatives-bg.webp"
+  ],
+  "note": "coral/orange burst on pale blue",
+  "mask": [
+   [
+    0.08,
+    0.2,
+    0.92,
+    0.48
+   ],
+   [
+    0.18,
+    0.5,
+    0.82,
+    0.78
+   ],
+   [
+    0.3,
+    0.82,
+    0.7,
+    0.95
+   ]
+  ]
+ },
+ {
+  "id": "workshop-red",
+  "name": "Workshop red",
+  "primary": "gradient-titled/x-ec-join-us-today-1-orange-red-81943.jpg",
+  "width": 1620,
+  "height": 1620,
+  "variants": [],
+  "note": "red/orange haze, muted purple top",
+  "mask": [
+   [
+    0.03,
+    0.04,
+    0.4,
+    0.12
+   ],
+   [
+    0.03,
+    0.38,
+    0.95,
+    0.62
+   ],
+   [
+    0.03,
+    0.85,
+    0.55,
+    0.95
+   ]
+  ]
+ },
+ {
+  "id": "lavender-cream",
+  "name": "Lavender cream",
+  "primary": "gradient-titled/x-ec-stay-brand-ease-whatever-lavender-cream-14056.jpg",
+  "width": 2152,
+  "height": 2690,
+  "variants": [],
+  "note": "lavender field with cream sweep and dark corner",
+  "mask": [
+   [
+    0,
+    0,
+    0.18,
+    0.07
+   ],
+   [
+    0.8,
+    0,
+    1,
+    0.07
+   ],
+   [
+    0.3,
+    0.48,
+    0.7,
+    0.53
+   ],
+   [
+    0,
+    0.93,
+    0.3,
+    1
+   ],
+   [
+    0.65,
+    0.93,
+    1,
+    1
+   ]
+  ]
+ },
+ {
+  "id": "sky-burst",
+  "name": "Sky burst",
+  "primary": "photo-blur/web_yt-banner-channel-blue-sky.jpg",
+  "width": 2560,
+  "height": 1440,
+  "variants": [
+   "photo-blur/site_blog-01.webp",
+   "photo-blur/web_linkedin-cover-blue-sky.jpg"
+  ],
+  "note": "deep blue V-burst on white; 020/021 are crops"
+ },
+ {
+  "id": "rust-blur",
+  "name": "Rust blur",
+  "primary": "photo-blur/site_creative-1-18030cd4.webp",
+  "width": 512,
+  "height": 512,
+  "variants": [],
+  "note": "orange/rust blurred photo, no streak direction"
+ },
+ {
+  "id": "green-peach-blur",
+  "name": "Green peach blur",
+  "primary": "photo-blur/site_creative-20-adb7c7e5.webp",
+  "width": 512,
+  "height": 512,
+  "variants": [],
+  "note": "green and peach blurred photo"
+ },
+ {
+  "id": "reader-pastel",
+  "name": "Reader pastel",
+  "primary": "photo-blur/site_elevenreadervoicechat.jpg",
+  "width": 1920,
+  "height": 1920,
+  "variants": [],
+  "note": "pastel lilac/pink/green motion blur",
+  "mask": [
+   [
+    0.2,
+    0.38,
+    0.8,
+    0.6
+   ]
+  ]
+ },
+ {
+  "id": "sdr-oxblood",
+  "name": "SDR oxblood",
+  "primary": "streak/site_ai-sdr-cover-3.webp",
+  "width": 1920,
+  "height": 1920,
+  "variants": [
+   "streak/x-el-agent-has-sound-human-blue-cream-75207-t1.png",
+   "streak/x-el-agent-has-sound-human-blue-lavender-75207.jpg"
+  ],
+  "note": "pale blue with oxblood/navy corner wedges",
+  "mask": [
+   [
+    0.3,
+    0.25,
+    0.7,
+    0.38
+   ],
+   [
+    0.15,
+    0.5,
+    0.88,
+    0.75
+   ]
+  ]
+ },
+ {
+  "id": "api-grey",
+  "name": "API grey",
+  "primary": "streak/site_api-gradient-1.webp",
+  "width": 1764,
+  "height": 1605,
+  "variants": [
+   "streak/site_api-gradient-2.webp",
+   "streak/site_api-gradient-3.webp"
+  ],
+  "note": "greyscale streak gradients (three variants)"
+ },
+ {
+  "id": "atom-band",
+  "name": "Atom band",
+  "primary": "streak/site_atom-bento-extra-large-card.webp",
+  "width": 1811,
+  "height": 1241,
+  "variants": [],
+  "note": "oxblood/violet band through pale blue-grey"
+ },
+ {
+  "id": "silk-blue",
+  "name": "Silk blue",
+  "primary": "streak/site_educational-01.webp",
+  "width": 960,
+  "height": 1200,
+  "variants": [
+   "streak/site_multilingual-05.webp"
+  ],
+  "note": "blue/white silk-like vertical sweep"
+ },
+ {
+  "id": "v4-turbo",
+  "name": "V4 Turbo",
+  "primary": "streak/site_v4-turbo-og.webp",
+  "width": 2400,
+  "height": 1260,
+  "variants": [
+   "streak/site_eleven-v45-1.webp",
+   "streak/site_eleven-v49.png"
+  ],
+  "note": "saturated red-orange with cream diagonal strikes",
+  "mask": [
+   [
+    0.2,
+    0.35,
+    0.8,
+    0.65
+   ]
+  ]
+ },
+ {
+  "id": "cobalt-openai",
+  "name": "Cobalt OpenAI",
+  "primary": "streak/site_elevenapi-openai-marketplace.webp",
+  "width": 1176,
+  "height": 1176,
+  "variants": [],
+  "note": "cobalt to sky blue shallow diagonal streaks",
+  "mask": [
+   [
+    0.15,
+    0.3,
+    0.85,
+    0.68
+   ]
+  ]
+ },
+ {
+  "id": "netherlands-amber",
+  "name": "Netherlands amber",
+  "primary": "streak/site_netherlands.webp",
+  "width": 2160,
+  "height": 2160,
+  "variants": [],
+  "note": "amber/orange diagonal streaks, portrait",
+  "mask": [
+   [
+    0.05,
+    0.42,
+    0.75,
+    0.6
+   ]
+  ]
+ },
+ {
+  "id": "reception-green",
+  "name": "Reception green",
+  "primary": "streak/site_reception-blog-square.jpg",
+  "width": 700,
+  "height": 700,
+  "variants": [],
+  "note": "green and sky blue diagonal streaks",
+  "mask": [
+   [
+    0.18,
+    0.35,
+    0.85,
+    0.65
+   ]
+  ]
+ },
+ {
+  "id": "scribe-green",
+  "name": "Scribe green",
+  "primary": "streak/site_scribe-v2-medical.webp",
+  "width": 1920,
+  "height": 1920,
+  "variants": [
+   "streak/x-ec-create-more-get-paid-green-lime-86504.jpg"
+  ],
+  "note": "green with pale strikes; 051 is darker green variant",
+  "mask": [
+   [
+    0.25,
+    0.38,
+    0.75,
+    0.6
+   ]
+  ]
+ },
+ {
+  "id": "sfx-grey",
+  "name": "SFX grey",
+  "primary": "streak/site_sfx-5c77e017.png",
+  "width": 1000,
+  "height": 1000,
+  "variants": [],
+  "note": "greyscale soft blob blur"
+ },
+ {
+  "id": "social-cream",
+  "name": "Social cream",
+  "primary": "streak/site_social-02.webp",
+  "width": 960,
+  "height": 1200,
+  "variants": [],
+  "note": "orange/cream diagonal, portrait"
+ },
+ {
+  "id": "social-ember",
+  "name": "Social ember",
+  "primary": "streak/site_social-05.webp",
+  "width": 960,
+  "height": 1200,
+  "variants": [],
+  "note": "orange/red petals with dark top, portrait"
+ },
+ {
+  "id": "coral-green",
+  "name": "Coral green",
+  "primary": "streak/web_yt-thumb-eleven-v4-red.jpg",
+  "width": 1280,
+  "height": 720,
+  "variants": [
+   "streak/site_tts-cover-01.webp"
+  ],
+  "note": "coral/pink with deep green strikes (Eleven V4)",
+  "mask": [
+   [
+    0.25,
+    0.35,
+    0.75,
+    0.65
+   ]
+  ]
+ },
+ {
+  "id": "coral-pink",
+  "name": "Coral pink",
+  "primary": "streak/site_tts-cover-02.webp",
+  "width": 786,
+  "height": 600,
+  "variants": [],
+  "note": "coral/peach soft diagonal"
+ },
+ {
+  "id": "pink-lilac",
+  "name": "Pink lilac",
+  "primary": "streak/site_tts-cover-04.webp",
+  "width": 786,
+  "height": 600,
+  "variants": [],
+  "note": "magenta/pink/lilac horizontal streaks"
+ },
+ {
+  "id": "red-burst",
+  "name": "Red burst",
+  "primary": "streak/site_uzcwj1ni2ys-background-03.png",
+  "width": 2000,
+  "height": 1125,
+  "variants": [],
+  "note": "red/orange burst on pale"
+ }
+]
