@@ -1,9 +1,17 @@
 import { cn } from "@/lib/utils"
 
-// The edge reaches as deep as the nav's band (--nav-band in globals.css). The
-// strip takes that height and the negative margin gives it straight back, so
-// it overlays the page without pushing it down.
-const PULL_BACK = { top: "-mb-(--nav-band)", bottom: "-mt-(--nav-band)" }
+// A page's edge reaches as deep as the nav's band (--nav-band in globals.css);
+// a panel's, inside its own scroll container, is a fixed h-12. The strip takes
+// that height and the negative margin gives it straight back, so it overlays
+// the content without pushing it down.
+const DEPTH = {
+  band: {
+    h: "h-(--nav-band)",
+    top: "-mb-(--nav-band)",
+    bottom: "-mt-(--nav-band)",
+  },
+  panel: { h: "h-12", top: "-mb-12", bottom: "-mt-12" },
+}
 
 // The viewport edge, as frosted glass rather than a hard cut (ported from
 // ziiz). A gradient dissolves the page into the background, and under it a
@@ -21,16 +29,28 @@ const LAYERS = [
 // Sticky rather than fixed so the strip belongs to the page it is placed in:
 // put the top one first and the bottom one last inside the page's own
 // wrapper. It sits under the floating nav (z-50), which keeps its own glass.
-export function EdgeFade({ side }: { side: "top" | "bottom" }) {
+// Inside a ScrollArea, pass a className that shows it only while there is
+// more to scroll that way (the root's data-overflow-y-start / -end).
+export function EdgeFade({
+  side,
+  depth = "band",
+  className,
+}: {
+  side: "top" | "bottom"
+  depth?: keyof typeof DEPTH
+  className?: string
+}) {
   const away = side === "top" ? "bottom" : "top"
 
   return (
     <div
       aria-hidden
       className={cn(
-        "pointer-events-none sticky z-30 h-(--nav-band)",
-        PULL_BACK[side],
-        side === "top" ? "top-0" : "bottom-0"
+        "pointer-events-none sticky z-30 shrink-0",
+        DEPTH[depth].h,
+        DEPTH[depth][side],
+        side === "top" ? "top-0" : "bottom-0",
+        className
       )}
     >
       {LAYERS.map(({ blur, reach }) => {
