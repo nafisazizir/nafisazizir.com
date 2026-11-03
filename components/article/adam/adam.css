@@ -1,0 +1,140 @@
+/*
+ * Figures for "Raising Adam": an iPhone drawn in CSS and the iOS screens it
+ * shows. Everything inside `.adam-device` is drawn at real iPhone 17 Pro
+ * points (402x874) and scaled as one piece, so sizes here are iOS sizes.
+ */
+
+.adam-device {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", var(--font-sans),
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: normal;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+/* ziiz draws corners as squircles; iOS's continuous corners are much closer
+   to round at these radii, and the bubble tails rely on round corners. */
+.adam-device,
+.adam-device *,
+.adam-device ::before,
+.adam-device ::after {
+  corner-shape: round;
+}
+
+/* iMessage bubbles. The tail is the classic two-pseudo-element cut: a bubble
+   coloured blob, then a background coloured blob that bites into it. */
+.adam-bubble {
+  position: relative;
+  max-width: 78%;
+  padding: 7px 13px 8px;
+  border-radius: 19px;
+  font-size: 17px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+.adam-bubble[data-from="me"] {
+  align-self: flex-end;
+  background: #0b84fe;
+  color: #fff;
+}
+.adam-bubble[data-from="adam"] {
+  align-self: flex-start;
+  background: #262628;
+  color: #fff;
+}
+.adam-bubble[data-tail]::before,
+.adam-bubble[data-tail]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 20px;
+}
+.adam-bubble[data-tail][data-from="me"]::before {
+  right: -7px;
+  width: 20px;
+  background: #0b84fe;
+  border-bottom-left-radius: 16px 14px;
+}
+.adam-bubble[data-tail][data-from="me"]::after {
+  /* A touch taller than the blob it bites, so no hairline of it shows. */
+  height: 22px;
+  right: -26px;
+  width: 26px;
+  background: #000;
+  border-bottom-left-radius: 10px;
+}
+.adam-bubble[data-tail][data-from="adam"]::before {
+  left: -7px;
+  width: 20px;
+  background: #262628;
+  border-bottom-right-radius: 16px 14px;
+}
+.adam-bubble[data-tail][data-from="adam"]::after {
+  height: 22px;
+  left: -26px;
+  width: 26px;
+  background: #000;
+  border-bottom-right-radius: 10px;
+}
+/* Media and rich links sit in the bubble edge to edge. */
+.adam-bubble[data-media] {
+  padding: 0;
+  overflow: hidden;
+  background: #262628;
+}
+.adam-bubble[data-media]::before,
+.adam-bubble[data-media]::after {
+  display: none;
+}
+
+/* Typing indicator: three dots breathing in turn. */
+.adam-typing-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #8e8e93;
+  animation: adam-typing 1.3s infinite ease-in-out;
+}
+.adam-typing-dot:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.adam-typing-dot:nth-child(3) {
+  animation-delay: 0.36s;
+}
+@keyframes adam-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The live-call waveform in the Dynamic Island. */
+.adam-wave-bar {
+  width: 2px;
+  border-radius: 1px;
+  background: #30d158;
+  animation: adam-wave 0.9s infinite ease-in-out alternate;
+}
+@keyframes adam-wave {
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-typing-dot,
+  .adam-wave-bar {
+    animation: none;
+  }
+}

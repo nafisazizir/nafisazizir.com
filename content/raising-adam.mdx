@@ -12,7 +12,7 @@ I was at a party last weekend that had gone a bit meh. So I texted Adam, "call m
 
 Five minutes later my phone rang. I put on my best "sorry, I have to take this" face and walked out.
 
-{/* TODO: screenshot of the "call me in 5 min" text + the incoming call. */}
+<AdamPartyCall />
 
 That's Adam, my personal agent. He lives in iMessage, in the same list as my friends. He reminds me of things, keeps an eye on my inbox and calendar, tells me how my last run went, and picks up the phone.
 
@@ -100,7 +100,7 @@ He reads every workout, every new email, every calendar change. Most of it I nev
 
 The coach is the clearest example. After a session he texts me a short verdict. If it went to plan, I hear nothing. No "nice work 💪". If I slept badly and my heart rate drifted, I get two lines. The deeper write-up still goes to Notion, which finally fixes the old problem. The analysis was always good. Now the part that matters reaches me.
 
-{/* TODO: screenshot of a real post-workout debrief text. */}
+<AdamDebrief caption="The only debrief I get is the one where something’s off." />
 
 Same with my Google Workspace. Gmail and Calendar push to him across a few accounts the moment something changes. He only texts me when a real person needs something from me, or a meeting moved in a way that messes up my day. Most days there's no brief at all.
 
@@ -122,9 +122,9 @@ Voice is the thing I've been deepest in for a while. At Avenue I build voice age
 
 How calls work is the decision I like most. The voice on the call is a separate realtime agent, but it's a thin front end with one tool, `ask_adam`, which drops my request into the same iMessage conversation as everything else. So there's still only one Adam. The call knows what we texted about yesterday, and he can answer out loud and text me a photo in the same turn. When I hang up, the call goes into the chat history like any other message.
 
-The other day I was walking to the bus stop and called him to find me a new shirt. He talked me through a couple of options. Problem is, I'm a visual person, and a shirt described over the phone means nothing to me. So I asked him to just send me a picture. My phone buzzed, and there it was in iMessage. We were still on the call.
+The other day I was walking to the bus stop and called him to find me a linen shirt. Venroy, Assembly Label and Industrie all had one, and he talked me through the fabrics. Problem is, I'm a visual person, and fabric described over the phone means nothing to me. So I asked him to just send me pictures. My phone buzzed, and there they were in iMessage. We were still on the call. I went with the Venroy.
 
-{/* TODO: screenshot of the iMessage thread. "📞 call started" line + the shirt photo. */}
+<AdamShirtCall caption="Still on the call. The photos land in the same thread." />
 
 There's no separate phone Adam. It's the same one, using a different mouth.
 
@@ -138,7 +138,7 @@ When Adam can't do something, or does it badly, I just tell him. He starts a Dev
 
 He doesn't wait for me to complain either. If he finds something to fix, or a better way to do something he already does, he starts that session himself, and all I see is the PR.
 
-{/* TODO: one real example of a fix that went through this loop. */}
+<AdamFix caption="Broken at 7:51. Fixed, merged and working by 7:58." />
 
 So the feedback loop is just a conversation now. He breaks, he notices or I do, he gets fixed.
 

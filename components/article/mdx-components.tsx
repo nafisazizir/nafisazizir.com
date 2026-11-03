@@ -2,6 +2,12 @@ import type { MDXComponents } from "mdx/types"
 import Link from "next/link"
 import type { ComponentPropsWithoutRef } from "react"
 
+import {
+  AdamDebrief,
+  AdamFix,
+  AdamPartyCall,
+  AdamShirtCall,
+} from "@/components/article/adam/figures"
 import { TweetEmbed } from "@/components/article/tweet-embed"
 import { CodeBlock } from "@/components/docs/code-block"
 import { revealBlocks } from "@/components/motion/reveal-block"
@@ -64,4 +70,9 @@ export const mdxComponents: MDXComponents = {
   pre: Pre,
   table: Table,
   Tweet: TweetEmbed,
+  // Figures for "Raising Adam".
+  AdamPartyCall,
+  AdamDebrief,
+  AdamShirtCall,
+  AdamFix,
 }

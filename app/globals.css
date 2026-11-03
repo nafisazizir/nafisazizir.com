@@ -9,6 +9,7 @@
    shadcn slot vocabulary, so shadcn.css (the slot bridge) is not imported. */
 @import "@nafisazizir/ziiz/theme.css";
 @import "../components/patterns/motion.css";
+@import "../components/article/adam/adam.css";
 
 :root {
   /* Pre-ziiz value, deliberately kept: the system's own default is
