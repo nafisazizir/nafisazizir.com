@@ -4,7 +4,7 @@ description: "A year ago Adam didn't exist. Not the name, not the idea. How an M
 date: 2026-10-26
 type: blog
 tags: [reflection, exploration]
-pattern: trigger
+pattern: adam
 flag: raising-adam
 ---
 
@@ -70,19 +70,17 @@ So I went through the options. It had to fit my hobby tier, which means free, an
 
 ## Getting a name
 
-Then Vercel released Eve at Ship London this year, a framework for durable backend agents. I watched it that night and thought, yeah, that's the one.
+Then Vercel released [eve](https://eve.dev/) at Ship London this year, a framework for durable backend agents. I watched it that night and thought, yeah, that's the one.
 
 What got me is it's all on Vercel. Workflow SDK for durability, Sandbox, AI Gateway for models. Every agent I'd built before was already on that stack, so moving over was easy, and it costs me basically nothing to run.
 
-It was also when I stopped riding my subscription. Models are getting smarter every few months, and I'd been patient with workarounds for long enough. Workarounds break. So I started paying for tokens properly, with a fixed monthly allowance for anything AI. If compute ever gets free, or I get a raise, Adam gets smarter.
+It was also when I stopped riding my subscription. Models are getting smarter every few months, and I'd been patient with workarounds for long enough. Workarounds break! So I started paying for tokens properly, with a fixed monthly allowance for anything AI. If compute ever gets free, orrrrrrr **I get a raise**, Adam gets smarter.
 
-The framework was called Eve, so the agent was always going to be Adam.
-
-Since then he's run on Grok, then DeepSeek, and now an OpenAI model. Everything goes through the gateway, so each swap was one line, and he didn't notice. I don't want him tied to one lab. Whoever's best for the job this month gets it.
+The framework was called eve, so the agent was always going to be Adam.
 
 ## Living in iMessage
 
-Adam was always going to live in iMessage. I'd been using Poke for a while and following the iMessage agent space pretty closely. At a tech meetup a guy told me to look at Sendblue, because his mate works there, and it's honestly so sick. That sent me down the rabbit hole. It's also the answer to the Notion problem. iMessage is the app I already open all day, so a message from him gets read without me changing anything.
+Adam was always going to live in iMessage. I'd been using Poke for a while and following the iMessage agent space pretty closely. At a tech meetup a guy told me to look at Sendblue because his mate works there, and it's honestly so sick. That sent me down the rabbit hole. iMessage was also the answer to the Notion problem. It's the app I already open all day, so a message from him gets read without me changing anything.
 
 The most important decision in Adam is that everything is a trigger.
 
@@ -98,15 +96,15 @@ Adam does a lot more than he tells me.
 
 He reads every workout, every new email, every calendar change. Most of it I never hear about. It gets handled, or it gets let go, and I don't need to know either way. He only surfaces the things that actually need my attention, including things I never asked him to watch for.
 
-The coach is the clearest example. After a session he texts me a short verdict. If it went to plan, I hear nothing. No "nice work 💪". If I slept badly and my heart rate drifted, I get two lines. The deeper write-up still goes to Notion, which finally fixes the old problem. The analysis was always good. Now the part that matters reaches me.
+The coach is one clear example. After a session he texts me a short verdict. If it went to plan, I hear nothing. If I slept badly and my heart rate drifted, he texts me what to look out for. The deeper write-up still goes to Notion, which finally fixes the old problem. The analysis was always good. Now the part that matters reaches me.
 
 <AdamDebrief caption="The only debrief I get is the one where something’s off." />
 
-Same with my Google Workspace. Gmail and Calendar push to him across a few accounts the moment something changes. He only texts me when a real person needs something from me, or a meeting moved in a way that messes up my day. Most days there's no brief at all.
+Same with my Google Workspace. Gmail and Calendar push to him across a few accounts the moment something changes. He only texts me when something actually needs me. A real person waiting on a reply, a meeting that moved and messes up my day, a utility bill that's due, a subscription I never use and should cancel. When a house inspection came up, he reminded me, blocked out time, and found a slot with my roommates to clean before it. Most days there's no brief at all.
 
-Under the hood he has a tool literally called `stay_silent`. Saying nothing is a decision he makes on purpose, and an empty reply counts as a failure. It took longer to get right than anything else in him. An agent that pings you all the time gets muted, and then it's just another app.
+Under the hood he has a tool called `stay_silent`. Saying nothing is a decision he makes on purpose. It took longer to get right than anything else in him. An agent that pings you all the time gets muted, and then it's just another app.
 
-When OpenAI launched Dots last month, the pitch was pretty much this. An agent that keeps working in the background and only comes back with what needs you. Nice to know I wasn't crazy.
+When OpenAI launched Dots last month, the pitch was pretty much this. An agent that keeps working in the background and only comes back with what needs you.
 
 ## Learning to see and hear
 
@@ -122,11 +120,9 @@ Voice is the thing I've been deepest in for a while. At Avenue I build voice age
 
 How calls work is the decision I like most. The voice on the call is a separate realtime agent, but it's a thin front end with one tool, `ask_adam`, which drops my request into the same iMessage conversation as everything else. So there's still only one Adam. The call knows what we texted about yesterday, and he can answer out loud and text me a photo in the same turn. When I hang up, the call goes into the chat history like any other message.
 
-The other day I was walking to the bus stop and called him to find me a linen shirt. Venroy, Assembly Label and Industrie all had one, and he talked me through the fabrics. Problem is, I'm a visual person, and fabric described over the phone means nothing to me. So I asked him to just send me pictures. My phone buzzed, and there they were in iMessage. We were still on the call. I went with the Venroy.
+The other day I was walking to the bus stop and called him to find me a linen shirt. Venroy, Assembly Label and Industrie all had one, and he talked me through the fabrics. Problem is, I'm a visual person, and fabric described over the phone means nothing to me. So I asked him to just send me pictures. My phone buzzed, and there they were in iMessage, while we were still on the call.
 
 <AdamShirtCall caption="Still on the call. The photos land in the same thread." />
-
-There's no separate phone Adam. It's the same one, using a different mouth.
 
 It works the other way too, which is how I got out of that party. Ask him to ring me, or set a reminder that rings instead of texts, and he calls.
 
@@ -134,7 +130,7 @@ It works the other way too, which is how I got out of that party. Ask him to rin
 
 The newest thing he's learned is the one that changes how he grows.
 
-When Adam can't do something, or does it badly, I just tell him. He starts a Devin session on his own repo, keeps an eye on it, texts me if Devin has a question, and texts me again when there's a pull request. I read it on my phone. If I say merge, he asks me to confirm with the PR named, then merges it.
+When Adam can't do something, or does it badly, I just tell him. He starts a session with Devin, or any cloud agent I have a subscription to, on his own repo, keeps an eye on it, texts me if it has a question, and texts me again when there's a pull request. I read it on my phone, then tell him to merge it.
 
 He doesn't wait for me to complain either. If he finds something to fix, or a better way to do something he already does, he starts that session himself, and all I see is the PR.
 

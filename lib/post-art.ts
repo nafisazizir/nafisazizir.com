@@ -1,4 +1,5 @@
 import { patterns, type PatternEntry } from "@/components/patterns"
+import { PatternAdam } from "@/components/patterns/adam"
 import type { Post } from "@/lib/content"
 
 // The frontmatter name of a pattern is its catalogue label in kebab case:
@@ -24,7 +25,17 @@ const FROM_X = new Set([
 ])
 
 const usable = patterns.filter((entry) => !FROM_X.has(nameOf(entry)))
-const byName = new Map(usable.map((entry) => [nameOf(entry), entry]))
+
+// Drawn for one post, so a post has to name it: it's never in the pool a post
+// without a pattern is picked from.
+const adam: PatternEntry = {
+  name: "PatternAdam",
+  label: "Adam",
+  family: "Graphs",
+  Component: PatternAdam,
+}
+
+const byName = new Map([...usable, adam].map((entry) => [nameOf(entry), entry]))
 
 /**
  * The pattern a post wears: the one its frontmatter names, or, when it names
