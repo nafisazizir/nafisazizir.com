@@ -14,7 +14,7 @@ Five minutes later my phone rang. I put on my best "sorry, I have to take this" 
 
 <AdamPartyCall />
 
-That's Adam, my personal agent. He lives in iMessage, in the same list as my friends. He reminds me of things, keeps an eye on my inbox and calendar, tells me how my last run went, and picks up the phone.
+That's Adam, my personal agent. He lives in iMessage, in the same list as my friends and family. He's proactive, keeps an eye on my inbox and calendar, tells me how my last run went, picks up the phone, and the list goes on.
 
 A year ago none of that existed. No Adam, no name, no plan to make one. If you'd asked me back then, I would've said I was building a small tool for my workout data. Really I just wanted fewer apps, and I was being a bit stubborn about it.
 
@@ -24,47 +24,47 @@ This is how he grew up.
 
 What I believed back then, and still do, is that most of my apps didn't need a screen at all. If an agent can talk to the thing, the only screen I need is the one I already text from. That's a pretty common take now. Ship an MCP, ship a CLI, let the agent drive. A year ago most apps didn't speak agent at all, so if I wanted it, I had to build the plugs myself.
 
-My training data was the obvious example. Garmin on my wrist for sleep, HRV and recovery. Strava for runs and rides. Hevy for lifting. Garmin and Strava sync, sort of, in the sense that a run shows up in both. Nothing looks at the run and the sleep together.
+My training data was the obvious example, and that's where it all started. Garmin on my wrist for sleep, HRV and recovery. Strava for runs and rides. Hevy for lifting. Garmin and Strava (sort of) sync, in the sense that a run shows up in both. But nothing looks at the run and the sleep together.
 
-And that's the whole question really. If my 5k is slower today, is that me getting worse, or is it the four hours of sleep and the leg day two days ago? If I miss a rep, is the programme wrong or did I just not eat enough? Each app holds one piece of that answer.
+And that's the whole question really. If my 5k is slower today, is that me getting worse, or is it the four hours of sleep and the leg day two days ago? If I miss a rep, is the programme wrong or did I just not eat enough?
 
-The normal move, especially if you've spent any time on TikTok lately, is to "build an app with AI". A fourth app that pulls the three together, with another dashboard on top. I didn't need another place to look at my data though. Each of these apps already stores it, cleans it up and keeps it in a nice shape. I just needed to borrow it and play around with it.
+The normal move, especially if you've spent any time on TikTok lately, is to "build an app with AI". Another app that pulls the three together, with another dashboard on top. I didn't need another place to look at my data though. Each of these apps already stores it, cleans it up and keeps it in a nice shape. I just needed to borrow it and play around with it.
 
 So I wrapped them in an MCP server. MCP is a standard plug that lets an AI agent use a tool. You write the plug once and any agent can pick it up.
 
-Not everything wanted to be plugged in. Garmin only gives its developer API to businesses, so riz-mcp signs in the same way the Garmin app on my phone does. Not pretty, but my data is my data.
+But not everything wanted to be plugged in. Garmin only gives its developer API to businesses, so I had to find a workaround. Messy and flaky, but it kinda works.
 
-I called it riz-mcp, plugged it into Claude, and started asking questions. Because it's a standard plug, ChatGPT or Codex can use it just the same. On top of it I wrote skills, which are basically instruction files, so the coaching had opinions: what to look at after a run versus a lift, what a two-week review should cover, when it's time to change the plan.
-
-It worked pretty much straight away, which was suspicious. To be fair there's a commit in the history called "fix what claude messed up", so it wasn't all smooth.
+I called it riz-mcp (from my last name "Riza"), plugged it into chat apps, and started asking questions. On top of it I wrote skills, which are basically instruction files, so the coaching had opinions: what to look at after a run versus a lift, what a two-week review should cover, when it's time to change the plan.
 
 That server is the oldest part of Adam, and it's older than Adam. He wouldn't get a name for months.
 
 ## The bet spread
 
-It didn't stay with workouts. I edit my photos in Lightroom Classic, which has no way for an agent to get in, so I wrote a plugin with Lightroom's own Lua SDK and put an MCP server in front of it. Now an agent can colour-grade a shoot.
+It didn't stay with workouts. I edit my photos in Lightroom Classic, which has no way for an agent to get in, so I wrote a plugin with Lightroom's own Lua SDK and put an MCP server in front of it. Now an agent can colour grade a shoot. It works nicely because the edits are non-destructive, with a full history, so anything is easy to undo.
 
-Side effect I didn't see coming. I started judging products by whether I could plug them in.
+This became a pattern for me, with a side effect I didn't see coming. I started judging products by whether I could plug them in.
 
-I was shopping for a smart scale, and the thing I cared about most wasn't accuracy or the app. It was whether the company has a public API that a normal person can get keys for, without applying as a business. They don't need an MCP server. If there's an API, I'll wrap it myself.
-
-That made it a short list. Most brands either don't have one or make you jump through hoops, and Withings was the easy pick.
+I was shopping for a smart scale, and the one thing I cared about most wasn't accuracy or the app. It was whether they have a public API that a normie can get keys for. They don't need to have an MCP, I can just wrap it myself.
 
 I do this for more than gadgets now. If I can't get my data out, I'm a lot less keen to put it in.
 
 ## Learning to work without me
 
-The problem with a chat window is you have to open it.
+The problem with a chat window is you have to open it. And it only does anything when you ask.
 
-So the next step was making the analysis happen on its own. A workout finishes, Strava or Hevy fires a webhook, and my server spins up a sandbox, a small throwaway computer in the cloud. Inside it a coding agent runs headless with the coaching skills loaded, Claude Code at the time, though Codex does the same job. It pulls the data, reads my current plan from Notion, and writes the analysis back into Notion.
+So the next step was making the analysis happen on its own. When a workout finishes, Strava or Hevy fires a webhook, and my server spins up a sandbox, a small throwaway computer in the cloud. Inside it a coding agent runs headless with the coaching skills loaded. It pulls the data, reads my current plan from Notion, and writes the analysis back into Notion.
 
-All of it ran on a subscription I was already paying for. The only new cost was the sandbox, and that's on Vercel, so it was free :)
+I know it sounds overly complex, when the easy way is a server talking to the model directly. But I wanted every run to be as free as possible, on the AI subscriptions I was already paying for. So I thought I was a genius. A coding agent on my subscription, running headless and unattended.
 
-Around the same time OpenClaw went through the roof and everyone was standing up their own personal agent, mostly on API tokens, and often on cheaper models to keep the bill down. I didn't want to trade intelligence for cost.
+The only new cost was the sandbox, and that's on Vercel, so it was free :)
 
-So I went a different way. My plan was to take Vercel's Chat SDK, AI SDK and Sandbox, and write a custom adapter that runs Claude Code or Codex headless inside the sandbox, on my subscription, unsupervised. The catch is you only get free-form text back, no structured output. Good enough for me. A couple of weeks later, the AI SDK shipped [`HarnessAgent`](https://vercel.com/changelog/program-agent-harnesses-with-ai-sdk) in canary, which runs Claude Code or Codex inside a sandbox behind one API. Pretty much the same idea, done properly.
+Around the same time OpenClaw went through the roof and everyone was standing up their own personal agent, mostly on API tokens, and often on cheaper models to keep the bill down. But I didn't want to trade intelligence for cost, and I was kind of reluctant to put more money into tokens.
 
-It served me well for a while. The problem was I didn't read it. The analysis was good, it was just sitting in a Notion page I had to remember to open.
+So I went a different way. My plan was to take Vercel's AI SDK and Sandbox, and write a custom adapter that runs Claude Code or Codex headless inside the sandbox, on my subscription, unsupervised (like the workout analysis, but in a more elegant way). The catch is you only get free form text back, no structured output, but that's good enough for me.
+
+Then the AI SDK shipped [`HarnessAgent`](https://vercel.com/changelog/program-agent-harnesses-with-ai-sdk) in canary, which runs Claude Code or Codex inside a sandbox behind one API. Pretty much the same idea, but they did it properly.
+
+The workout setup served me well for a while. The problem was I didn't read what it wrote. The analysis was good, it was just sitting in a Notion page I had to remember to open.
 
 So I went through the options. It had to fit my hobby tier, which means free, and no paying for another service just to get a ping. Email through Resend would've worked, but I don't live in my inbox. Telegram would've worked too, except I don't use Telegram. Anything that needed me to build a new habit was out. If the experience isn't good I won't use it, and the tool should follow how I already do things.
 
