@@ -8,6 +8,7 @@ import {
   AdamPartyCall,
   AdamShirtCall,
 } from "@/components/article/adam/figures"
+import { AdamTriggerMap } from "@/components/article/adam/trigger-map"
 import { TweetEmbed } from "@/components/article/tweet-embed"
 import { CodeBlock } from "@/components/docs/code-block"
 import { revealBlocks } from "@/components/motion/reveal-block"
@@ -72,6 +73,7 @@ export const mdxComponents: MDXComponents = {
   Tweet: TweetEmbed,
   // Figures for "Raising Adam".
   AdamPartyCall,
+  AdamTriggerMap,
   AdamDebrief,
   AdamShirtCall,
   AdamFix,
