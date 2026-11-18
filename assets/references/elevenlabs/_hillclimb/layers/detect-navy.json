@@ -1,0 +1,33 @@
+{
+ "id": "detect-navy",
+ "dist": {
+  "score": 0.363,
+  "bands": 0.043,
+  "chroma": 0,
+  "tone": 0.059,
+  "shift": 0.261
+ },
+ "clean": {
+  "score": 9.5,
+  "bands": 6.954,
+  "chroma": 0,
+  "tone": 2.284,
+  "shift": 0.262
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 2,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.0728,
+    "size": 1.31,
+    "mids": 0.313,
+    "colour": 0.156
+   }
+  }
+ ]
+}

@@ -27,12 +27,39 @@ const MODS = ["renderer", "shader", "presets"]
 const JOB_TIMEOUT = +(process.env.SL_JOB_TIMEOUT || 60000)
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("job timeout")), ms))])
 
-const version = () =>
-  MODS.map((m) => fs.statSync(`${SRC}/${m}.ts`).mtimeMs).join("-")
+// Every module the renderer can reach: the top-level ones plus the shared
+// layers (components/shaders/layers).
+const LAYERS = `${REPO}/components/shaders/layers`
+const modFiles = () => [
+  ...MODS.map((m) => `${SRC}/${m}.ts`),
+  ...(fs.existsSync(LAYERS) ? fs.readdirSync(LAYERS).filter((f) => f.endsWith(".ts")).map((f) => `${LAYERS}/${f}`) : []),
+]
+const version = () => modFiles().map((f) => fs.statSync(f).mtimeMs).join("-")
+
+// A module id is a path relative to SRC ("shader") or an "@/" path from the
+// repo root, like the site's alias ("@/components/shaders/layers/post"). A
+// directory means its index. Returns the id with any /index made explicit.
+function resolveMod(name) {
+  const p = path.normalize(name)
+  const base = p.startsWith("@/") ? `${REPO}/${p.slice(2)}` : `${SRC}/${p}`
+  if (!p.startsWith("@/") && p.startsWith("..")) return null
+  if (fs.existsSync(`${base}.ts`)) return p
+  if (fs.existsSync(`${base}/index.ts`)) return `${p}/index`
+  return null
+}
+const fileOf = (id) => (id.startsWith("@/") ? `${REPO}/${id.slice(2)}` : `${SRC}/${id}`) + ".ts"
 
 function serveModule(name, res) {
-  let code = stripTypeScriptTypes(fs.readFileSync(`${SRC}/${name}.ts`, "utf8"))
-  code = code.replace(/from\s+"\.\/(\w[\w-]*)"/g, (_, m) => `from "/mod/${m}.js?v=${version()}"`)
+  const mod = resolveMod(name)
+  if (!mod) { res.writeHead(404); return res.end() }
+  let code = stripTypeScriptTypes(fs.readFileSync(fileOf(mod), "utf8"))
+  const v = version()
+  // Relative imports resolve against this module's own directory; "@/" ones
+  // are already ids.
+  code = code.replace(/from\s+"((?:\.{1,2}|@)\/[\w./-]+)"/g, (_, spec) => {
+    const target = resolveMod(spec.startsWith("@/") ? spec : path.join(path.dirname(mod), spec))
+    return `from "/mod/${target ?? spec}.js?v=${v}"`
+  })
   res.writeHead(200, { "content-type": "text/javascript", "cache-control": "no-store" })
   res.end(code)
 }
@@ -120,7 +147,7 @@ const server = http.createServer(async (req, res) => {
       return res.end(fs.readFileSync(path.join(HERE, "harness.html")))
     }
     if (url.pathname === "/version") { res.writeHead(200, { "cache-control": "no-store" }); return res.end(version()) }
-    if (url.pathname.startsWith("/mod/")) return serveModule(path.basename(url.pathname, ".js"), res)
+    if (url.pathname.startsWith("/mod/")) return serveModule(url.pathname.slice(5).replace(/\.js$/, ""), res)
     if (url.pathname.startsWith("/ref/")) {
       const f = path.join(REF, decodeURIComponent(url.pathname.slice(5)))
       if (!f.startsWith(REF) || !fs.existsSync(f)) { res.writeHead(404); return res.end() }

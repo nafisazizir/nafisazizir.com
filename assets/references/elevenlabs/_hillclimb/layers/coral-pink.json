@@ -1,0 +1,19 @@
+{
+ "id": "coral-pink",
+ "dist": {
+  "score": 2.184,
+  "bands": 0.185,
+  "chroma": 1.303,
+  "tone": 0.371,
+  "shift": 0.325
+ },
+ "clean": {
+  "score": 2.184,
+  "bands": 0.185,
+  "chroma": 1.303,
+  "tone": 0.371,
+  "shift": 0.325
+ },
+ "layers": [],
+ "note": "clean reference"
+}

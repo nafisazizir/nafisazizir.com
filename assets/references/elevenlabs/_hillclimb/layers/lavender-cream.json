@@ -1,0 +1,19 @@
+{
+ "id": "lavender-cream",
+ "dist": {
+  "score": 0.368,
+  "bands": 0.362,
+  "chroma": 0,
+  "tone": 0,
+  "shift": 0.006
+ },
+ "clean": {
+  "score": 0.368,
+  "bands": 0.362,
+  "chroma": 0,
+  "tone": 0,
+  "shift": 0.006
+ },
+ "layers": [],
+ "note": "clean reference"
+}

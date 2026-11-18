@@ -1,0 +1,33 @@
+{
+ "id": "reception-green",
+ "dist": {
+  "score": 0.256,
+  "bands": 0.124,
+  "chroma": 0.068,
+  "tone": 0.009,
+  "shift": 0.057
+ },
+ "clean": {
+  "score": 9.218,
+  "bands": 6.48,
+  "chroma": 2.176,
+  "tone": 0.515,
+  "shift": 0.047
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.2484,
+    "size": 1.575,
+    "mids": 0.615,
+    "colour": 0.149
+   }
+  }
+ ]
+}

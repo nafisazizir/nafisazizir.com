@@ -1,0 +1,33 @@
+{
+ "id": "workshop-red",
+ "dist": {
+  "score": 0.48,
+  "bands": 0.11,
+  "chroma": 0.057,
+  "tone": 0.005,
+  "shift": 0.308
+ },
+ "clean": {
+  "score": 15.678,
+  "bands": 13.498,
+  "chroma": 0.037,
+  "tone": 1.779,
+  "shift": 0.363
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.9139,
+    "size": 0.745,
+    "mids": 0.486,
+    "colour": 0.034
+   }
+  }
+ ]
+}

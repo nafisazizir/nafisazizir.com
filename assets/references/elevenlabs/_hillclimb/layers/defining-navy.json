@@ -1,0 +1,33 @@
+{
+ "id": "defining-navy",
+ "dist": {
+  "score": 0.578,
+  "bands": 0.042,
+  "chroma": 0.201,
+  "tone": 0.037,
+  "shift": 0.298
+ },
+ "clean": {
+  "score": 11.27,
+  "bands": 8.064,
+  "chroma": 0.53,
+  "tone": 2.321,
+  "shift": 0.355
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.2766,
+    "size": 0.826,
+    "mids": 0.589,
+    "colour": 0
+   }
+  }
+ ]
+}

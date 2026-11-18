@@ -26,11 +26,16 @@ const items = groups.flatMap((g) => {
   const p = { ...STREAK_DEFAULTS, ...r.params }
   for (const s of STREAK_PARAMS) p[s.key] = Math.min(s.max, Math.max(s.min, +p[s.key]))
   const params = Object.fromEntries(KEYS.map((k) => [k, p[k]]))
-  return [{ id: g.id, name: g.name, ref: g.primary, variants: g.variants, aspect: +(g.width / g.height).toFixed(4), fidelity: critic[g.id]?.grade ?? r.fidelity, gaps: critic[g.id] ? critic[g.id].fixes.map(sentence).join(" ") : r.gaps || "", params }]
+  // Fitted layers (tools/layers.mjs fit → layers/<id>.json), stored without
+  // the uid a stack gives them. Only when there are some.
+  const lf = path.join(ROOT, "layers", `${g.id}.json`)
+  const layers = fs.existsSync(lf) ? JSON.parse(fs.readFileSync(lf, "utf8")).layers.map(({ uid, ...l }) => l) : []
+  return [{ id: g.id, name: g.name, ref: g.primary, variants: g.variants, aspect: +(g.width / g.height).toFixed(4), fidelity: critic[g.id]?.grade ?? r.fidelity, gaps: critic[g.id] ? critic[g.id].fixes.map(sentence).join(" ") : r.gaps || "", params, ...(layers.length ? { layers } : {}) }]
 })
 const ts = `// Generated from the reference picks (assets/references/elevenlabs/picks.json):
 // one entry per de-duplicated group, with the streak params that best recreate
 // its primary image. Shown side by side at /labs/streaks/references.
+import type { LayerPreset } from "@/components/shaders/layers"
 import type { StreakParams } from "./presets"
 
 export interface Recreation {
@@ -47,6 +52,8 @@ export interface Recreation {
   /** What the shader can't reproduce here. */
   gaps: string
   params: StreakParams
+  /** Grain fitted to the reference's own texture, laid over the streaks. */
+  layers?: LayerPreset[]
 }
 
 export const RECREATIONS: Recreation[] = ${JSON.stringify(items, null, 2)}

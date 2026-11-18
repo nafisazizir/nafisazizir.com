@@ -1,0 +1,19 @@
+{
+ "id": "mcp-coral",
+ "dist": {
+  "score": 2.129,
+  "bands": 0.712,
+  "chroma": 0.657,
+  "tone": 0.249,
+  "shift": 0.512
+ },
+ "clean": {
+  "score": 2.129,
+  "bands": 0.712,
+  "chroma": 0.657,
+  "tone": 0.249,
+  "shift": 0.512
+ },
+ "layers": [],
+ "note": "clean reference"
+}

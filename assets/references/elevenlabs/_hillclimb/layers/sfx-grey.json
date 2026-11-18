@@ -1,0 +1,19 @@
+{
+ "id": "sfx-grey",
+ "dist": {
+  "score": 1.584,
+  "bands": 1.107,
+  "chroma": 0,
+  "tone": 0.134,
+  "shift": 0.343
+ },
+ "clean": {
+  "score": 1.584,
+  "bands": 1.107,
+  "chroma": 0,
+  "tone": 0.134,
+  "shift": 0.343
+ },
+ "layers": [],
+ "note": "clean reference"
+}

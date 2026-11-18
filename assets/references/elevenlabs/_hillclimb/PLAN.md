@@ -121,3 +121,50 @@ G soft/photo-blur: rust-blur, green-peach-blur, reader-pastel, sfx-grey, lavende
   angle that varies with position (angle + k·y); S/cubic edge; masked radial texture layer; placeable clump zones; fibreFreq > 120 / third octave;
   a lightening (additive) mass; two-colour signed rim fringe; a third accent or N colour spots.
 - Restart: `SL_PAGES=6 node tools/server.mjs &`, then `node tools/sl.mjs score`.
+
+## Layers round (2026-11-18)
+User asked to fit the new opt-in layers (components/labs/streaks/layers/: grain,
+noise, fractal; a post pass over the finished streaks) so each clone matches its
+reference's surface texture. The streak params are untouched; only layers are fit.
+
+- Finding: the "no grain" brief was about the streak shader. Most refs *do* carry
+  grain: 27/35 have a fine-band luma amplitude of 1–9 levels, ours ~0. Clean ones:
+  agents-pale, lavender-cream, atom-band, mcp-coral, rust-blur, green-peach,
+  pink-lilac, coral-pink. (notes/layers-measure.json)
+- The 320px metric de-grains on purpose, so texture got its own metric
+  (harness.html `texture` job): native-res crops (3, ≤320², smooth + unmasked,
+  picked on the ref), robust (MAD) amplitude of 4 DoG luma bands σ .7/1.5/3/6,
+  the colour share of the finest band, its tone response (shadow/mid/high), a
+  mean-shift guard. Renders round-trip through the ref's codec (webp/jpg q .85).
+  Candidate stacks are laid over a cached native render via the real layer pass
+  (post.ts exposes the stack's texture), so a candidate costs ms.
+- tools/layers.mjs: `measure`, `show <id>` (out/layers/<id>.png, ref | ours 1:1
+  crops), `fit` (per blend mode: amount×size grid, then (1+8)-ES on amount(log),
+  mids, size(log), colour; keep a layer only if it beats clean by >15% and >0.3).
+  Results in layers/<id>.json; tools/build.mjs folds them into recreations.ts.
+- Server: nested module imports (layers/*), version covers layers/. Gotcha: after
+  editing harness.html the pool sometimes wedged (job timeouts): restart it.
+- Grain change mid-round: below 1px a cell is averaged away (amplitude × cell,
+  one value per pixel), so previews/thumbs match a downscaled export. Round 1 fits
+  (pre-change) are in snapshots/layers-r1 and are not comparable.
+- R2 fit (new grain), all 35: texture dist mean 7.68 → 0.77. Rule added after: a ref
+  whose finest band is < 0.3 luma levels (no visible grain) gets no layer (12 refs:
+  support-teal agents-pale mcp-coral lavender-cream rust-blur green-peach-blur
+  atom-band silk-blue sfx-grey coral-green coral-pink pink-lilac). Final: 23 clones
+  with one fitted Grain layer, texture mean 1.11 (clean refs keep their clean dist).
+- Main 320px metric with layers: 22.07 → 20.58 (workshop-red 35.3→24.4, letter-sky
+  25.7→17.6, social-cream 37.7→32.8); no regression once clean refs stay clean.
+- Eye check (out/layers/*.png): amplitude and grain size match; workshop-red's ref has
+  a faint diagonal weave and v4-turbo's is a little blotchier than ours (isotropic grain).
+- Limits: refs with *less* fine detail than our render (support-teal, coral-pink,
+  mcp-coral, rust-blur) can't be helped by an additive layer; that's the streak params.
+- Studio: a clone now loads its fitted layers (pick/reset reloads them); thumbs and the
+  references board render them.
+- Layers moved to components/shaders/layers (shared with the homepage gradient, which
+  now draws through the pass; its old ±0.01 noise is a default grain layer). The post
+  pass takes a `room` size (tile or full canvas). Server: "@/" imports resolve from the
+  repo root; harness imports /mod/@/components/shaders/layers/post.js.
+- Shader: `stipple`, `stippleSize`, `stippleSparkle` (new "Stipple" group): the homepage's
+  boundary grain, ported (jitters the averaged palette coordinate). Default off; mean
+  score 22.07 unchanged. Not fitted: refs' grain is uniform (incl. flat areas), so the
+  grain layer models them; stipple is a look option.

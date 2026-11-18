@@ -1,0 +1,19 @@
+{
+ "id": "atom-band",
+ "dist": {
+  "score": 1.424,
+  "bands": 0.867,
+  "chroma": 0,
+  "tone": 0.187,
+  "shift": 0.37
+ },
+ "clean": {
+  "score": 1.424,
+  "bands": 0.867,
+  "chroma": 0,
+  "tone": 0.187,
+  "shift": 0.37
+ },
+ "layers": [],
+ "note": "clean reference"
+}

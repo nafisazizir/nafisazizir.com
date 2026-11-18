@@ -1,0 +1,33 @@
+{
+ "id": "red-burst",
+ "dist": {
+  "score": 1.163,
+  "bands": 0.338,
+  "chroma": 0.033,
+  "tone": 0.049,
+  "shift": 0.743
+ },
+ "clean": {
+  "score": 6.558,
+  "bands": 4.666,
+  "chroma": 0.87,
+  "tone": 0.256,
+  "shift": 0.766
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.2153,
+    "size": 0.662,
+    "mids": 0.561,
+    "colour": 0
+   }
+  }
+ ]
+}

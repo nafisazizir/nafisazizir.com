@@ -1,0 +1,33 @@
+{
+ "id": "netherlands-amber",
+ "dist": {
+  "score": 0.611,
+  "bands": 0.364,
+  "chroma": 0.132,
+  "tone": 0.011,
+  "shift": 0.103
+ },
+ "clean": {
+  "score": 12.379,
+  "bands": 10.191,
+  "chroma": 0.191,
+  "tone": 1.862,
+  "shift": 0.135
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.4955,
+    "size": 0.53,
+    "mids": 0.187,
+    "colour": 0.104
+   }
+  }
+ ]
+}

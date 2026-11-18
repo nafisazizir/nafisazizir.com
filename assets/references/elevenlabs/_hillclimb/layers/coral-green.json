@@ -1,0 +1,19 @@
+{
+ "id": "coral-green",
+ "dist": {
+  "score": 3.685,
+  "bands": 2.226,
+  "chroma": 0.45,
+  "tone": 0.927,
+  "shift": 0.082
+ },
+ "clean": {
+  "score": 3.685,
+  "bands": 2.226,
+  "chroma": 0.45,
+  "tone": 0.927,
+  "shift": 0.082
+ },
+ "layers": [],
+ "note": "clean reference"
+}

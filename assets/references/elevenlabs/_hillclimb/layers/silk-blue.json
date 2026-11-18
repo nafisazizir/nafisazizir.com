@@ -1,0 +1,19 @@
+{
+ "id": "silk-blue",
+ "dist": {
+  "score": 5.418,
+  "bands": 3.393,
+  "chroma": 0.109,
+  "tone": 1.915,
+  "shift": 0.001
+ },
+ "clean": {
+  "score": 5.418,
+  "bands": 3.393,
+  "chroma": 0.109,
+  "tone": 1.915,
+  "shift": 0.001
+ },
+ "layers": [],
+ "note": "clean reference"
+}

@@ -30,7 +30,7 @@ function canvas(w, h) { const c = document.createElement("canvas"); c.width = w;
 
 function render(p, W, H, samples = 40) {
   const c = canvas(W, H), ctx = c.getContext("2d", { willReadFrequently: true })
-  R.render(ctx, W, H, p, { samples })
+  R.render(ctx, W, H, p, { samples, layers: p.layers })
   return c
 }
 
@@ -251,10 +251,216 @@ function stack(cs, gap = 6) {
   return o
 }
 
+// ---- texture (layers) ------------------------------------------------------
+// Grain lives at native resolution, so this works on native-size crops of the
+// reference: smooth regions (no text, no edges), where the only fine detail is
+// the surface texture. Candidate layer stacks are laid over a cached native
+// render of the streaks with the site's real layer pass, so each candidate
+// costs a few ms.
+let LP = null, LPver = ""
+async function layerPass() {
+  if (LP && LPver === ver) return LP
+  const post = await import(`/mod/@/components/shaders/layers/post.js?v=${ver}`)
+  const sh = await import(`/mod/shader.js?v=${ver}`)
+  const c = document.createElement("canvas")
+  const gl = c.getContext("webgl2", { antialias: false, preserveDrawingBuffer: true })
+  const vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, sh.STREAK_VERT); gl.compileShader(vs)
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao)
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf)
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0)
+  LP?.post.dispose()
+  LP = { c, gl, post: post.createPostPass(gl, vs) }
+  LPver = ver
+  return LP
+}
+// layers over one crop (x, y from the top-left of a W×H frame) -> canvas.
+function overlay(src, x, y, W, H, layers, time = 0) {
+  const { c, gl, post } = LP
+  const w = src.width, h = src.height
+  const stack = post.prepare(layers, W, H, time, [512, 512])
+  const out = canvas(w, h)
+  if (!stack) { out.getContext("2d").drawImage(src, 0, 0); return out }
+  c.width = w; c.height = h
+  gl.viewport(0, 0, w, h)
+  gl.bindTexture(gl.TEXTURE_2D, stack.texture)
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+  gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, src)
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+  stack.draw(x, H - y - h)
+  out.getContext("2d").drawImage(c, 0, 0)
+  return out
+}
+function crop(src, x, y, w, h) { const o = canvas(w, h); o.getContext("2d").drawImage(src, x, y, w, h, 0, 0, w, h); return o }
+
+// Up to n non-overlapping S×S crops of the reference: low structure (so the
+// fine bands are texture, not art), unmasked, not clipped to white or black.
+function pickCrops(refFull, rects, n = 3, S = 320) {
+  // Shrink until at least two fit (big text masks leave little room).
+  for (const f of [1, 0.75, 0.5, 0.35]) {
+    const c = pickCropsAt(refFull, rects, n, Math.round(S * f))
+    if (c.length >= Math.min(2, n)) return c
+  }
+  return pickCropsAt(refFull, rects, n, Math.round(S * 0.35), true)
+}
+function pickCropsAt(refFull, rects, n, S, anyway = false) {
+  const W = refFull.width, H = refFull.height
+  S = Math.min(S, Math.floor(Math.min(W, H) / 2))
+  const k = 8, w = Math.round(W / k), h = Math.round(H / k)
+  const small = drawImg(refFull, w, h), d = pixels(small)
+  const L = new Float32Array(w * h)
+  for (let i = 0; i < w * h; i++) L[i] = 0.299 * d[4 * i] + 0.587 * d[4 * i + 1] + 0.114 * d[4 * i + 2]
+  const m = maskFor(w, h, rects, autoMask(small))
+  const b = blur(L, w, h, 1.5)
+  const cands = []
+  const step = Math.max(8, Math.round(S / 4))
+  for (let y = 0; y + S <= H; y += step) for (let x = 0; x + S <= W; x += step) {
+    let g = 0, mean = 0, bad = 0, cnt = 0
+    for (let yy = Math.floor(y / k) + 1; yy < Math.floor((y + S) / k) - 1; yy++)
+      for (let xx = Math.floor(x / k) + 1; xx < Math.floor((x + S) / k) - 1; xx++) {
+        const i = yy * w + xx
+        if (!m[i]) bad++
+        g += Math.hypot(b[i + 1] - b[i - 1], b[i + w] - b[i - w]); mean += L[i]; cnt++
+      }
+    if (!cnt || (!anyway && bad > 0.02 * cnt)) continue
+    mean /= cnt
+    const clip = Math.max(0, Math.abs(mean - 128) - 95)
+    cands.push({ x, y, cost: g / cnt + clip })
+  }
+  cands.sort((a, b) => a.cost - b.cost)
+  const out = []
+  for (const c of cands) {
+    if (out.some((o) => Math.abs(o.x - c.x) < S && Math.abs(o.y - c.y) < S)) continue
+    out.push({ x: c.x, y: c.y, w: S, h: S })
+    if (out.length === n) break
+  }
+  return out
+}
+
+const mad = (arr) => {
+  if (!arr.length) return 0
+  const s = Float32Array.from(arr).sort(), med = s[s.length >> 1]
+  const dev = Float32Array.from(arr, (v) => Math.abs(v - med)).sort()
+  return 1.4826 * dev[dev.length >> 1]
+}
+// Texture of one crop: robust amplitude of four band-pass levels of luma
+// (σ 0.7 / 1.5 / 3 / 6 px), how much of the finest band is colour, and how the
+// finest band follows brightness (shadows and highlights vs mids). Only the
+// smoother half of the crop counts, so streak edges and hairlines don't.
+function texStats(cnv) {
+  const W = cnv.width, H = cnv.height, n = W * H, d = pixels(cnv)
+  const L = new Float32Array(n), A = new Float32Array(n), B = new Float32Array(n)
+  for (let i = 0; i < n; i++) {
+    const r = d[4 * i], g = d[4 * i + 1], b = d[4 * i + 2]
+    L[i] = 0.299 * r + 0.587 * g + 0.114 * b; A[i] = r - g; B[i] = 0.5 * (r + g) - b
+  }
+  const s = [0.7, 1.5, 3, 6], G = s.map((sg) => blur(L, W, H, sg))
+  const ga = blur(A, W, H, 0.7), gb = blur(B, W, H, 0.7)
+  // Structure from the coarsest level; keep the flatter half, away from edges.
+  const gm = [], idx = []
+  const pad = 14
+  for (let y = pad; y < H - pad; y++) for (let x = pad; x < W - pad; x++) {
+    const i = y * W + x, c = G[3]
+    gm.push(Math.hypot(c[i + 1] - c[i - 1], c[i + W] - c[i - W])); idx.push(i)
+  }
+  const thr = Float32Array.from(gm).sort()[Math.floor(gm.length * 0.5)]
+  const keep = idx.filter((_, j) => gm[j] <= thr)
+  const lv = [L, ...G]
+  const bands = [0, 1, 2, 3].map((b) => mad(keep.map((i) => lv[b][i] - lv[b + 1][i])))
+  const chroma = Math.hypot(mad(keep.map((i) => A[i] - ga[i])), mad(keep.map((i) => B[i] - gb[i]))) / (bands[0] + 0.05)
+  // Fine band by brightness tercile of the local mean.
+  const byL = keep.map((i) => [G[3][i], L[i] - G[0][i]]).sort((a, b) => a[0] - b[0])
+  const t = Math.floor(byL.length / 3)
+  const tone = [byL.slice(0, t), byL.slice(t, 2 * t), byL.slice(2 * t)].map((p) => mad(p.map((q) => q[1])))
+  const meanL = keep.reduce((acc, i) => acc + L[i], 0) / keep.length
+  return { bands, chroma, tone, meanL }
+}
+function texAvg(list) {
+  const lg = (v) => Math.log(v + 0.05)
+  const avg = (f) => list.reduce((a, s) => a + f(s), 0) / list.length
+  return {
+    bands: [0, 1, 2, 3].map((b) => Math.exp(avg((s) => lg(s.bands[b]))) - 0.05),
+    chroma: avg((s) => s.chroma),
+    tone: [0, 1, 2].map((b) => Math.exp(avg((s) => lg(s.tone[b]))) - 0.05),
+    meanL: avg((s) => s.meanL),
+  }
+}
+// Lower is better. Fine bands weigh most: they're what grain is.
+const BAND_W = [1.5, 1.2, 0.8, 0.5]
+function texDist(r, o) {
+  const lr = (a, b) => Math.abs(Math.log((b + 0.15) / (a + 0.15)))
+  const bands = r.bands.reduce((s, v, i) => s + BAND_W[i] * lr(v, o.bands[i]), 0)
+  const chroma = 1.5 * Math.abs(r.chroma - o.chroma)
+  // The shape of the tone response, relative to its own mids.
+  const rel = (s) => [s.tone[0] / (s.tone[1] + 0.1), s.tone[2] / (s.tone[1] + 0.1)]
+  const rr = rel(r), oo = rel(o)
+  const tone = 0.5 * (Math.abs(Math.log((rr[0] + 0.1) / (oo[0] + 0.1))) + Math.abs(Math.log((rr[1] + 0.1) / (oo[1] + 0.1))))
+  // Layers mustn't shift the brightness either.
+  const shift = 0.05 * Math.abs(r.meanL - o.meanL)
+  const r3 = (v) => Math.round(v * 1000) / 1000
+  return { score: r3(bands + chroma + tone + shift), bands: r3(bands), chroma: r3(chroma), tone: r3(tone), shift: r3(shift) }
+}
+
+const baseCache = new Map()
+async function texture(j) {
+  const T = [], t0 = performance.now(), mark = (k) => T.push(k + ":" + Math.round(performance.now() - t0))
+  await layerPass(); mark("lp")
+  const im = await loadImg(j.ref)
+  const W = im.naturalWidth, H = im.naturalHeight
+  const refFull = drawImg(im, W, H)
+  mark("img")
+  const crops = j.crops || pickCrops(refFull, j.mask, j.nCrops || 3, j.cropSize || 320)
+  mark("pick")
+  const refCrops = crops.map((c) => crop(refFull, c.x, c.y, c.w, c.h))
+  const ref = texAvg(refCrops.map(texStats))
+  mark("refstats")
+  const { P } = full(j.params)
+  const key = JSON.stringify([P, W, H, j.samples || 40])
+  if (!baseCache.has(key)) {
+    baseCache.clear()
+    const full_ = render(P, W, H, j.samples || 40)
+    baseCache.set(key, crops.map((c) => crop(full_, c.x, c.y, c.w, c.h)))
+  }
+  const base = baseCache.get(key)
+  mark("base")
+  // Optionally round-trip through the reference's own codec, so compression
+  // softens our grain the way it softened theirs.
+  const codec = async (cv) => {
+    if (!j.codec) return cv
+    const url = cv.toDataURL(j.codec.type, j.codec.q)
+    const img = new Image(); img.src = url; await img.decode()
+    const o = canvas(cv.width, cv.height); o.getContext("2d").drawImage(img, 0, 0); return o
+  }
+  const evalStack = async (layers) => {
+    const cs = []
+    for (let i = 0; i < crops.length; i++) cs.push(await codec(overlay(base[i], crops[i].x, crops[i].y, W, H, layers)))
+    const st = texAvg(cs.map(texStats))
+    return { stats: st, dist: texDist(ref, st), cs }
+  }
+  const out = { crops, ref, size: [W, H] }
+  const cands = []
+  for (const L of j.candidates || [[]]) {
+    const e = await evalStack(L)
+    cands.push({ stats: e.stats, dist: e.dist })
+    if (j.image && cands.length === 1) {
+      // ref crops over our crops, 1:1, for judging by eye.
+      const rows = crops.map((_, i) => stack([refCrops[i], e.cs[i]], 4))
+      const o = canvas(rows[0].width, rows.reduce((s, r) => s + r.height + 4, -4))
+      let y = 0; for (const r of rows) { o.getContext("2d").drawImage(r, 0, y); y += r.height + 4 }
+      out.image = o.toDataURL("image/png")
+    }
+  }
+  out.cands = cands
+  mark("cands")
+  out.timing = T.join(" ")
+  return out
+}
+
 window.job = async (j) => {
   await ensure()
   const t0 = performance.now()
   if (j.kind === "sheet") return sheet(j)
+  if (j.kind === "texture") { const o = await texture(j); o.ms = Math.round(performance.now() - t0); return o }
   const { P, clamped } = full(j.params)
   let W = j.width || 640
   const im = j.ref ? await loadImg(j.ref) : null

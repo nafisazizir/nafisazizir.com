@@ -1,0 +1,33 @@
+{
+ "id": "social-cream",
+ "dist": {
+  "score": 1.418,
+  "bands": 0.384,
+  "chroma": 0.238,
+  "tone": 0.011,
+  "shift": 0.786
+ },
+ "clean": {
+  "score": 7.391,
+  "bands": 4.148,
+  "chroma": 0.66,
+  "tone": 1.802,
+  "shift": 0.781
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 2,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.0644,
+    "size": 2.34,
+    "mids": 0.599,
+    "colour": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "id": "social-ember",
+ "dist": {
+  "score": 0.575,
+  "bands": 0.242,
+  "chroma": 0.019,
+  "tone": 0.06,
+  "shift": 0.253
+ },
+ "clean": {
+  "score": 8.142,
+  "bands": 5.655,
+  "chroma": 0.848,
+  "tone": 1.412,
+  "shift": 0.228
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.289,
+    "size": 2.055,
+    "mids": 0.183,
+    "colour": 0.22
+   }
+  }
+ ]
+}

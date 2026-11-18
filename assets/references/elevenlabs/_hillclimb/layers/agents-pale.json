@@ -1,0 +1,19 @@
+{
+ "id": "agents-pale",
+ "dist": {
+  "score": 0.468,
+  "bands": 0.322,
+  "chroma": 0,
+  "tone": 0,
+  "shift": 0.146
+ },
+ "clean": {
+  "score": 0.468,
+  "bands": 0.322,
+  "chroma": 0,
+  "tone": 0,
+  "shift": 0.146
+ },
+ "layers": [],
+ "note": "clean reference"
+}
