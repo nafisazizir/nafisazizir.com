@@ -37,13 +37,23 @@ function hexToLinear(hex: string) {
   })
 }
 
-export function createStreakRenderer(): StreakRenderer | null {
+/**
+ * `onLost` fires if the GPU drops the context (a driver reset, too much work
+ * at once), not when it's disposed: the caller makes a new renderer.
+ */
+export function createStreakRenderer(
+  onLost?: () => void
+): StreakRenderer | null {
   const canvas = document.createElement("canvas")
   const gl = canvas.getContext("webgl2", {
     antialias: false,
     preserveDrawingBuffer: true,
   })
   if (!gl) return null
+  let disposed = false
+  canvas.addEventListener("webglcontextlost", () => {
+    if (!disposed) onLost?.()
+  })
 
   const compile = (type: number, src: string) => {
     const sh = gl.createShader(type)!
@@ -112,6 +122,9 @@ export function createStreakRenderer(): StreakRenderer | null {
       params,
       { time = 0, samples = 40, layers } = {}
     ) {
+      // A lost context draws nothing and every call fails, so a draw that
+      // races a dispose (Fast Refresh) or a GPU reset is skipped.
+      if (gl.isContextLost()) return
       // Tiles are at most TILE square, so that is all the pass needs to hold.
       const stack = post.prepare(layers, width, height, time, [TILE, TILE])
       gl.useProgram(program)
@@ -140,6 +153,7 @@ export function createStreakRenderer(): StreakRenderer | null {
       }
     },
     dispose() {
+      disposed = true
       post.dispose()
       gl.deleteProgram(program)
       gl.deleteShader(vs)

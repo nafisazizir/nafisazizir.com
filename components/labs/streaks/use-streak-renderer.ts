@@ -12,11 +12,16 @@ export function useStreakRenderer() {
   const [supported, setSupported] = useState(true)
 
   useEffect(() => {
-    const r = createStreakRenderer()
-    // Setting state from the effect is the point: WebGL only exists here.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (r) setRenderer(r)
-    else setSupported(false)
+    let r: StreakRenderer | null = null
+    // If the GPU drops the context, start over on a fresh one; everything
+    // drawing with the renderer redraws when it changes.
+    const make = () => {
+      r = createStreakRenderer(make)
+      // Setting state from the effect is the point: WebGL only exists here.
+      if (r) setRenderer(r)
+      else setSupported(false)
+    }
+    make()
     return () => r?.dispose()
   }, [])
 
