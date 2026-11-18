@@ -1,3 +1,5 @@
+import type { LayerPreset } from "@/components/shaders/layers"
+import { createPostPass } from "@/components/shaders/layers/post"
 import { STREAK_PARAMS, type StreakParams } from "./presets"
 import { STREAK_FRAG, STREAK_VERT } from "./shader"
 
@@ -10,6 +12,8 @@ import { STREAK_FRAG, STREAK_VERT } from "./shader"
 export interface RenderOptions {
   time?: number
   samples?: number
+  /** Laid over the streaks in order; disabled ones are skipped. */
+  layers?: LayerPreset[]
 }
 
 export interface StreakRenderer {
@@ -61,7 +65,7 @@ export function createStreakRenderer(): StreakRenderer | null {
     console.error("[streaks]", gl.getProgramInfoLog(program))
     return null
   }
-  gl.useProgram(program)
+  const post = createPostPass(gl, vs)
 
   const vao = gl.createVertexArray()
   gl.bindVertexArray(vao)
@@ -101,7 +105,16 @@ export function createStreakRenderer(): StreakRenderer | null {
   }
 
   return {
-    render(ctx, width, height, params, { time = 0, samples = 40 } = {}) {
+    render(
+      ctx,
+      width,
+      height,
+      params,
+      { time = 0, samples = 40, layers } = {}
+    ) {
+      // Tiles are at most TILE square, so that is all the pass needs to hold.
+      const stack = post.prepare(layers, width, height, time, [TILE, TILE])
+      gl.useProgram(program)
       setUniforms(params, time, samples)
       gl.uniform2f(loc("u_full"), width, height)
       for (let ty = 0; ty < height; ty += TILE) {
@@ -114,13 +127,20 @@ export function createStreakRenderer(): StreakRenderer | null {
           }
           gl.viewport(0, 0, tw, th)
           // GL's origin is bottom-left, the 2D canvas's is top-left.
-          gl.uniform2f(loc("u_origin"), tx, height - ty - th)
+          const oy = height - ty - th
+          // With layers, the streaks go to a texture and the layer pass
+          // draws the canvas from it.
+          gl.useProgram(program)
+          gl.bindFramebuffer(gl.FRAMEBUFFER, stack?.framebuffer ?? null)
+          gl.uniform2f(loc("u_origin"), tx, oy)
           gl.drawArrays(gl.TRIANGLES, 0, 3)
+          stack?.draw(tx, oy)
           ctx.drawImage(canvas, tx, ty)
         }
       }
     },
     dispose() {
+      post.dispose()
       gl.deleteProgram(program)
       gl.deleteShader(vs)
       gl.deleteShader(fs)

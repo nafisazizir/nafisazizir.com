@@ -6,15 +6,23 @@ import {
   useEffect,
   useRef,
   useState,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from "react"
 import Link from "next/link"
+import { Reorder, useDragControls } from "framer-motion"
 import {
   IconDice5,
   IconDownload,
+  IconEye,
+  IconEyeOff,
+  IconGripVertical,
   IconPlayerPause,
   IconPlayerPlay,
+  IconPlus,
   IconRotate,
+  IconX,
 } from "@tabler/icons-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -28,6 +36,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Field, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import {
   Popover,
@@ -52,18 +66,27 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import {
+  createLayer,
+  instantiate,
+  layerSpecs,
+  LAYER_LIST,
+  LAYER_TYPES,
+  type Layer,
+  type LayerParamSpec,
+  type LayerPreset,
+} from "@/components/shaders/layers"
 
 import {
   ASPECTS,
   STREAK_PARAM_GROUPS,
   STREAK_PRESETS,
   type Aspect,
-  type NumericParam,
-  type ParamSpec,
   type StreakParams,
   type Stops,
 } from "./presets"
 import { ColorPicker } from "./color-picker"
+
 import { RECREATIONS } from "./recreations"
 import type { StreakRenderer } from "./renderer"
 import { useStreakRenderer } from "./use-streak-renderer"
@@ -92,6 +115,14 @@ const fromSource = ({ kind, index }: Source): StreakParams => {
   const { name, ...params } = STREAK_PRESETS[index]
   return structuredClone(params)
 }
+
+// A clone brings the grain fitted to its reference; presets have none.
+const layersOf = ({ kind, index }: Source): Layer[] =>
+  kind === "recreation"
+    ? (RECREATIONS[index].layers ?? []).map((l, i) =>
+        instantiate(l, `${kind}-${index}-${i}`)
+      )
+    : []
 
 const sourceName = ({ kind, index }: Source) =>
   kind === "recreation" ? RECREATIONS[index].name : STREAK_PRESETS[index].name
@@ -130,6 +161,9 @@ export function StreakStudio({ title }: { title: string }) {
   const [aspect, setAspect] = useState<Aspect>("16:9")
   const [playing, setPlaying] = useState(false)
   const [busy, setBusy] = useState(false)
+  // Grain, noise and the like over the streaks. A clone starts with the
+  // layers fitted to its reference; picking or resetting a look reloads them.
+  const [layers, setLayers] = useState<Layer[]>(() => layersOf(FIRST))
   // The reference pinned over the preview, picked from the strip below it.
   const [original, setOriginal] = useState<string | null>(null)
   const recreation =
@@ -144,6 +178,7 @@ export function StreakStudio({ title }: { title: string }) {
   const choose = (next: Source) => {
     setSource(next)
     setParams(fromSource(next))
+    setLayers(layersOf(next))
     setOriginal(null)
   }
 
@@ -160,6 +195,7 @@ export function StreakStudio({ title }: { title: string }) {
     out.height = h
     renderer.render(out.getContext("2d")!, w, h, params, {
       samples: SAMPLES.export,
+      layers,
     })
     out.toBlob((blob) => {
       setBusy(false)
@@ -216,6 +252,7 @@ export function StreakStudio({ title }: { title: string }) {
               renderer={renderer}
               supported={supported}
               params={params}
+              layers={layers}
               aspect={aspect}
               playing={playing}
               original={original ? refImg(original) : undefined}
@@ -316,6 +353,8 @@ export function StreakStudio({ title }: { title: string }) {
       >
         <Panel>
           <div className="flex flex-col gap-5 p-5">
+            <LayerStack layers={layers} onChange={setLayers} />
+            <Separator />
             <FieldSet className="gap-3">
               <FieldLegend variant="label">Palette</FieldLegend>
               <div className="grid grid-cols-5 gap-2">
@@ -359,9 +398,10 @@ export function StreakStudio({ title }: { title: string }) {
                   {group.params.map((spec) => (
                     <ParamSlider
                       key={spec.key}
+                      id={`streak-${spec.key}`}
                       spec={spec}
                       value={params[spec.key]}
-                      onChange={set}
+                      onChange={(v) => set(spec.key, v)}
                     />
                   ))}
                 </FieldSet>
@@ -420,7 +460,7 @@ function Panel({ children }: { children: ReactNode }) {
 const RAIL: {
   title: string
   kind: Source["kind"]
-  items: { name: string; params: StreakParams }[]
+  items: { name: string; params: StreakParams; layers?: LayerPreset[] }[]
 }[] = [
   { title: "Clones", kind: "recreation", items: RECREATIONS },
   {
@@ -494,6 +534,7 @@ function PresetRail({
                   <Thumb
                     renderer={renderer}
                     params={p.params}
+                    layers={p.layers}
                     ratio={ASPECTS[aspect]}
                     className="rounded-sm outline-2 outline-offset-2 outline-transparent transition-[outline-color] group-hover/thumb:outline-gray-alpha-500 group-aria-pressed/thumb:outline-gray-1000"
                   />
@@ -592,16 +633,241 @@ function ColorTile({
   )
 }
 
-function ParamSlider({
+/**
+ * The layers over the streaks, top of the list first applied. Drag a layer by
+ * its grip to reorder (or focus the grip and use the arrow keys); the eye
+ * hides one without losing its settings.
+ */
+function LayerStack({
+  layers,
+  onChange,
+}: {
+  layers: Layer[]
+  // Updaters, not values: two edits in one tick both land.
+  onChange: Dispatch<SetStateAction<Layer[]>>
+}) {
+  const update = (uid: string, patch: Partial<Layer>) =>
+    onChange((ls) => ls.map((l) => (l.uid === uid ? { ...l, ...patch } : l)))
+  const move = (uid: string, delta: number) =>
+    onChange((ls) => {
+      const from = ls.findIndex((l) => l.uid === uid)
+      const to = from + delta
+      if (from < 0 || to < 0 || to >= ls.length) return ls
+      const next = [...ls]
+      next.splice(to, 0, ...next.splice(from, 1))
+      return next
+    })
+
+  return (
+    <section aria-labelledby="streak-layers" className="flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <h2 id="streak-layers" className="text-heading-14">
+          Layers
+        </h2>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="xs">
+                <IconPlus data-icon="inline-start" />
+                Add
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end" className="w-60">
+            {LAYER_LIST.map((type) => (
+              <DropdownMenuItem
+                key={type.id}
+                onClick={() => onChange((ls) => [...ls, createLayer(type.id)])}
+                className="flex-col items-start gap-0"
+              >
+                {type.label}
+                <span className="text-copy-13 text-gray-900">
+                  {type.description}
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      {layers.length ? (
+        <Reorder.Group
+          axis="y"
+          values={layers}
+          onReorder={onChange}
+          className="flex flex-col gap-3"
+        >
+          {layers.map((layer) => (
+            <LayerCard
+              key={layer.uid}
+              layer={layer}
+              onChange={(patch) => update(layer.uid, patch)}
+              onMove={(d) => move(layer.uid, d)}
+              onRemove={() =>
+                onChange((ls) => ls.filter((l) => l.uid !== layer.uid))
+              }
+            />
+          ))}
+        </Reorder.Group>
+      ) : (
+        <p className="text-copy-13 text-gray-900">
+          None. Add grain, noise or a fractal texture over the streaks.
+        </p>
+      )}
+    </section>
+  )
+}
+
+function LayerCard({
+  layer,
+  onChange,
+  onMove,
+  onRemove,
+}: {
+  layer: Layer
+  onChange: (patch: Partial<Layer>) => void
+  /** By one place, up (-1) or down (1): the keyboard's way to reorder. */
+  onMove: (delta: number) => void
+  onRemove: () => void
+}) {
+  const type = LAYER_TYPES[layer.type]
+  const id = `layer-${layer.uid}`
+  // Only the grip starts a drag, so the sliders inside still slide.
+  const drag = useDragControls()
+  return (
+    <Reorder.Item
+      value={layer}
+      dragListener={false}
+      dragControls={drag}
+      role="group"
+      aria-labelledby={`${id}-name`}
+      className="flex flex-col gap-3 rounded-md border border-gray-alpha-400 bg-background-100 p-3"
+      // Lifted while it moves; the group keeps it above its neighbours.
+      whileDrag={{ scale: 1.02, boxShadow: "0 8px 24px rgb(0 0 0 / 0.35)" }}
+    >
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          aria-label={`Reorder ${type.label}`}
+          aria-roledescription="drag handle"
+          title="Drag to reorder"
+          onPointerDown={(e) => drag.start(e)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+              e.preventDefault()
+              onMove(e.key === "ArrowUp" ? -1 : 1)
+            }
+          }}
+          className="-ms-1 grid size-6 shrink-0 cursor-grab touch-none place-items-center rounded-sm text-gray-900 outline-none hover:text-gray-1000 focus-visible:ring-3 focus-visible:ring-gray-600/50 active:cursor-grabbing"
+        >
+          <IconGripVertical className="size-4" />
+        </button>
+        <span
+          id={`${id}-name`}
+          className={cn(
+            "flex-1 text-label-14",
+            !layer.enabled && "text-gray-900"
+          )}
+        >
+          {type.label}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={`${layer.enabled ? "Hide" : "Show"} ${type.label}`}
+          onClick={() => onChange({ enabled: !layer.enabled })}
+        >
+          {layer.enabled ? <IconEye /> : <IconEyeOff />}
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={`Remove ${type.label}`}
+          onClick={onRemove}
+        >
+          <IconX />
+        </Button>
+      </div>
+      {/* Hidden keeps its settings, just out of the way. */}
+      {layer.enabled
+        ? layerSpecs(type).map((spec) => {
+            const value = layer.params[spec.key] ?? type.defaults[spec.key]
+            const set = (v: number) =>
+              onChange({ params: { ...layer.params, [spec.key]: v } })
+            return spec.options ? (
+              <OptionSelect
+                key={spec.key}
+                id={`${id}-${spec.key}`}
+                spec={spec}
+                value={value}
+                onChange={set}
+              />
+            ) : (
+              <ParamSlider
+                key={spec.key}
+                id={`${id}-${spec.key}`}
+                spec={spec}
+                value={value}
+                onChange={set}
+              />
+            )
+          })
+        : null}
+    </Reorder.Item>
+  )
+}
+
+/** A param with named values, as a select. */
+function OptionSelect({
+  id,
   spec,
   value,
   onChange,
 }: {
-  spec: ParamSpec
+  id: string
+  spec: LayerParamSpec
   value: number
-  onChange: (key: NumericParam, value: number) => void
+  onChange: (value: number) => void
 }) {
-  const id = `streak-${spec.key}`
+  const options = spec.options ?? []
+  return (
+    <Field
+      orientation="horizontal"
+      className="grid grid-cols-[5.5rem_minmax(0,1fr)]"
+    >
+      <FieldLabel id={`${id}-label`} className="text-gray-900">
+        {spec.label}
+      </FieldLabel>
+      <Select
+        size="sm"
+        value={value}
+        onValueChange={(v) => v !== null && onChange(v)}
+      >
+        <SelectTrigger aria-labelledby={`${id}-label`} className="w-full">
+          <SelectValue>{(v: number) => options[v]}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((label, i) => (
+            <SelectItem key={label} value={i}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </Field>
+  )
+}
+
+function ParamSlider({
+  id,
+  spec,
+  value,
+  onChange,
+}: {
+  id: string
+  spec: { label: string; min: number; max: number; step: number }
+  value: number
+  onChange: (value: number) => void
+}) {
   // Base UI hands the root's aria-labelledby down to the thumb's input. The
   // value is an array: a bare number makes the wrapper draw two thumbs.
   return (
@@ -618,9 +884,7 @@ function ParamSlider({
         max={spec.max}
         step={spec.step}
         value={[value]}
-        onValueChange={(v) =>
-          onChange(spec.key, typeof v === "number" ? v : v[0])
-        }
+        onValueChange={(v) => onChange(typeof v === "number" ? v : v[0])}
       />
       <output
         aria-live="off"
@@ -636,6 +900,7 @@ function Preview({
   renderer,
   supported,
   params,
+  layers,
   aspect,
   playing,
   original,
@@ -643,6 +908,7 @@ function Preview({
   renderer: StreakRenderer | null
   supported: boolean
   params: StreakParams
+  layers: Layer[]
   aspect: Aspect
   playing: boolean
   /** A reference image to show over the corner, for comparing. */
@@ -652,12 +918,12 @@ function Preview({
   const draft = useRef<HTMLCanvasElement | null>(null)
   // The loop reads the latest params from here, so changing a slider while
   // animating doesn't restart the clock.
-  const live = useRef(params)
+  const live = useRef({ params, layers })
   const [size, setSize] = useState({ w: 0, h: 0 })
 
   useEffect(() => {
-    live.current = params
-  }, [params])
+    live.current = { params, layers }
+  }, [params, layers])
 
   useEffect(() => {
     const el = canvas.current
@@ -673,7 +939,7 @@ function Preview({
 
   // Half resolution, few samples, upscaled into the visible canvas.
   const drawDraft = useCallback(
-    (p: StreakParams, time: number) => {
+    (p: StreakParams, l: Layer[], time: number) => {
       const el = canvas.current
       if (!el || !renderer) return
       const d = (draft.current ??= document.createElement("canvas"))
@@ -682,6 +948,7 @@ function Preview({
       renderer.render(d.getContext("2d")!, d.width, d.height, p, {
         time,
         samples: SAMPLES.draft,
+        layers: l,
       })
       el.getContext("2d")!.drawImage(d, 0, 0, el.width, el.height)
     },
@@ -696,17 +963,18 @@ function Preview({
       el.width = size.w
       el.height = size.h
     }
-    const raf = requestAnimationFrame(() => drawDraft(params, 0))
+    const raf = requestAnimationFrame(() => drawDraft(params, layers, 0))
     const full = setTimeout(() => {
       renderer.render(el.getContext("2d")!, el.width, el.height, params, {
         samples: SAMPLES.preview,
+        layers,
       })
     }, IDLE)
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(full)
     }
-  }, [renderer, params, size, playing, drawDraft])
+  }, [renderer, params, layers, size, playing, drawDraft])
 
   // Animating: drafts every frame, paused while the tab is hidden by rAF.
   useEffect(() => {
@@ -719,7 +987,7 @@ function Preview({
     const start = performance.now()
     let raf = 0
     const tick = (now: number) => {
-      drawDraft(live.current, (now - start) / 1000)
+      drawDraft(live.current.params, live.current.layers, (now - start) / 1000)
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -762,12 +1030,14 @@ function Preview({
 function Thumb({
   renderer,
   params,
+  layers,
   ratio,
   width = 512,
   className,
 }: {
   renderer: StreakRenderer | null
   params: StreakParams
+  layers?: LayerPreset[]
   /** Width / height. */
   ratio: number
   /** Backing width in pixels. */
@@ -785,8 +1055,9 @@ function Thumb({
     el.height = h
     renderer.render(el.getContext("2d")!, w, h, params, {
       samples: SAMPLES.thumb,
+      layers,
     })
-  }, [renderer, params, ratio, width])
+  }, [renderer, params, layers, ratio, width])
 
   return (
     <canvas

@@ -28,7 +28,11 @@
  * coordinate passes through the stops in between). `knee` rolls the ramp's
  * ends off softly instead of clamping them flat. `chroma` disperses the whole
  * thing across the streak into a 5-tap spectrum: prism fringes on hard edges,
- * flipped when negative. No grain.
+ * flipped when negative. `stipple` is the homepage's grain (see
+ * gradient-shader.tsx): pixel-scale noise jitters where the averaged palette
+ * coordinate lands, so it stipples the ramp's transitions with the palette's
+ * own colours and leaves flat stretches clean. Off by default. Grain laid over
+ * everything is a layer (components/shaders/layers), not part of this shader.
  *
  * Uniform contract (see renderer.ts): every numeric param in STREAK_PARAMS is
  * bound to `u_<key>` (degrees converted to radians), plus u_full, u_origin,
@@ -74,6 +78,7 @@ uniform float u_hero, u_heroOffset, u_heroWidth, u_heroX, u_heroLen;
 uniform float u_hero2, u_hero2Offset;
 uniform float u_fibre, u_fibreFreq, u_fibreBreak, u_fibreHard;
 uniform float u_contrast, u_shift, u_blend, u_chroma, u_dither;
+uniform float u_stipple, u_stippleSize, u_stippleSparkle;
 uniform int   u_samples;
 uniform vec3  u_stops[5];
 uniform vec3  u_accent, u_accent2, u_heroColor, u_detailColor;
@@ -497,6 +502,55 @@ vec3 resolve(vec4 s, vec2 a) {
   return max(mix(s.rgb, accents(palette(s.a), a), u_blend), 0.0);
 }
 
+// Stipple: the homepage gradient's grain (gradient-shader.tsx, style 4),
+// ported. Simplex noise at pixel scale, its product with a coarser octave,
+// minus a very slow fbm that thins it out in places; sparkle is where the base
+// noise peaks. Returns an offset in palette coordinate.
+vec3 st_permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+float st_snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = st_permute(st_permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+  m = m * m;
+  m = m * m;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+// Three octaves of 0..1 noise, rotating as they go, like the homepage's fbmR.
+float st_fbm(vec2 p) {
+  float s = 0.0, a = 0.2;
+  for (int i = 0; i < 3; i++) {
+    p = mat2(0.9553, 0.2955, -0.2955, 0.9553) * p;
+    s += a * (0.5 + 0.7 * gnoise(p));
+    p *= 1.99;
+    a *= 0.6;
+  }
+  return s;
+}
+float stipple(vec2 px) {
+  // Size is in pixels at 1080p, like the grain layer; below a pixel it
+  // averages away instead of aliasing.
+  float cell = u_stippleSize * u_full.y / 1080.0;
+  vec2 g = px * 0.6 / max(cell, 1.0) + seedOff() * 37.0;
+  float base = st_snoise(g * 0.5);
+  float d = base * st_snoise(g * 0.2) - st_fbm(0.002 * g + 10.0) - st_fbm(0.003 * g) + 0.4;
+  float sparkle = clamp(0.75 * base - st_fbm(0.001 * g) - 0.6 * gnoise(0.4 * g), 0.0, 1.0);
+  return min(cell, 1.0) * (u_stipple * d + 0.5 * u_stippleSparkle * sparkle);
+}
+
 vec3 toSrgb(vec3 c) {
   return mix(12.92 * c, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c));
 }
@@ -559,6 +613,14 @@ void main() {
     col = sum / wsum;
   } else {
     col = resolve(mid, am);
+  }
+
+  if (u_stipple > 0.0 || u_stippleSparkle > 0.0) {
+    // Where the ramp lands moves, not the colour: the step to the jittered
+    // coordinate, so transitions stipple in palette colours and flat ends
+    // (past the knee) stay calm.
+    vec2 spx = gl_FragCoord.xy + u_origin;
+    col = max(col + palette(mid.a + stipple(spx)) - palette(mid.a), 0.0);
   }
 
   if (u_lum != 0.0 && u_lumPost > 0.0) {

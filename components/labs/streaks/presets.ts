@@ -148,6 +148,10 @@ export interface StreakParams {
   shift: number
   blend: number
   chroma: number
+  /** Stipple: the homepage's grain, jittering where the ramp lands. */
+  stipple: number
+  stippleSize: number
+  stippleSparkle: number
   seed: number
 }
 
@@ -409,6 +413,14 @@ export const STREAK_PARAM_GROUPS: { title: string; params: ParamSpec[] }[] = [
     ],
   },
   {
+    title: "Stipple",
+    params: [
+      { key: "stipple", label: "Stipple", min: 0, max: 0.5, step: 0.005 },
+      { key: "stippleSize", label: "Size", min: 0.5, max: 4, step: 0.05 },
+      { key: "stippleSparkle", label: "Sparkle", min: 0, max: 1, step: 0.01 },
+    ],
+  },
+  {
     title: "Finish",
     params: [
       { key: "fibre", label: "Fibre", min: 0, max: 1.5, step: 0.01 },
@@ -571,6 +583,9 @@ export const STREAK_DEFAULTS: Omit<StreakParams, "stops"> = {
   shift: 0,
   blend: 0,
   chroma: 0.004,
+  stipple: 0,
+  stippleSize: 1,
+  stippleSparkle: 0,
   seed: 7,
 }
 

@@ -13,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
+import type { LayerPreset } from "@/components/shaders/layers"
 import type { StreakParams } from "./presets"
 import { RECREATIONS } from "./recreations"
 import type { StreakRenderer } from "./renderer"
@@ -91,6 +92,7 @@ export function ReferenceBoard() {
                   <Recreation
                     renderer={renderer}
                     params={r.params}
+                    layers={r.layers}
                     aspect={r.aspect}
                   />
                   <figcaption className="text-label-12 text-gray-900">
@@ -130,10 +132,13 @@ export function ReferenceBoard() {
 function Recreation({
   renderer,
   params,
+  layers,
   aspect,
 }: {
   renderer: StreakRenderer | null
   params: StreakParams
+  /** The clone's grain, if it has any. */
+  layers?: LayerPreset[]
   aspect: number
 }) {
   const canvas = useRef<HTMLCanvasElement>(null)
@@ -148,7 +153,10 @@ function Recreation({
       if (el.width === w && el.height === h) return
       el.width = w
       el.height = h
-      renderer.render(el.getContext("2d")!, w, h, params, { samples: 40 })
+      renderer.render(el.getContext("2d")!, w, h, params, {
+        samples: 40,
+        layers,
+      })
     }
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -160,7 +168,7 @@ function Recreation({
     )
     io.observe(el)
     return () => io.disconnect()
-  }, [renderer, params, aspect])
+  }, [renderer, params, layers, aspect])
 
   return (
     <canvas
