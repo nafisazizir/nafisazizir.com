@@ -80,7 +80,6 @@ import {
 import {
   ASPECTS,
   STREAK_PARAM_GROUPS,
-  STREAK_PRESETS,
   type Aspect,
   type StreakParams,
   type Stops,
@@ -103,29 +102,18 @@ const EXPORT_EDGE = 3840
 const SHOW_REFERENCES = process.env.NODE_ENV !== "production"
 const refImg = (file: string) => `/labs/streaks/references/img/${file}`
 
-// What the controls start from: a clone of a reference pick, or one of the
-// hand-tuned presets. Reset goes back to it.
-type Source = { kind: "preset" | "recreation"; index: number }
-const FIRST: Source = { kind: "recreation", index: 0 }
+// What the controls start from: the index of a clone of a reference pick.
+// Reset goes back to it.
+const FIRST = 0
 
-const fromSource = ({ kind, index }: Source): StreakParams => {
-  if (kind === "recreation") return structuredClone(RECREATIONS[index].params)
-  // The name is the preset's, not the params'.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { name, ...params } = STREAK_PRESETS[index]
-  return structuredClone(params)
-}
+const fromSource = (index: number): StreakParams =>
+  structuredClone(RECREATIONS[index].params)
 
-// A clone brings the grain fitted to its reference; presets have none.
-const layersOf = ({ kind, index }: Source): Layer[] =>
-  kind === "recreation"
-    ? (RECREATIONS[index].layers ?? []).map((l, i) =>
-        instantiate(l, `${kind}-${index}-${i}`)
-      )
-    : []
-
-const sourceName = ({ kind, index }: Source) =>
-  kind === "recreation" ? RECREATIONS[index].name : STREAK_PRESETS[index].name
+// A clone brings the grain fitted to its reference.
+const layersOf = (index: number): Layer[] =>
+  (RECREATIONS[index].layers ?? []).map((l, i) =>
+    instantiate(l, `recreation-${index}-${i}`)
+  )
 
 // The colours outside the palette, shown at the top of their group.
 const GROUP_COLORS: Record<
@@ -146,7 +134,7 @@ const decimals = (step: number) =>
 
 /**
  * The streak playground, laid out like a slide editor over the whole
- * viewport: the clones and presets as a filmstrip on the left, the live
+ * viewport: the clones as a filmstrip on the left, the live
  * preview as the slide in the middle with a floating toolbar, the references
  * the selected clone was built from in a strip under it (dev only), and every
  * control the shader takes in a scrolling panel on the right. Export is in
@@ -155,7 +143,7 @@ const decimals = (step: number) =>
  */
 export function StreakStudio({ title }: { title: string }) {
   const { renderer, supported } = useStreakRenderer()
-  const [source, setSource] = useState<Source>(FIRST)
+  const [source, setSource] = useState<number>(FIRST)
   const [params, setParams] = useState<StreakParams>(() => fromSource(FIRST))
   // The aspect is the frame's, not the look's: picking one leaves it be.
   const [aspect, setAspect] = useState<Aspect>("16:9")
@@ -166,8 +154,7 @@ export function StreakStudio({ title }: { title: string }) {
   const [layers, setLayers] = useState<Layer[]>(() => layersOf(FIRST))
   // The reference pinned over the preview, picked from the strip below it.
   const [original, setOriginal] = useState<string | null>(null)
-  const recreation =
-    source.kind === "recreation" ? RECREATIONS[source.index] : null
+  const recreation = RECREATIONS[source]
 
   const set = useCallback(
     <K extends keyof StreakParams>(key: K, value: StreakParams[K]) =>
@@ -175,7 +162,7 @@ export function StreakStudio({ title }: { title: string }) {
     []
   )
 
-  const choose = (next: Source) => {
+  const choose = (next: number) => {
     setSource(next)
     setParams(fromSource(next))
     setLayers(layersOf(next))
@@ -200,7 +187,7 @@ export function StreakStudio({ title }: { title: string }) {
     out.toBlob((blob) => {
       setBusy(false)
       if (!blob) return
-      const name = sourceName(source).toLowerCase().replace(/\s+/g, "-")
+      const name = recreation.name.toLowerCase().replace(/\s+/g, "-")
       const a = document.createElement("a")
       a.href = URL.createObjectURL(blob)
       a.download = `streak-${name}-${params.seed}-${w}x${h}.png`
@@ -212,7 +199,7 @@ export function StreakStudio({ title }: { title: string }) {
   return (
     <div className="flex min-h-svh flex-col md:h-svh md:flex-row md:overflow-hidden">
       <section
-        aria-label="Clones and presets"
+        aria-label="Clones"
         className="order-2 flex flex-col md:order-none md:w-72 md:shrink-0 md:border-e md:border-gray-alpha-400"
       >
         <header className="flex h-(--nav-band) shrink-0 items-center px-5 md:px-4">
@@ -233,7 +220,7 @@ export function StreakStudio({ title }: { title: string }) {
           </Breadcrumb>
         </header>
         <Panel>
-          <PresetRail
+          <CloneRail
             renderer={renderer}
             aspect={aspect}
             selected={source}
@@ -457,27 +444,12 @@ function Panel({ children }: { children: ReactNode }) {
   )
 }
 
-const RAIL: {
-  title: string
-  kind: Source["kind"]
-  items: { name: string; params: StreakParams; layers?: LayerPreset[] }[]
-}[] = [
-  { title: "Clones", kind: "recreation", items: RECREATIONS },
-  {
-    title: "Presets",
-    kind: "preset",
-    // A preset is its own params, name and all.
-    items: STREAK_PRESETS.map((p) => ({ name: p.name, params: p })),
-  },
-]
-
 /**
- * The clones, then the hand-tuned presets, as a filmstrip: a column of
- * thumbnails on md and up, a strip that scrolls sideways below the stage on
- * small screens. Each section is a toggle group, so the arrow keys walk it in
- * whichever direction it runs.
+ * The clones as a filmstrip: a column of thumbnails on md and up, a strip
+ * that scrolls sideways below the stage on small screens. It's a toggle
+ * group, so the arrow keys walk it in whichever direction it runs.
  */
-function PresetRail({
+function CloneRail({
   renderer,
   aspect,
   selected,
@@ -485,8 +457,8 @@ function PresetRail({
 }: {
   renderer: StreakRenderer | null
   aspect: Aspect
-  selected: Source
-  onSelect: (source: Source) => void
+  selected: number
+  onSelect: (index: number) => void
 }) {
   const mobile = useIsMobile()
   const rail = useRef<HTMLDivElement>(null)
@@ -505,48 +477,44 @@ function PresetRail({
       ref={rail}
       className="flex w-max gap-6 px-5 pt-1 pb-5 md:w-full md:flex-col md:px-4"
     >
-      {RAIL.map(({ title, kind, items }) => (
-        <div key={kind} className="flex flex-col gap-3">
-          <h2 className="text-label-12 text-gray-900">{title}</h2>
-          <ToggleGroup
-            orientation={mobile ? "horizontal" : "vertical"}
-            spacing={3}
-            value={selected.kind === kind ? [String(selected.index)] : []}
-            onValueChange={(v) =>
-              v[0] && onSelect({ kind, index: Number(v[0]) })
-            }
-            // Room around each thumb for its outline.
-            className="items-start md:w-full"
-          >
-            {items.map((p, i) => (
-              // The thumbnail is the look; its name is the label, shown on
-              // hover.
-              <Tooltip key={p.name}>
-                <TooltipTrigger
-                  render={
-                    <ToggleGroupItem
-                      value={String(i)}
-                      aria-label={p.name}
-                      className="group/thumb h-auto w-48 p-0 hover:bg-transparent active:bg-transparent aria-pressed:bg-transparent aria-pressed:hover:bg-transparent md:w-full md:scroll-my-12"
-                    />
-                  }
-                >
-                  <Thumb
-                    renderer={renderer}
-                    params={p.params}
-                    layers={p.layers}
-                    ratio={ASPECTS[aspect]}
-                    className="rounded-sm outline-2 outline-offset-2 outline-transparent transition-[outline-color] group-hover/thumb:outline-gray-alpha-500 group-aria-pressed/thumb:outline-gray-1000"
+      <div className="flex flex-col gap-3">
+        <h2 className="text-label-12 text-gray-900">Clones</h2>
+        <ToggleGroup
+          orientation={mobile ? "horizontal" : "vertical"}
+          spacing={3}
+          value={[String(selected)]}
+          onValueChange={(v) => v[0] && onSelect(Number(v[0]))}
+          // Room around each thumb for its outline.
+          className="items-start md:w-full"
+        >
+          {RECREATIONS.map((p, i) => (
+            // The thumbnail is the look; its name is the label, shown on
+            // hover.
+            <Tooltip key={p.name}>
+              <TooltipTrigger
+                render={
+                  <ToggleGroupItem
+                    value={String(i)}
+                    aria-label={p.name}
+                    className="group/thumb h-auto w-48 p-0 hover:bg-transparent active:bg-transparent aria-pressed:bg-transparent aria-pressed:hover:bg-transparent md:w-full md:scroll-my-12"
                   />
-                </TooltipTrigger>
-                <TooltipContent side={mobile ? "top" : "right"}>
-                  {p.name}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </ToggleGroup>
-        </div>
-      ))}
+                }
+              >
+                <Thumb
+                  renderer={renderer}
+                  params={p.params}
+                  layers={p.layers}
+                  ratio={ASPECTS[aspect]}
+                  className="rounded-sm outline-2 outline-offset-2 outline-transparent transition-[outline-color] group-hover/thumb:outline-gray-alpha-500 group-aria-pressed/thumb:outline-gray-1000"
+                />
+              </TooltipTrigger>
+              <TooltipContent side={mobile ? "top" : "right"}>
+                {p.name}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </ToggleGroup>
+      </div>
     </div>
   )
 }

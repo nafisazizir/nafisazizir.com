@@ -4,13 +4,17 @@ import { useEffect, useRef } from "react"
 
 import { cn } from "@/lib/utils"
 
-import { STREAK_PRESETS, type StreakParams } from "./presets"
+import type { StreakParams } from "./presets"
+import { RECREATIONS } from "./recreations"
 import { useStreakRenderer } from "./use-streak-renderer"
+
+// The labs card wears the Agents pale clone.
+const THUMB = RECREATIONS.find((r) => r.id === "agents-pale")!.params
 
 // A single still frame, sized to its box. Used for card art, where a live
 // loop would be wasted; it redraws only when its box or params change.
 export function StreakStill({
-  params = STREAK_PRESETS[0],
+  params = THUMB,
   samples = 32,
   className,
 }: {
