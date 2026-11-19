@@ -1,0 +1,19 @@
+{
+ "id": "green-peach-blur",
+ "dist": {
+  "score": 1.498,
+  "bands": 0.22,
+  "chroma": 0.438,
+  "tone": 0.681,
+  "shift": 0.16
+ },
+ "clean": {
+  "score": 1.498,
+  "bands": 0.22,
+  "chroma": 0.438,
+  "tone": 0.681,
+  "shift": 0.16
+ },
+ "layers": [],
+ "note": "clean reference"
+}

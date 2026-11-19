@@ -1,0 +1,33 @@
+{
+ "id": "api-grey",
+ "dist": {
+  "score": 0.18,
+  "bands": 0.161,
+  "chroma": 0,
+  "tone": 0.017,
+  "shift": 0.002
+ },
+ "clean": {
+  "score": 10.171,
+  "bands": 7.899,
+  "chroma": 0,
+  "tone": 2.266,
+  "shift": 0.005
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 2,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1003,
+    "size": 0.553,
+    "mids": 0.342,
+    "colour": 0.172
+   }
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "id": "v4-turbo",
+ "dist": {
+  "score": 0.365,
+  "bands": 0.103,
+  "chroma": 0.003,
+  "tone": 0.026,
+  "shift": 0.233
+ },
+ "clean": {
+  "score": 15.08,
+  "bands": 11.75,
+  "chroma": 0.67,
+  "tone": 2.334,
+  "shift": 0.326
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 1,
+    "size": 1.327,
+    "mids": 0.539,
+    "colour": 0.33
+   }
+  }
+ ]
+}

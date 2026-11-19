@@ -1,0 +1,33 @@
+{
+ "id": "sdr-oxblood",
+ "dist": {
+  "score": 0.672,
+  "bands": 0.282,
+  "chroma": 0.048,
+  "tone": 0.013,
+  "shift": 0.329
+ },
+ "clean": {
+  "score": 13.668,
+  "bands": 10.873,
+  "chroma": 0.157,
+  "tone": 2.388,
+  "shift": 0.249
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.5971,
+    "size": 0.5,
+    "mids": 0.618,
+    "colour": 0.418
+   }
+  }
+ ]
+}

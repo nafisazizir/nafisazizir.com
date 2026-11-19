@@ -1,0 +1,33 @@
+{
+ "id": "scribe-green",
+ "dist": {
+  "score": 0.316,
+  "bands": 0.198,
+  "chroma": 0.033,
+  "tone": 0.028,
+  "shift": 0.057
+ },
+ "clean": {
+  "score": 12.689,
+  "bands": 10.312,
+  "chroma": 0.102,
+  "tone": 2.201,
+  "shift": 0.073
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 2,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1969,
+    "size": 0.565,
+    "mids": 0.352,
+    "colour": 0.238
+   }
+  }
+ ]
+}

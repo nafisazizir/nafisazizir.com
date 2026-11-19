@@ -1,0 +1,19 @@
+{
+ "id": "rust-blur",
+ "dist": {
+  "score": 2.055,
+  "bands": 0.749,
+  "chroma": 0.605,
+  "tone": 0.223,
+  "shift": 0.477
+ },
+ "clean": {
+  "score": 2.055,
+  "bands": 0.749,
+  "chroma": 0.605,
+  "tone": 0.223,
+  "shift": 0.477
+ },
+ "layers": [],
+ "note": "clean reference"
+}

@@ -1,0 +1,33 @@
+{
+ "id": "cobalt-openai",
+ "dist": {
+  "score": 0.404,
+  "bands": 0.337,
+  "chroma": 0.023,
+  "tone": 0.033,
+  "shift": 0.01
+ },
+ "clean": {
+  "score": 9.798,
+  "bands": 8.115,
+  "chroma": 0.042,
+  "tone": 1.61,
+  "shift": 0.032
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.4811,
+    "size": 0.5,
+    "mids": 0.78,
+    "colour": 0.241
+   }
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "id": "elections-green",
+ "dist": {
+  "score": 0.418,
+  "bands": 0.095,
+  "chroma": 0.016,
+  "tone": 0.017,
+  "shift": 0.29
+ },
+ "clean": {
+  "score": 11.409,
+  "bands": 9.16,
+  "chroma": 0.41,
+  "tone": 1.554,
+  "shift": 0.285
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 1,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.2402,
+    "size": 0.616,
+    "mids": 0.391,
+    "colour": 0.114
+   }
+  }
+ ]
+}

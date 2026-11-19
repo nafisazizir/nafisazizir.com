@@ -1,0 +1,33 @@
+{
+ "id": "architect-square",
+ "dist": {
+  "score": 0.348,
+  "bands": 0.028,
+  "chroma": 0.003,
+  "tone": 0.003,
+  "shift": 0.315
+ },
+ "clean": {
+  "score": 8.439,
+  "bands": 6.646,
+  "chroma": 0.037,
+  "tone": 1.437,
+  "shift": 0.319
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1808,
+    "size": 1.319,
+    "mids": 0.412,
+    "colour": 0.02
+   }
+  }
+ ]
+}

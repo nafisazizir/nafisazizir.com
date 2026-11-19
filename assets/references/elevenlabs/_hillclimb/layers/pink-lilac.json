@@ -1,0 +1,19 @@
+{
+ "id": "pink-lilac",
+ "dist": {
+  "score": 0.98,
+  "bands": 0.407,
+  "chroma": 0.01,
+  "tone": 0.172,
+  "shift": 0.392
+ },
+ "clean": {
+  "score": 0.98,
+  "bands": 0.407,
+  "chroma": 0.01,
+  "tone": 0.172,
+  "shift": 0.392
+ },
+ "layers": [],
+ "note": "clean reference"
+}

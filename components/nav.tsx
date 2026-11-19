@@ -16,8 +16,12 @@ import {
 import { cn } from "@/lib/utils"
 
 const BAND = "fixed inset-x-0 top-(--nav-inset) z-50 flex justify-center"
+// Round corners, concentric with the pill buttons inside: half the pill's
+// height when closed, plus the p-2 inset once open (ziiz's rounded TabsList
+// does the same). Round rather than squircle so the frame and the pills
+// share one curve while the radius animates between the two.
 const PILL =
-  "rounded-3xl border border-gray-alpha-400 bg-background-100/20 text-gray-1000 shadow-2xl backdrop-blur-sm backdrop-saturate-150"
+  "rounded-[calc(var(--nav-pill)/2)] border [corner-shape:round] border-gray-alpha-400 bg-background-100/20 text-gray-1000 shadow-2xl backdrop-blur-sm backdrop-saturate-150"
 
 const links = [
   { href: "/", label: "Home" },
@@ -248,14 +252,19 @@ export function Nav() {
       <div
         ref={pillRef}
         onKeyDown={onKeyDown}
-        // Width animates first; padding animates together with the height
-        // (both delayed to 300ms on open). On close the order reverses.
+        // Width animates first; padding and radius animate together with the
+        // height (all delayed to 300ms on open). On close the order reverses.
         style={{
           transition: open
-            ? "width 300ms ease-out 0ms, padding 300ms ease-out 300ms"
-            : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms",
+            ? "width 300ms ease-out 0ms, padding 300ms ease-out 300ms, border-radius 300ms ease-out 300ms"
+            : "width 300ms ease-out 400ms, padding 300ms ease-out 150ms, border-radius 300ms ease-out 150ms",
         }}
-        className={cn(PILL, open ? "w-52 p-2" : "w-26 p-0")}
+        className={cn(
+          PILL,
+          open
+            ? "w-52 rounded-[calc(var(--nav-pill)/2+--spacing(2))] p-2"
+            : "w-26 p-0"
+        )}
       >
         {onSectionRoot || !open ? (
           <Button

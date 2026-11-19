@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react"
 import { SIGNATURE_PALETTES } from "@/components/shaders/gradient-presets"
+import type { LayerPreset } from "@/components/shaders/layers"
+import { createPostPass } from "@/components/shaders/layers/post"
 import { cn } from "@/lib/utils"
 
 const VERT = `#version 300 es
@@ -258,6 +260,28 @@ export interface GradientConfig {
   seed: number | null
   colors: number[][] | null
   interactive: boolean
+  /**
+   * Passes laid over the finished gradient (components/shaders/layers), the
+   * same module the streaks lab uses. Grain there is sized to the image, so
+   * it reads the same on any screen.
+   */
+  layers: LayerPreset[]
+}
+
+// The fine noise the gradient always had (±0.01 of value noise, a cell under
+// a pixel), as a grain layer: add, no tone shaping, still.
+const BASE_GRAIN: LayerPreset = {
+  type: "grain",
+  enabled: true,
+  params: {
+    amount: 0.02,
+    blend: 2,
+    mids: 0,
+    size: 0.9,
+    colour: 0,
+    animate: 0,
+    seed: 0,
+  },
 }
 
 export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
@@ -267,7 +291,8 @@ export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
   colorRotation: -0.38,
   displacement: 1.2,
   noiseSize: 0.45,
-  noiseIntensity: 0.01,
+  // Now the grain layer below; kept for configs that set it.
+  noiseIntensity: 0,
   offsetX: 0,
   offsetY: 0,
   color5Mix: 0,
@@ -291,6 +316,7 @@ export const DEFAULT_GRADIENT_CONFIG: GradientConfig = {
   colors: null,
   interactive: true,
   presets: SIGNATURE_PALETTES,
+  layers: [BASE_GRAIN],
 }
 
 // GSAP power2.inOut, replicated so we don't pull in the dependency.
@@ -351,6 +377,9 @@ export function GradientShader({
       return
     }
     gl.useProgram(program)
+    // With layers on, the gradient is drawn into the pass's texture and the
+    // pass draws the canvas.
+    const post = createPostPass(gl, vs)
 
     const vao = gl.createVertexArray()
     gl.bindVertexArray(vao)
@@ -485,6 +514,14 @@ export function GradientShader({
         if (p >= 1) tween = null
       }
 
+      const stack = post.prepare(
+        c.layers,
+        canvas!.width,
+        canvas!.height,
+        ts / 1000
+      )
+      gl!.useProgram(program)
+      gl!.bindFramebuffer(gl!.FRAMEBUFFER, stack?.framebuffer ?? null)
       gl!.uniform2f(U("u_resolution"), canvas!.width, canvas!.height)
       gl!.uniform2f(U("u_mouse"), smooth.x, smooth.y)
       gl!.uniform1f(U("u_seed"), seed)
@@ -515,6 +552,7 @@ export function GradientShader({
       gl!.uniform3f(U("u_color5"), 0, 0, 0)
 
       gl!.drawArrays(gl!.TRIANGLES, 0, 3)
+      stack?.draw(0, 0)
     }
     raf = requestAnimationFrame(draw)
 
@@ -537,6 +575,7 @@ export function GradientShader({
       window.removeEventListener("mousemove", onMove)
       window.removeEventListener("click", onClick)
       document.removeEventListener("visibilitychange", onVis)
+      post.dispose()
       gl.deleteProgram(program)
       gl.deleteShader(vs)
       gl.deleteShader(fs)

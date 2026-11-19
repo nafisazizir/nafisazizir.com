@@ -1,0 +1,33 @@
+{
+ "id": "fedramp-oxblood",
+ "dist": {
+  "score": 0.452,
+  "bands": 0.162,
+  "chroma": 0.017,
+  "tone": 0.016,
+  "shift": 0.257
+ },
+ "clean": {
+  "score": 8.309,
+  "bands": 7.031,
+  "chroma": 0.558,
+  "tone": 0.464,
+  "shift": 0.255
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.2932,
+    "size": 0.648,
+    "mids": 0.307,
+    "colour": 0.192
+   }
+  }
+ ]
+}

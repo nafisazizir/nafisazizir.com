@@ -1,0 +1,33 @@
+{
+ "id": "ads-red",
+ "dist": {
+  "score": 0.339,
+  "bands": 0.06,
+  "chroma": 0.069,
+  "tone": 0.071,
+  "shift": 0.139
+ },
+ "clean": {
+  "score": 13.218,
+  "bands": 10.675,
+  "chroma": 1.076,
+  "tone": 1.332,
+  "shift": 0.134
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 0,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.5703,
+    "size": 1.21,
+    "mids": 0.194,
+    "colour": 0.116
+   }
+  }
+ ]
+}

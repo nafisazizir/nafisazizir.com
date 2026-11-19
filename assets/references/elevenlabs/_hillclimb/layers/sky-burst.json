@@ -1,0 +1,33 @@
+{
+ "id": "sky-burst",
+ "dist": {
+  "score": 1.376,
+  "bands": 1.116,
+  "chroma": 0,
+  "tone": 0.031,
+  "shift": 0.229
+ },
+ "clean": {
+  "score": 8.079,
+  "bands": 5.588,
+  "chroma": 0,
+  "tone": 2.265,
+  "shift": 0.225
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 1,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1441,
+    "size": 0.525,
+    "mids": 0.271,
+    "colour": 0.186
+   }
+  }
+ ]
+}

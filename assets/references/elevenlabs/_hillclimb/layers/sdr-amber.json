@@ -1,0 +1,33 @@
+{
+ "id": "sdr-amber",
+ "dist": {
+  "score": 0.093,
+  "bands": 0.045,
+  "chroma": 0.019,
+  "tone": 0.023,
+  "shift": 0.006
+ },
+ "clean": {
+  "score": 8.564,
+  "bands": 7.398,
+  "chroma": 0.102,
+  "tone": 1.058,
+  "shift": 0.006
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 2,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1971,
+    "size": 0.566,
+    "mids": 0.401,
+    "colour": 0.106
+   }
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "id": "belgium-amber",
+ "dist": {
+  "score": 0.543,
+  "bands": 0.222,
+  "chroma": 0.037,
+  "tone": 0.014,
+  "shift": 0.27
+ },
+ "clean": {
+  "score": 8.324,
+  "bands": 6.724,
+  "chroma": 1.188,
+  "tone": 0.142,
+  "shift": 0.27
+ },
+ "layers": [
+  {
+   "uid": "fit",
+   "type": "grain",
+   "enabled": true,
+   "params": {
+    "blend": 1,
+    "animate": 1,
+    "seed": 0,
+    "amount": 0.1205,
+    "size": 0.5,
+    "mids": 0.236,
+    "colour": 0.17
+   }
+  }
+ ]
+}

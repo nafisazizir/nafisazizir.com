@@ -1,0 +1,19 @@
+{
+ "id": "support-teal",
+ "dist": {
+  "score": 4.308,
+  "bands": 1.949,
+  "chroma": 1.933,
+  "tone": 0.151,
+  "shift": 0.275
+ },
+ "clean": {
+  "score": 4.308,
+  "bands": 1.949,
+  "chroma": 1.933,
+  "tone": 0.151,
+  "shift": 0.275
+ },
+ "layers": [],
+ "note": "clean reference"
+}

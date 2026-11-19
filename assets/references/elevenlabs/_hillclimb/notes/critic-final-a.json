@@ -1,0 +1,92 @@
+{
+  "sdr-amber": {"grade": 3, "fixes": [
+    "Reference's right third carries strong orange-red rays (x 80-100%, y 10-55%) and a burnt-orange core just above the burst origin at bottom centre; ours is almost uniformly yellow there, with only a faint orange tint at the top right.",
+    "The blue-to-yellow boundary in the reference is a soft, blurry diagonal. Ours is a hard straight edge with a pale white highlight running along it from the left edge (~y 30%) down to the origin.",
+    "The reference's brightest near-white rays sit at top centre (x 45-60%, y 0-35%) and fan out from a burst point at about (52%, 95%). Ours puts the brightest pale wedge in the upper left, and the burst point sits further left at about (45%, 95%)."
+  ]},
+  "elections-green": {"grade": 4, "fixes": [
+    "The reference's upper half has broad, deep green masses (x 20-90%, y 10-40%). Ours is lighter and evenly striped there, with no large dark-green bodies.",
+    "Our streaks are too fine and too many: dozens of thin parallel lines across the upper half and the lower right. The reference streaks are fewer, wider and softer.",
+    "The reference has a pale mint/whitish patch in the centre-left (around x 20-50%, y 35-60%) and yellow-green glints in the lower middle. Ours has no centre-left lightening, and its pale area starts lower and sits further right."
+  ]},
+  "support-teal": {"grade": 4, "fixes": [
+    "The reference's green mass rises in a stepped shoulder: a mid step around x 30-45% at ~y 60%, then the upper plateau at ~y 30%. Ours goes from the low left step straight up a single diagonal at x ~40-45% to a plateau at ~y 38%, which is too low and has no middle shoulder.",
+    "The reference's top edges of the green mass blur upward softly over a tall distance (a fuzzy vertical smear). Ours are cleaner, with horizontally streaked edges.",
+    "Ours has grey horizontal streak lines across the cream upper-right area (y 5-25%) that the reference doesn't have; the reference's upper right is a smooth grey-green tint."
+  ]},
+  "fedramp-oxblood": {"grade": 4, "fixes": [
+    "Our rainbow fringe along the dark/pale diagonal edge (green-yellow-pink, lower right) is far too saturated and sharp. The reference shows only a faint warm/pinkish tint along that edge.",
+    "Our upper right (x 60-100%, y 0-50%) is a flat grey-blue. The reference is a richer periwinkle there, with soft light streaks.",
+    "The reference's pale band is brightest near the top centre (almost white-cyan at x 35-55%, y 0-25%) and broad. Ours is dimmer and narrower at the top."
+  ]},
+  "letter-sky": {"grade": 4, "fixes": [
+    "The reference has sharper, thinner pale streaks, almost hairlines, in the left half (y 40-65%) rising to the upper right. Ours are all broad and soft-blurred.",
+    "The reference's dark navy band in the lower left (y 78-90%) is thin and crisp, and sits close to the bottom. Ours is wider and softer and sits a little higher.",
+    "The reference's magenta-pink along the bottom is more saturated and runs as a band across the bottom 12% from x ~35% to the right edge. Ours is a duller pink-mauve, concentrated in the bottom-right corner."
+  ]},
+  "belgium-amber": {"grade": 3, "fixes": [
+    "In the reference the teal-blue sits in the top-left corner (x 0-35%, y 0-20%), with only grey-blue at the top right. In ours the strongest blue is at the top right and the top left is sandy beige with blue streaks.",
+    "The reference has a dark burnt-orange/brown bottom-left corner (x 0-15%, y 85-100%). Ours is uniform amber there.",
+    "The reference's streaks are gently curved arcs sweeping up to the right, with a pale cream band through the middle-right (y 55-65%) and fine dark hairlines in the bottom amber. Ours are straighter, converge toward the upper left, and have weaker hairlines."
+  ]},
+  "defining-navy": {"grade": 4, "fixes": [
+    "Ours has a dark navy blob at the top centre-left (x 20-45%, y 0-40%). In the reference that area is lighter, more mid-blue, and the navy is spread more evenly across the upper left.",
+    "The reference has a distinct lighter streak band running from about (45%, 35%) to the top-right corner along the navy/pale boundary. Ours blends it into a broad, soft gradient.",
+    "The reference's oxblood is concentrated at the left edge and bottom-left corner and stays dark up to ~y 50%. Ours spreads the oxblood further right along the bottom (to x ~45%) and makes it a little weaker at the left edge."
+  ]},
+  "architect-wide": {"grade": 3, "fixes": [
+    "The reference's navy mass is much larger and richer: a saturated blue-violet from x ~45% to ~90%, reaching down to ~y 70% on the right. Ours is a narrower, greyer navy that fades out by ~y 50%, and the top-right corner is too light.",
+    "The reference's dark-to-pale edge (around x 35-45%) carries a soft prism fringe (cyan plus a hint of red). Ours is a single crisp bright hairline running from (37%, 0) down to about (60%, 70%), too sharp and too long.",
+    "The reference's oxblood at the top (x 25-45%) is deeper and wider. Ours is fainter and sits further right (x 35-60%)."
+  ]},
+  "architect-square": {"grade": 3, "fixes": [
+    "The reference's pale diagonal band is much brighter and more cyan (almost white-cyan at the centre and lower middle), and it is wide, covering most of the bottom-left half. Ours is a dimmer blue-grey and narrower.",
+    "The reference has a visible prism fringe (pinkish then cyan) along the band's upper edge around (35-45%, 25-40%). Ours has no warm fringe, only faint thin cyan lines.",
+    "The reference's bottom-left corner and left edge are light (pale blue with a blue-violet patch at x 0-15%, y 45-70%). In ours the left side and bottom-left corner are a darker slate blue, and fine diagonal hairlines run through the band that the reference doesn't have."
+  ]},
+  "agents-pale": {"grade": 3, "fixes": [
+    "In the reference the navy mass reaches the top edge (faint blue at x 30-55%, y 0-15%). In ours the mass starts at ~y 15% under a wide uniform pale band.",
+    "The reference's bottom-right corner is a distinct reddish oxblood (x 75-100%, y 70-100%). Ours is a muted purple-brown there.",
+    "Ours has a combed texture of many fine parallel streaks inside the mass and along its top edge. The reference's mass is built from a few broad, smooth strokes, with a soft lilac-pink fringe on its left edge."
+  ]},
+  "detect-navy": {"grade": 4, "fixes": [
+    "Ours has a bright, sharp cyan-white hairline from about (0, 10%) to (35%, 60%). The reference has only a soft cyan glow/fringe along the left side and at the dark/pale boundary.",
+    "The reference's pale lower-left region is smaller: it starts at ~y 35% on the left edge and reaches the bottom only to x ~55%. Ours climbs higher up the left edge and spreads further right along the bottom.",
+    "The reference has a lighter periwinkle streak in the top-right corner (x 85-100%, y 0-25%) and lighter blue streaks in the lower right. Ours keeps the top right dark and puts its lighter blue band on the right edge at mid height."
+  ]},
+  "ads-red": {"grade": 4, "fixes": [
+    "The reference's slate blue-grey vertical band (x ~50-62%) runs the full height, mauve-grey at the top. Ours appears only in the lower half, with a broad mauve wash at the top spanning x 45-75%.",
+    "The reference has fine vertical streak texture inside the bands (visible striations in the red and peach). Ours is smooth, blobby vertical gradients.",
+    "The reference's left edge is a brighter yellow-orange over a wider area (x 0-10%, from y 30% down). Ours confines the yellow to a narrow strip in the lower left."
+  ]},
+  "mcp-coral": {"grade": 3, "fixes": [
+    "The reference is one dense, softly blurred coral body filling the centre (x 15-90%), with short feathered tongues at its edges. Ours is a fan of long, separate petals with crisp pale gaps between them, so it reads as a striped radial burst.",
+    "The reference has no visible convergence point; its streak blur runs fairly parallel. Ours clearly fans out from the lower right toward the upper left.",
+    "The reference's pale blue is confined to the left edge (x 0-10%) and the top-right corner, with lilac at the bottom left and bottom right. Ours puts a large pale-blue area in the top-left quadrant and more blue between petals in the lower left."
+  ]},
+  "workshop-red": {"grade": 4, "fixes": [
+    "The reference's top-left corner (x 0-35%, y 0-15%) is warm red-orange, and the slate grey-blue is confined to the top centre-right. Ours runs the slate band across the full top width.",
+    "The reference's upper-middle red (y 20-50%) is a saturated crimson-red. Ours is a muted pinkish crimson.",
+    "The reference has visible horizontal streak texture and a broader yellow-orange bottom right. Ours is smooth with no streak detail, and its orange-to-yellow transition at the bottom is weaker."
+  ]},
+  "lavender-cream": {"grade": 3, "fixes": [
+    "The reference's purple/cream boundary is a wave: purple runs up the whole left edge (x 0-15%) to the top, the boundary dips to ~y 45% at x 25-40%, then rises to ~y 37% at the right. Ours has a nearly flat, soft horizontal boundary at ~y 40-48%, and the top left is pale lilac-cream instead of purple.",
+    "The reference's black wedge at the top right is larger (x 65-100%, y 0-28%), with an olive-yellow tint at its lower edge. Ours is smaller and higher (y 0-15%).",
+    "The reference's cream is a bright diagonal tongue running from the top centre down-left to about (25%, 45%), with sharp-ish edges. Ours is a broad, hazy cream band across the full width, with vertical blur streaks dragging into the purple."
+  ]},
+  "sky-burst": {"grade": 4, "fixes": [
+    "The reference's dark-blue mass is a V/wedge: its lower-left edge sweeps diagonally from about (5%, 50%) into the convergence point at ~(25%, 78%), and it is darkest near that point. Ours is a rounded vertical blob, darkest and most uniform at the top.",
+    "The reference's mass has internal streaky texture and lighter blue strands. Ours is a smooth flat fill.",
+    "Ours has distinct blue radiating streaks in the pale area right of centre (x 40-65%, y 15-60%). In the reference those are much fainter, so the pale right half is almost clean."
+  ]},
+  "rust-blur": {"grade": 3, "fixes": [
+    "The reference's dark rust shape at the left centre is an elongated diagonal stroke rising from the left edge (~y 60%) up to the right, with a red-orange streak along the left edge. Ours is a near-perfect circle with a defined edge at (18-48%, 40-70%).",
+    "The reference has a dark rust mass at the bottom centre (x 55-75%, y 85-100%). Ours has none.",
+    "The reference has a rust arc across the top centre (from ~(35%, 15%) to the top-right edge at ~y 25%), with a dark spot at the right edge (~y 25-35%). Ours shows only a short diagonal rust streak at the upper right, with no arc toward the centre."
+  ]},
+  "green-peach-blur": {"grade": 3, "fixes": [
+    "The reference's main peach blob is soft-edged, tilted along a diagonal and positioned at x 55-95%, y 40-80%. Ours is a crisp-edged vertical ellipse sitting higher, at y 32-85%.",
+    "The reference's darkest teal sits at the left edge, upper middle (x 0-15%, y 15-50%). Ours puts the darkest green in a diagonal band through the centre (x 40-60%, y 50-85%), and our left edge at mid height is a lighter teal.",
+    "The reference's top centre is a light minty green (x 30-70%, y 0-30%). Ours is a mid green there, and our top-right peach is a crisper circle than the reference's soft glow."
+  ]}
+}
