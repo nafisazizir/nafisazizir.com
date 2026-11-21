@@ -9,17 +9,33 @@ import { TOC_VARIANTS } from "./registry"
 const KEY = "toc-variant"
 const listeners = new Set<() => void>()
 
+// Storage can throw where the browser blocks it; the pick then lives only in
+// the URL.
+function load(): string | null {
+  try {
+    return window.localStorage.getItem(KEY)
+  } catch {
+    return null
+  }
+}
+
+function save(id: string) {
+  try {
+    save(id)
+  } catch {}
+}
+
 function read(): string {
   const ids = TOC_VARIANTS.map((v) => v.id)
   const fromUrl = new URLSearchParams(window.location.search).get("toc")
   if (fromUrl && ids.includes(fromUrl)) return fromUrl
-  const saved = window.localStorage.getItem(KEY)
+  const saved = load()
   if (saved && ids.includes(saved)) return saved
   return ids[0]
 }
 
 export function setTocVariant(id: string) {
-  window.localStorage.setItem(KEY, id)
+  save(id)
   const url = new URL(window.location.href)
   url.searchParams.set("toc", id)
   window.history.replaceState(window.history.state, "", url)
