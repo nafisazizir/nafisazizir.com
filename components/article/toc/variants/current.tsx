@@ -5,16 +5,18 @@ import { useEffect, useState } from "react"
 
 import { track } from "@/lib/analytics/events"
 import { tap as tapSound } from "@/lib/audio"
-import type { TocItem } from "@/lib/content"
 import { useScrollSpy } from "@/lib/hooks/use-scroll-spy"
 import { cn } from "@/lib/utils"
+
+import type { TocVariantProps } from "../types"
 
 const TOC_ITEM_H = 28
 // The 720px column centred in the page's 1120px leaves 200px beside it, and
 // only once the page has its full width: 1120 plus the 24px gutters.
 const TOC_MIN_WIDTH = 1168
 
-export function Toc({ slug, items }: { slug: string; items: TocItem[] }) {
+export default function CurrentToc({ slug, items: all }: TocVariantProps) {
+  const items = all.filter((it) => it.depth === 2)
   const reduced = useReducedMotion() ?? false
   const [wide, setWide] = useState(false)
   const { active, scrollToId } = useScrollSpy({

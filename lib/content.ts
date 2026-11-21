@@ -29,6 +29,8 @@ export interface PostFrontmatter {
 export interface TocItem {
   id: string
   label: string
+  /** 2 for `## `, 3 for `### `. */
+  depth: 2 | 3
 }
 
 export interface Post {
@@ -36,7 +38,7 @@ export interface Post {
   frontmatter: PostFrontmatter
   /** Raw MDX body, frontmatter stripped. */
   content: string
-  /** Second-level headings, in document order (drives the reading TOC). */
+  /** Second- and third-level headings, in document order (drives the reading TOC). */
   toc: TocItem[]
 }
 
@@ -47,8 +49,10 @@ function toIsoDay(value: unknown): string {
 }
 
 /**
- * Extract `## ` headings and slugify them exactly as rehype-slug does
- * (github-slugger), so TOC anchors line up with the ids rehype-slug writes.
+ * Extract `## ` and `### ` headings and slugify them exactly as rehype-slug
+ * does (github-slugger), so TOC anchors line up with the ids rehype-slug
+ * writes. Every heading level goes through the slugger, as rehype-slug's do,
+ * so a repeated label gets the same numbered suffix.
  * Skips fenced code blocks so a `## ` comment inside a snippet isn't picked up.
  */
 function extractToc(body: string): TocItem[] {
@@ -62,9 +66,9 @@ function extractToc(body: string): TocItem[] {
       continue
     }
     if (inFence) continue
-    const h2 = line.match(/^##\s+(.+?)\s*$/)
-    if (!h2) continue
-    const label = h2[1]
+    const heading = line.match(/^(#{1,6})\s+(.+?)\s*$/)
+    if (!heading) continue
+    const label = heading[2]
       .replace(/`([^`]+)`/g, "$1")
       .replace(/\*\*([^*]+)\*\*/g, "$1")
       .replace(/\*([^*]+)\*/g, "$1")
@@ -72,7 +76,9 @@ function extractToc(body: string): TocItem[] {
       .replace(/\b_([^_]+)_\b/g, "$1")
       .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
       .trim()
-    items.push({ id: slugger.slug(label), label })
+    const id = slugger.slug(label)
+    const depth = heading[1].length
+    if (depth === 2 || depth === 3) items.push({ id, label, depth })
   }
   return items
 }
