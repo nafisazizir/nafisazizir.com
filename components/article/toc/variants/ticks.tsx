@@ -45,8 +45,9 @@ export default function TicksToc({ slug, items }: TocVariantProps) {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return
-      setOpen(false)
+      // Focus first: returning it fires the wrapper's onFocus, which opens.
       buttonRef.current?.focus()
+      setOpen(false)
     }
     const onDown = (e: PointerEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
@@ -108,7 +109,7 @@ export default function TicksToc({ slug, items }: TocVariantProps) {
           type="button"
           aria-expanded={open}
           aria-label="Contents"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => setOpen(true)}
           initial={reduced ? false : { opacity: 0, x: 6 }}
           animate={{ opacity: open ? 0 : 1, x: 0 }}
           transition={
