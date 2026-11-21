@@ -16,6 +16,7 @@ const FOCUS =
 export default function InlineToc({ slug, items }: TocVariantProps) {
   const reduced = useReducedMotion() ?? false
   const block = useRef<HTMLElement>(null)
+  const mini = useRef<HTMLOListElement>(null)
   const listId = useId()
   const blockId = useId()
   const [away, setAway] = useState(false)
@@ -51,6 +52,16 @@ export default function InlineToc({ slug, items }: TocVariantProps) {
     observer.observe(element)
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    const list = mini.current
+    const link = list?.querySelector<HTMLElement>('[aria-current="location"]')
+    if (!list || !link) return
+    const top = link.offsetTop - list.offsetTop
+    if (top < list.scrollTop) list.scrollTop = top
+    else if (top + link.offsetHeight > list.scrollTop + list.clientHeight)
+      list.scrollTop = top + link.offsetHeight - list.clientHeight
+  }, [current, away])
 
   if (items.length < 2) return null
 
@@ -173,7 +184,10 @@ export default function InlineToc({ slug, items }: TocVariantProps) {
                 >
                   Contents ↑
                 </a>
-                <ol className="max-h-[calc(100dvh-16rem)] list-none overflow-y-auto overscroll-contain py-1">
+                <ol
+                  ref={mini}
+                  className="max-h-[calc(100dvh-16rem)] list-none overflow-y-auto overscroll-contain py-1"
+                >
                   {groups.map(({ heading }, i) => (
                     <li key={heading.id}>
                       <a
@@ -183,7 +197,7 @@ export default function InlineToc({ slug, items }: TocVariantProps) {
                         onClick={(e) => jump(e, heading.id, heading.label)}
                         className={cn(
                           FOCUS,
-                          "flex h-7 items-center gap-1 text-label-13 no-underline transition-colors hover:bg-gray-alpha-100 hover:text-gray-1000",
+                          "flex min-h-7 items-center gap-1 py-1 text-label-13 no-underline transition-colors hover:bg-gray-alpha-100 hover:text-gray-1000",
                           i === current ? "text-gray-1000" : "text-gray-900"
                         )}
                       >
@@ -197,7 +211,7 @@ export default function InlineToc({ slug, items }: TocVariantProps) {
                         <span className="min-w-4 shrink-0 text-label-13-mono tabular-nums">
                           {i + 1}
                         </span>
-                        <span className="truncate">{heading.label}</span>
+                        <span className="line-clamp-2">{heading.label}</span>
                       </a>
                     </li>
                   ))}
