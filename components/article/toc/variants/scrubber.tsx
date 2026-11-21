@@ -354,7 +354,7 @@ function Horizontal({ slug, reading, labels }: ViewProps) {
           transition={
             reduced ? { duration: 0 } : { duration: 0.24, ease: "easeOut" }
           }
-          className="fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-md flex-col gap-2 material-menu px-3.5 pt-2.5 pb-3"
+          className="fixed inset-x-4 bottom-16 z-40 mx-auto flex max-w-md flex-col gap-2 material-menu px-3.5 pt-2.5 pb-3"
         >
           <div className="flex items-center gap-3">
             <span className="text-label-12-mono text-gray-900 tabular-nums">
