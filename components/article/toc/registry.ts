@@ -84,7 +84,7 @@ export const TOC_VARIANTS: TocVariant[] = [
     id: "scrubber",
     name: "Scrubber",
     description:
-      "A timeline whose segments are as long as their sections, filling as you read.",
+      "A timeline whose segments are as long as their sections, filling as you read; drag it to scrub.",
     Component: ScrubberToc,
   },
   {
