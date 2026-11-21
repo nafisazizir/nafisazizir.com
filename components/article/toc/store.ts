@@ -21,7 +21,7 @@ function load(): string | null {
 
 function save(id: string) {
   try {
-    save(id)
+    window.localStorage.setItem(KEY, id)
   } catch {}
 }
 
