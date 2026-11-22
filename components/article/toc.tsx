@@ -36,6 +36,13 @@ export function Toc({
     if (!article || !prose || headings.length === 0) return
     let frame = 0
     let idle: ReturnType<typeof setTimeout>
+    // At the bottom a short last section can't reach the reading line, so the
+    // line jumps to the end of the prose to mark everything read.
+    const line = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (window.scrollY < max - 1) return window.scrollY + 96
+      return prose.getBoundingClientRect().bottom + window.scrollY - 1
+    }
     const measure = () => {
       const top = (element: Element) =>
         element.getBoundingClientRect().top + window.scrollY
@@ -59,7 +66,7 @@ export function Toc({
         }))
       )
       setViewport({ width: window.innerWidth, height: window.innerHeight })
-      setReading(window.scrollY + 96)
+      setReading(line())
     }
     const onScroll = () => {
       setScrolling(true)
@@ -67,7 +74,7 @@ export function Toc({
       idle = setTimeout(() => setScrolling(false), 1000)
       if (!frame)
         frame = requestAnimationFrame(() => {
-          setReading(window.scrollY + 96)
+          setReading(line())
           frame = 0
         })
     }
