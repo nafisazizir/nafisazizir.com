@@ -12,6 +12,9 @@ import type { TocVariantProps } from "../types"
 
 type Section = { id: string; label: string; start: number; end: number }
 
+// The rail needs the page at its full width; narrower screens get no TOC.
+const TOC_MIN_WIDTH = 1168
+
 export default function XaiToc({ slug, items }: TocVariantProps) {
   const headings = useMemo(
     () => items.filter((item) => item.depth === 2),
@@ -32,6 +35,13 @@ export default function XaiToc({ slug, items }: TocVariantProps) {
     if (!article || !prose || headings.length === 0) return
     let frame = 0
     let idle: ReturnType<typeof setTimeout>
+    // At the bottom a short last section can't reach the reading line, so the
+    // line jumps to the end of the prose to mark everything read.
+    const line = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (window.scrollY < max - 1) return window.scrollY + 96
+      return prose.getBoundingClientRect().bottom + window.scrollY - 1
+    }
     const measure = () => {
       const top = (element: Element) =>
         element.getBoundingClientRect().top + window.scrollY
@@ -44,7 +54,7 @@ export default function XaiToc({ slug, items }: TocVariantProps) {
         {
           id: "",
           label: article.querySelector("h1")?.textContent || "Introduction",
-          start: top(article),
+          start: top(prose),
         },
         ...found,
       ]
@@ -55,7 +65,7 @@ export default function XaiToc({ slug, items }: TocVariantProps) {
         }))
       )
       setViewport({ width: window.innerWidth, height: window.innerHeight })
-      setReading(window.scrollY + 96)
+      setReading(line())
     }
     const onScroll = () => {
       setScrolling(true)
@@ -63,7 +73,7 @@ export default function XaiToc({ slug, items }: TocVariantProps) {
       idle = setTimeout(() => setScrolling(false), 1000)
       if (!frame)
         frame = requestAnimationFrame(() => {
-          setReading(window.scrollY + 96)
+          setReading(line())
           frame = 0
         })
     }
@@ -113,19 +123,23 @@ export default function XaiToc({ slug, items }: TocVariantProps) {
     )
   }
 
+  // Hidden over the title and cover; it shows once the body reaches the
+  // reading line.
+  const started = segments.length > 0 && reading >= segments[0].start
+
   return (
     <aside
       ref={root}
       aria-label="Contents"
       className={cn(
-        "group pointer-events-none fixed end-0 top-[14vh] z-40 h-[72vh] w-70",
-        (viewport.width < 1168 || !headings.length) && "hidden"
+        "group pointer-events-none fixed end-0 top-[14vh] z-40 h-[72vh] w-70 transition-[opacity,visibility] duration-220 motion-reduce:transition-none",
+        !started && "invisible opacity-0",
+        (viewport.width < TOC_MIN_WIDTH || !headings.length) && "hidden"
       )}
-      style={{ display: headings.length ? undefined : "none" }}
     >
       <div className="pointer-events-auto absolute inset-y-0 end-0 w-35" />
       <div
-        className="bg-linear-to-e absolute inset-x-0 -inset-y-10 from-transparent to-background-100 opacity-0 transition-opacity duration-220 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+        className="absolute inset-x-0 -inset-y-10 bg-linear-to-r from-transparent to-background-100 opacity-0 transition-opacity duration-220 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
         style={{
           maskImage:
             "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
