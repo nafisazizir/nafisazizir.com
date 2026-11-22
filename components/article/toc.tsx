@@ -55,7 +55,7 @@ export function Toc({
         {
           id: "",
           label: article.querySelector("h1")?.textContent || "Introduction",
-          start: top(article),
+          start: top(prose),
         },
         ...found,
       ]
@@ -124,12 +124,17 @@ export function Toc({
     )
   }
 
+  // Hidden over the title and cover; it shows once the body reaches the
+  // reading line.
+  const started = segments.length > 0 && reading >= segments[0].start
+
   return (
     <aside
       ref={root}
       aria-label="Contents"
       className={cn(
-        "group pointer-events-none fixed end-0 top-[14vh] z-40 h-[72vh] w-70",
+        "group pointer-events-none fixed end-0 top-[14vh] z-40 h-[72vh] w-70 transition-[opacity,visibility] duration-220 motion-reduce:transition-none",
+        !started && "invisible opacity-0",
         (viewport.width < TOC_MIN_WIDTH || !headings.length) && "hidden"
       )}
     >
